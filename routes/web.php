@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CradtController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,10 +14,15 @@ Route::get('/', function () {
 // Verifica se o usuário é Cradt, se sim, redireciona para a dashboard específica.
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user();
+    
+    // Verifica se o usuário tem a role "Cradt"
     if ($user->role === 'Cradt') {
+        // Redireciona para a rota "cradt"
         return redirect()->route('cradt');
     }
-    return view('dashboard');
+
+    // Caso não seja "Cradt", chama o controller do Dashboard
+    return (new DashboardController())->index();  // Chama o método index do DashboardController
 })
 ->middleware(['auth', 'verified'])
 ->name('dashboard');
