@@ -14,9 +14,10 @@ class Justificativa extends Component
     public $andamento;
     public $anexos;
     public $observacoes;
-
-    public function __construct($nome, $matricula, $email, $cpf, $datas, $andamento, $anexos, $observacoes)
+    public $id;
+    public function __construct($id = null,$nome, $matricula, $email, $cpf, $datas, $andamento, $anexos, $observacoes)
     {
+        $this->id = $id ?? uniqid();
         $this->nome = $nome;
         $this->matricula = $matricula;
         $this->email = $email;
