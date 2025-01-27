@@ -14,14 +14,14 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Exemplo de chamada do componente -->
             <x-justificativa-aluno
-                nome="Fulano da Silva"
-                matricula="2024TSIIG6778"
-                email="kkkk@discente.ifpe.edu.br"
-                cpf="123.456.789-00"
-                :datas="$datas" 
-                andamento="Pendência"
+                nome="{{ $nome }}"
+                matricula="{{ $matricula }}"
+                email="{{ $email }}"
+                cpf="{{ $cpf }}" 
+                datas="{{ $datas }}" 
+                andamento="{{ $andamento }}" 
                 :anexos="['requerimento_TSI202420892.png', 'hbshdbfhbaajcmsncanjbs.png', 'bshdbfhbaajcmsnjcanbs.img']"
-                observacoes="O aluno justificou sua falta alegando problemas de saúde e anexou atestados médicos correspondentes."
+                observacoes="{{ $observacoes }}"
             />
         </div>
     </div>
