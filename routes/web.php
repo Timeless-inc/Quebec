@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CradtController;
 use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 //Geral
@@ -39,7 +40,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
 Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
 Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create');
-Route::post('/requerimentos', [ApplicationController::class, 'store'])->name('application.store');
+Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
 Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
 Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
 //Cradt
@@ -50,5 +51,7 @@ Route::post('/justificativa/update-status/{id}', [JustificativaController::class
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
 
 Route::get('/requerimentos1', [ApplicationController::class, 'index']);
+Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
+
 
 require __DIR__.'/auth.php';

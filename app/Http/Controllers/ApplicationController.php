@@ -27,19 +27,21 @@ class ApplicationController extends Controller
 
     /**
      * Processa o envio do formulário.
+     * 'cpf' => 'required|string|unique:requerimentos,cpf|max:14', 
+     * 'matricula' => 'required|string|max:50|unique:requerimentos,matricula',
      */
     public function store(Request $request)
     {
         // Validação dos dados
         $validatedData = $request->validate([
             'nomeCompleto' => 'required|string|max:255',
-            'cpf' => 'required|string|unique:requerimentos,cpf|max:14',  // removed unique validation
+            'cpf' => 'required|string|max:14',  // removed unique validation
             'celular' => 'required|string|max:15',
             'email' => 'required|email|max:255',
             'rg' => 'required|string|max:20',
             'orgaoExpedidor' => 'required|string|max:50',
             'campus' => 'required|string|max:255',
-            'matricula' => 'required|string|max:50|unique:requerimentos,matricula', // removed unique validation
+            'matricula' => 'required|string|max:50', // removed unique validation
             'situacao' => 'required|in:1,2,3',
             'curso' => 'required|string|max:255',
             'periodo' => 'required|in:1,2,3,4,5,6',
@@ -81,12 +83,20 @@ class ApplicationController extends Controller
             28 => 'Transferência de Turno',
             29 => 'Outros',
         ];
+
+        $situacoes = [
+            1 => 'Ativo',
+            2 => 'Inativo',
+            3 => 'Desvinculado',
+        ];
     
         // Obtém o nome da requisição com base no valor
         $tipoRequisicaoNome = $tiposRequisicao[$validatedData['tipoRequisicao']];
+        $situacaoNome = $situacoes[$validatedData['situacao']];
     
         // Substitui o valor do tipoRequisicao pelo nome
         $validatedData['tipoRequisicao'] = $tipoRequisicaoNome;
+        $validatedData['situacao'] = $situacaoNome;
     
         // Verifica se há um arquivo para upload
         if ($request->hasFile('anexarArquivos')) {

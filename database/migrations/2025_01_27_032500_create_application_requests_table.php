@@ -11,13 +11,13 @@ return new class extends Migration {
             $table->id(); // ID auto-incrementável
             $table->uuid('key')->unique(); // Chave única para identificar o requerimento
             $table->string('nomeCompleto'); // Nome completo do requerente
-            $table->string('cpf')->unique(); // CPF do requerente
+            $table->string('cpf'); // CPF do requerente
             $table->string('celular'); // Número de celular
             $table->string('email'); // Email do requerente
             $table->string('rg'); // RG do requerente
             $table->string('orgaoExpedidor'); // Órgão expedidor do RG
             $table->string('campus'); // Campus do aluno
-            $table->string('matricula')->unique(); // Número de matrícula
+            $table->string('matricula'); // Número de matrícula
             $table->string('situacao'); // Situação acadêmica (matriculado, graduado, etc.)
             $table->string('curso'); // Nome do curso
             $table->string('periodo'); // Período atual

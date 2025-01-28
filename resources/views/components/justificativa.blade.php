@@ -51,7 +51,11 @@
             <hr class="my-2">
 
             <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-secondary">PDF</button>
+            <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary">
+            Gerar PDF
+            </a>
+
+                <!--<button type="button" class="btn btn-secondary">PDF</button>-->
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'resolvido')" class="btn btn-success">Finalizar</button>
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'atencao')" class="btn btn-warning">Pendência</button>
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'indeferido')" class="btn btn-danger">Indeferir</button>

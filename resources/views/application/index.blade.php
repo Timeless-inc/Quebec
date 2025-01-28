@@ -14,6 +14,18 @@
                     <div class="bg-primary overflow-hidden shadow-sm sm:rounded-lg border border-primary bg-opacity-25">
                         <div class="container mt-5">
                             <div class="card-body">
+
+                            <!-- Exibição de mensagens de erro -->
+                            @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                                
                             <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data">
                             @csrf
                                     <div class="row mb-3">
