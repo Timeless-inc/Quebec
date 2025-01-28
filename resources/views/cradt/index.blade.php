@@ -21,18 +21,19 @@
         </h2>
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <x-justificativa
-                id="{{ 1 }}"
-                nome="{{ $nome }}"
-                matricula="{{ $matricula }}"
-                email="{{ $email }}"
-                cpf="{{ $cpf }}"
-                datas="{{ $datas }}"
-                :andamento="$currentStatus ?? 'em_andamento'"
-                :anexos="['requerimento_TSI202420892.png', 'hbshdbfhbaajcmsncanjbs.png', 'bshdbfhbaajcmsnjcanbs.img']"
-                observacoes="{{ $observacoes }}"
-                class="justificativa-item" />
+            @foreach($requerimentos as $requerimento)
+                <x-justificativa
+                    id="{{ $requerimento->id }}"
+                    nome="{{ $requerimento->nomeCompleto }}"
+                    matricula="{{ $requerimento->matricula }}"
+                    email="{{ $requerimento->email }}"
+                    cpf="{{ $requerimento->cpf }}"
+                    datas="{{ $requerimento->created_at->format('d/m/Y') }}"
+                    :andamento="$requerimento->status ?? 'em_andamento'"
+                    :anexos="[$requerimento->anexarArquivos]"
+                    observacoes="{{ $requerimento->observacoes }}"
+                    class="justificativa-item" />
+            @endforeach
         </div>
     </div>
-
 </x-appcradt>
