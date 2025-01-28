@@ -2,38 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\ApplicationRequest;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    /**
-     * Exibe o conteúdo do dashboard.
-     */
     public function index()
-    {
-        // Obtém o usuário autenticado
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Verifica se o usuário está autenticado
-        if (!$user) {
-            abort(403, 'Acesso negado.');
-        }
-
-        // Define as variáveis para o dashboard
-        $datas = Carbon::now()->format('d/m/Y');  // Formatação da data
-        $nome = $user->name;
-        $matricula = $user->matricula;
-        $email = $user->email;
-        $cpf = $user->cpf;
-        $andamento = 'Pendência';  // Exemplo de andamento
-        $anexos = ['anexo1.pdf', 'anexo2.pdf'];  // Exemplo de anexos
-        $observacoes = 'Observações sobre a falta';  // Exemplo de observações
-
-        // Retorna a view do dashboard com as variáveis
-        return view('dashboard.index', compact(
-            'nome', 'matricula', 'email', 'cpf', 'datas', 'andamento', 'anexos', 'observacoes'
-        ));
+    if (!$user) {
+        abort(403, 'Acesso negado.');
     }
+
+    $requerimentos = ApplicationRequest::where('email', $user->email)
+        ->latest()
+        ->get();
+
+    $datas = Carbon::now()->format('d/m/Y');
+    $nome = $user->name;
+    $matricula = $user->matricula;
+    $email = $user->email;
+    $cpf = $user->cpf;
+    
+    $currentStatus = 'em_andamento';
+    $anexos = ['requerimento_TSI202420892.png', 'hbshdbfhbaajcmsncanjbs.png', 'bshdbfhbaajcmsnjcanbs.img'];
+    $observacoes = 'Observações sobre a falta';
+
+    return view('dashboard.index', compact(
+        'requerimentos',
+        'nome',
+        'matricula',
+        'email',
+        'cpf',
+        'datas',
+        'currentStatus',
+        'anexos',
+        'observacoes'
+    ));
+}
+
+
+
+
 }

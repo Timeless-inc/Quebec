@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Guid\Guid;
 
 class ApplicationController extends Controller
@@ -14,7 +15,14 @@ class ApplicationController extends Controller
      */
     public function create()
     {
-        return view('application.create');
+        $user = Auth::user();
+        return view('application.create', [
+        'nomeCompleto' => $user->name,
+        'matricula' => $user->matricula,
+        'email' => $user->email,
+        'cpf' => $user->cpf,
+        'data' => now()->format('Y-m-d')
+    ]);
     }
 
     /**
@@ -25,13 +33,13 @@ class ApplicationController extends Controller
         // Validação dos dados
         $validatedData = $request->validate([
             'nomeCompleto' => 'required|string|max:255',
-            'cpf' => 'required|string|max:14|unique:requerimentos,cpf',
+            'cpf' => 'required|string|unique:requerimentos,cpf|max:14',  // removed unique validation
             'celular' => 'required|string|max:15',
             'email' => 'required|email|max:255',
             'rg' => 'required|string|max:20',
             'orgaoExpedidor' => 'required|string|max:50',
             'campus' => 'required|string|max:255',
-            'matricula' => 'required|string|max:50|unique:requerimentos,matricula',
+            'matricula' => 'required|string|max:50|unique:requerimentos,matricula', // removed unique validation
             'situacao' => 'required|in:1,2,3',
             'curso' => 'required|string|max:255',
             'periodo' => 'required|in:1,2,3,4,5,6',
@@ -101,7 +109,10 @@ class ApplicationController extends Controller
      */
     public function index()
     {
-        $requerimentos = ApplicationRequest::latest()->paginate(10);
+        $requerimentos = ApplicationRequest::where('email', Auth::user()->email)
+        ->latest()
+        ->paginate(10);
+
         return view('application.index', compact('requerimentos'));
     }
 
