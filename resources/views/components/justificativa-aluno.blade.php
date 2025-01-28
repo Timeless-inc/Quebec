@@ -1,3 +1,15 @@
+@props([
+    'id',
+    'nome',
+    'matricula',
+    'email',
+    'cpf',
+    'datas',
+    'andamento',
+    'anexos',
+    'observacoes'
+])
+
 <div class="justificativa-item" id="justificativa-{{ $id }}">
     <div class="row bg-primary bg-opacity-25 border border-primary rounded shadow-sm mb-4">
         <div class="col-1 d-flex justify-content-center align-items-center">
