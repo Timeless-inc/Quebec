@@ -7,12 +7,13 @@
         <div class="col-11 p-4">
             <div class="d-flex justify-content-between">
                 <div>
-                    <h5 class="fw-bold mb-3">Justificativa de Falta</h5>
+                    <h5 class="fw-bold mb-3">{{ $tipoRequisicao }}</h5>
                     <span class="fw-bold">Nome:</span> {{ $nome }}<br>
                     <span class="fw-bold">Matrícula:</span> {{ $matricula }}<br>
                     <span class="fw-bold">E-mail:</span> {{ $email }}<br>
                     <span class="fw-bold">CPF:</span> {{ $cpf }}<br>
                     <span class="fw-bold">Data:</span> {{ $datas }} <br>
+                    <span class="fw-bold">Key:</span> {{ $key }} <br>
                     <span class="fw-bold">Andamento:</span>
                     <span class="badge bg-{{ $andamento == 'Pendência' ? 'warning' : ($andamento == 'Finalizado' ? 'success' : 'info') }}">
                         {{ $andamento }}
@@ -22,9 +23,11 @@
                 <div>
                     <h5 class="fw-bold mb-3">Anexos:</h5>
                     <ul class="list-unstyled">
-                        @foreach ($anexos as $anexo)
-                        <li><a href="{{ $anexo }}" class="text-primary text-decoration-none">{{ $anexo }}</a></li>
-                        @endforeach
+                        @forelse ($anexos as $anexo)
+                            <li><a href="{{ $anexo }}" class="text-primary text-decoration-none">{{ $anexo }}</a></li>
+                        @empty
+                            <li><em>Sem anexos</em></li>
+                        @endforelse
                     </ul>
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
@@ -40,7 +43,6 @@
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'atencao')" class="btn btn-warning">Pendência</button>
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'indeferido')" class="btn btn-danger">Indeferir</button>
                 <button onclick="updateStatusAndFilter('{{ $id }}', 'em_andamento')" class="btn btn-info">Em andamento</button>
-
             </div>
 
         </div>

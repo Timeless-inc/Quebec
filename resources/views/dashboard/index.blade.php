@@ -13,16 +13,19 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Exemplo de chamada do componente -->
-            <x-justificativa-aluno
+            <x-justificativa-aluno 
+                id="{{ 3 }}"
                 nome="{{ $nome }}"
                 matricula="{{ $matricula }}"
                 email="{{ $email }}"
-                cpf="{{ $cpf }}" 
-                datas="{{ $datas }}" 
-                andamento="{{ $andamento }}" 
+                cpf="{{ $cpf }}"
+                datas="{{ $datas }}"
+                :andamento="$currentStatus ?? 'em_andamento'"
                 :anexos="['requerimento_TSI202420892.png', 'hbshdbfhbaajcmsncanjbs.png', 'bshdbfhbaajcmsnjcanbs.img']"
                 observacoes="{{ $observacoes }}"
-            />
+                class="justificativa-item" />
+
+            
         </div>
     </div>
 </x-app-layout>

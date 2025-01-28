@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CradtController;
+use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,7 +47,8 @@ Route::get('/cradt/dashboard', [CradtController::class, 'index'])->middleware(['
 //Justificativa
 Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
 Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
+Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
 
-
+Route::get('/requerimentos1', [ApplicationController::class, 'index']);
 
 require __DIR__.'/auth.php';

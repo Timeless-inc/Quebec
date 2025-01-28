@@ -19,19 +19,19 @@
         <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
             Processos Situação:
         </h2>
+        
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-justificativa
-                id="1"
-                nome="Fulano da Silva"
-                matricula="2024TSIIG6778"
-                email="kkkk@discente.ifpe.edu.br"
-                cpf="123.456.789-00"
-                datas="$datas"
+                id="{{ 3 }}"
+                nome="{{ $nome }}"
+                matricula="{{ $matricula }}"
+                email="{{ $email }}"
+                cpf="{{ $cpf }}"
+                datas="{{ $datas }}"
                 :andamento="$currentStatus ?? 'em_andamento'"
                 :anexos="['requerimento_TSI202420892.png', 'hbshdbfhbaajcmsncanjbs.png', 'bshdbfhbaajcmsnjcanbs.img']"
-                observacoes="O aluno justificou sua falta alegando problemas de saúde e anexou atestados médicos correspondentes."
+                observacoes="{{ $observacoes }}"
                 class="justificativa-item" />
-                
         </div>
     </div>
 

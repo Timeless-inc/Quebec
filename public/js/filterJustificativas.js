@@ -1,4 +1,4 @@
-let currentStatus = 'em_andamento';
+let currentStatus = 'Em andamento';
 
 function filterJustificativas(status) {
     const justificativas = document.querySelectorAll('.justificativa-item');

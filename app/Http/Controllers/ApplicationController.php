@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
 use Illuminate\Support\Facades\Storage;
+use Ramsey\Uuid\Guid\Guid;
 
 class ApplicationController extends Controller
 {
@@ -39,18 +40,61 @@ class ApplicationController extends Controller
             'anexarArquivos' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'observacoes' => 'nullable|string|max:1000',
         ]);
-
+    
+        // Mapeamento dos valores para os nomes do tipoRequisicao
+        $tiposRequisicao = [
+            1 => 'Admissão por Transferência e Análise Curricular',
+            2 => 'Ajuste de Matrícula Semestral',
+            3 => 'Autorização para cursar disciplinas em outras Instituições de Ensino Superior',
+            4 => 'Cancelamento de Matrícula',
+            5 => 'Cancelamento de Disciplina',
+            6 => 'Certificado de Conclusão',
+            7 => 'Certidão - Autenticidade',
+            8 => 'Complementação de Matrícula',
+            9 => 'Cópia Xerox de Documento',
+            10 => 'Declaração de Colação de Grau e Tramitação de Diploma',
+            11 => 'Declaração de Matrícula ou Matrícula Vínculo',
+            12 => 'Declaração de Monitoria',
+            13 => 'Declaração para Estágio',
+            14 => 'Diploma 1ªvia/2ªvia',
+            15 => 'Dispensa da prática de Educação Física',
+            16 => 'Declaração Tramitação de Diploma',
+            17 => 'Ementa de disciplina',
+            18 => 'Guia de Transferência',
+            19 => 'Histórico Escolar',
+            20 => 'Isenção de disciplinas cursadas',
+            21 => 'Justificativa de falta(s) ou prova 2º chamada',
+            22 => 'Matriz curricular',
+            23 => 'Reabertura de Matrícula',
+            24 => 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC',
+            25 => 'Reintegração para Cursar',
+            26 => 'Solicitação de Conselho de Classe',
+            27 => 'Trancamento de Matrícula',
+            28 => 'Transferência de Turno',
+            29 => 'Outros',
+        ];
+    
+        // Obtém o nome da requisição com base no valor
+        $tipoRequisicaoNome = $tiposRequisicao[$validatedData['tipoRequisicao']];
+    
+        // Substitui o valor do tipoRequisicao pelo nome
+        $validatedData['tipoRequisicao'] = $tipoRequisicaoNome;
+    
         // Verifica se há um arquivo para upload
         if ($request->hasFile('anexarArquivos')) {
             $filePath = $request->file('anexarArquivos')->store('requerimentos_arquivos', 'public');
             $validatedData['anexarArquivos'] = $filePath;
         }
-
+    
+        // Gerando o valor para o campo 'key' (UUID)
+        $validatedData['key'] = Guid::uuid4()->toString(); // Gerando um UUID para o campo 'key'
+    
         // Salva os dados no banco
         ApplicationRequest::create($validatedData);
-
+    
         return redirect()->route('application.create')->with('success', 'Requerimento enviado com sucesso!');
     }
+    
 
     /**
      * Exibe a lista de requerimentos.
