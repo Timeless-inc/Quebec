@@ -18,6 +18,8 @@ class Justificativa extends Component
     public $observacoes;
     public $tipoRequisicao;  // Propriedade tipoRequisicao
     public $key;  // Propriedade key
+    public $status;
+    public $requerimento;
 
     /**
      * O construtor do componente.
@@ -41,7 +43,9 @@ class Justificativa extends Component
                 $this->anexos = explode(",", $requerimento->anexarArquivos); // Caso os arquivos estejam separados por vírgula
                 $this->observacoes = $requerimento->observacoes;
                 $this->tipoRequisicao = $requerimento->tipoRequisicao;  // Busca o tipoRequisicao
-                $this->key = $requerimento->key;  // Busca o campo key
+                $this->key = $requerimento->key;
+                $this->status = $requerimento->status;  // Busca o campo key
+                $this->requerimento = $requerimento;  // Adiciona o objeto requerimento
             } else {
                 // Caso não encontre o requerimento, retornamos valores padrão ou um erro
                 $this->id = $id ?: uniqid();
@@ -55,6 +59,7 @@ class Justificativa extends Component
                 $this->observacoes = 'Não encontrado';
                 $this->tipoRequisicao = 'Não encontrado';  // Valor padrão
                 $this->key = 'Não encontrado';  // Valor padrão
+                $this->status = 'Não encontrado';
             }
         }
     }
