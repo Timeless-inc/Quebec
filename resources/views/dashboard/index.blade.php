@@ -11,26 +11,28 @@
     </x-slot>
 
     <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        @if($requerimentos->count() > 0)
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)
-                <x-justificativa-aluno
-                    id="{{ $requerimento->id }}"
-                    nome="{{ $requerimento->nomeCompleto }}"
-                    matricula="{{ $requerimento->matricula }}"
-                    email="{{ $requerimento->email }}"
-                    cpf="{{ $requerimento->cpf }}"
-                    datas="{{ $requerimento->created_at->format('d/m/Y') }}"
-                    :anexos="[$requerimento->anexarArquivos]"
-                    observacoes="{{ $requerimento->observacoes }}"
-                    class="justificativa-item" />
+            <x-justificativa-aluno
+                id="{{ $requerimento->id }}"
+                nome="{{ $requerimento->nomeCompleto }}"
+                matricula="{{ $requerimento->matricula }}"
+                email="{{ $requerimento->email }}"
+                cpf="{{ $requerimento->cpf }}"
+                datas="{{ $requerimento->created_at->format('d/m/Y') }}"
+                :anexos="[$requerimento->anexarArquivos]"
+                observacoes="{{ $requerimento->observacoes }}"
+                class="justificativa-item" />
             @endforeach
-        @else
+            @else
             <p>Nenhum requerimento encontrado para este usuário.</p>
-        @endif
+            @endif
+        </div>
     </div>
-</div>
 
 
-
+    <div class="d-flex justify-content-center mt-4">
+        {{ $requerimentos->links('pagination::bootstrap-5') }}
+    </div>
 </x-app-layout>

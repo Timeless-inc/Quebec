@@ -19,7 +19,7 @@ class CradtController extends Controller
 
         Gate::authorize('isCradt', $user);
 
-        $requerimentos = ApplicationRequest::latest()->get();
+        $requerimentos = ApplicationRequest::latest()->paginate(10); // Mantém a paginação ativa
         $datas = Carbon::now()->format('d/m/Y');
 
         return view('cradt.index', [

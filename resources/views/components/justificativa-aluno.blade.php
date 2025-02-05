@@ -20,7 +20,7 @@
         <div class="col-11 p-4">
             <div class="d-flex justify-content-between">
                 <div>
-                    <h5 class="fw-bold mb-3">{{ $nome }}</h5>
+                    <h5 class="fw-bold mb-3">{{ $tipoRequisicao }}</h5>
                     <span class="fw-bold">Nome:</span> {{ $nome }}<br>
                     <span class="fw-bold">Matrícula:</span> {{ $matricula }}<br>
                     <span class="fw-bold">E-mail:</span> {{ $email }}<br>

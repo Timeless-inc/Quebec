@@ -19,7 +19,8 @@ class DashboardController extends Controller
     $requerimentos = ApplicationRequest::where('email', $user->email)
         ->latest()
         ->get();
-
+        
+    $requerimentos = ApplicationRequest::where('email', $user->email)->paginate(10);
     $datas = Carbon::now()->format('d/m/Y');
     $nome = $user->name;
     $matricula = $user->matricula;
