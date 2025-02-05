@@ -17,12 +17,12 @@ class ApplicationController extends Controller
     {
         $user = Auth::user();
         return view('application.create', [
-        'nomeCompleto' => $user->name,
-        'matricula' => $user->matricula,
-        'email' => $user->email,
-        'cpf' => $user->cpf,
-        'data' => now()->format('Y-m-d')
-    ]);
+            'nomeCompleto' => $user->name,
+            'matricula' => $user->matricula,
+            'email' => $user->email,
+            'cpf' => $user->cpf,
+            'data' => now()->format('Y-m-d')
+        ]);
     }
 
     /**
@@ -50,7 +50,7 @@ class ApplicationController extends Controller
             'anexarArquivos' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'observacoes' => 'nullable|string|max:1000',
         ]);
-    
+
         // Mapeamento dos valores para os nomes do tipoRequisicao
         $tiposRequisicao = [
             1 => 'Admissão por Transferência e Análise Curricular',
@@ -89,30 +89,30 @@ class ApplicationController extends Controller
             2 => 'Inativo',
             3 => 'Desvinculado',
         ];
-    
+
         // Obtém o nome da requisição com base no valor
         $tipoRequisicaoNome = $tiposRequisicao[$validatedData['tipoRequisicao']];
         $situacaoNome = $situacoes[$validatedData['situacao']];
-    
+
         // Substitui o valor do tipoRequisicao pelo nome
         $validatedData['tipoRequisicao'] = $tipoRequisicaoNome;
         $validatedData['situacao'] = $situacaoNome;
-    
+
         // Verifica se há um arquivo para upload
         if ($request->hasFile('anexarArquivos')) {
             $filePath = $request->file('anexarArquivos')->store('requerimentos_arquivos', 'public');
             $validatedData['anexarArquivos'] = $filePath;
         }
-    
+
         // Gerando o valor para o campo 'key' (UUID)
         $validatedData['key'] = Guid::uuid4()->toString(); // Gerando um UUID para o campo 'key'
-    
+
         // Salva os dados no banco
         ApplicationRequest::create($validatedData);
-    
+
         return redirect()->route('application.create')->with('success', 'Requerimento enviado com sucesso!');
     }
-    
+
 
     /**
      * Exibe a lista de requerimentos.
@@ -120,8 +120,8 @@ class ApplicationController extends Controller
     public function index()
     {
         $requerimentos = ApplicationRequest::where('email', Auth::user()->email)
-        ->latest()
-        ->paginate(10);
+            ->latest()
+            ->paginate(10);
 
         return view('application.index', compact('requerimentos'));
     }
@@ -150,5 +150,14 @@ class ApplicationController extends Controller
         $requerimento->delete();
 
         return redirect()->route('application.index')->with('success', 'Requerimento excluído com sucesso!');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $application = ApplicationRequest::findOrFail($id);
+        $application->status = $request->status;
+        $application->save();
+
+        return redirect()->back()->with('success', 'Status atualizado com sucesso!');
     }
 }
