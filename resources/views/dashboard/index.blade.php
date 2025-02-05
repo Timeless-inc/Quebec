@@ -21,7 +21,6 @@
                     email="{{ $requerimento->email }}"
                     cpf="{{ $requerimento->cpf }}"
                     datas="{{ $requerimento->created_at->format('d/m/Y') }}"
-                    :andamento="$requerimento->status ?? 'em_andamento'"
                     :anexos="[$requerimento->anexarArquivos]"
                     observacoes="{{ $requerimento->observacoes }}"
                     class="justificativa-item" />

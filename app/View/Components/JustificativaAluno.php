@@ -19,6 +19,7 @@ class JustificativaAluno extends Component
     public $tipoRequisicao; 
     public $key;
     public $requerimentos; // Adiciona a variável para os requerimentos
+    public $status;
 
     /**
      * O construtor do componente.
@@ -40,6 +41,7 @@ class JustificativaAluno extends Component
                 $this->observacoes = $requerimento->observacoes;
                 $this->tipoRequisicao = $requerimento->tipoRequisicao;
                 $this->key = $requerimento->key;
+                $this->status = $requerimento->status;
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 $this->id = $id ?: uniqid();
                 $this->nome = 'Não encontrado';

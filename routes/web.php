@@ -53,5 +53,7 @@ Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, '
 Route::get('/requerimentos1', [ApplicationController::class, 'index']);
 Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
 
+Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
+
 
 require __DIR__.'/auth.php';

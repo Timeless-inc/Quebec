@@ -1,13 +1,14 @@
 @props([
-    'id',
-    'nome',
-    'matricula',
-    'email',
-    'cpf',
-    'datas',
-    'andamento',
-    'anexos',
-    'observacoes'
+'id',
+'nome',
+'matricula',
+'email',
+'cpf',
+'datas',
+'andamento',
+'anexos',
+'observacoes',
+'status'
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}">
@@ -25,10 +26,21 @@
                     <span class="fw-bold">E-mail:</span> {{ $email }}<br>
                     <span class="fw-bold">CPF:</span> {{ $cpf }}<br>
                     <span class="fw-bold">Data:</span> {{ $datas }} <br>
-                    <span class="fw-bold">Andamento:</span>
-                    <span class="badge bg-{{ $andamento == 'Pendência' ? 'warning' : ($andamento == 'Finalizado' ? 'success' : 'info') }}">
-                        {{ $andamento }}
-                    </span>
+                    <span class="fw-bold">Status:</span>
+                    @switch($status ?? 'em_andamento')
+                    @case('em_andamento')
+                    <span class="badge bg-primary">Em Andamento</span>
+                    @break
+                    @case('finalizado')
+                    <span class="badge bg-success">Finalizado</span>
+                    @break
+                    @case('indeferido')
+                    <span class="badge bg-danger">Indeferido</span>
+                    @break
+                    @case('pendente')
+                    <span class="badge bg-warning">Pendente</span>
+                    @break
+                    @endswitch
                 </div>
 
                 <div>
@@ -53,7 +65,9 @@
             <hr class="my-2">
 
             <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-secondary">PDF</button>
+            <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
+                        Gerar PDF
+                    </a>
             </div>
 
         </div>
