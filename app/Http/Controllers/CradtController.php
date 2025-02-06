@@ -19,7 +19,20 @@ class CradtController extends Controller
 
         Gate::authorize('isCradt', $user);
 
-        $requerimentos = ApplicationRequest::latest()->paginate(10); // Mantém a paginação ativa
+        $query = ApplicationRequest::query();
+        $request = request();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nomeCompleto', 'like', "%{$search}%")
+                  ->orWhere('matricula', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('cpf', 'like', "%{$search}%");
+            });
+        }
+
+        $requerimentos = $query->latest()->paginate(10);
         $datas = Carbon::now()->format('d/m/Y');
 
         return view('cradt.index', [

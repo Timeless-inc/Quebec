@@ -45,6 +45,7 @@ Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name(
 Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
 //Cradt
 Route::get('/cradt/dashboard', [CradtController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt');
+Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
 //Justificativa
 Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
 Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');

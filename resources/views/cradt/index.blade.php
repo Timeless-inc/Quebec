@@ -15,6 +15,25 @@
         <button onclick="filterJustificativas('em_andamento')" type="button" class="btn btn-sm btn-info filter-btn" data-status="em_andamento">Em andamento</button>
     </x-slot>
 
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               name="search" 
+                               placeholder="Buscar por nome, CPF, matrícula..."
+                               value="{{ request('search') }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="py-12">
         <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
             Processos Situação:
@@ -40,5 +59,4 @@
     <div class="d-flex justify-content-center mt-4">
         {{ $requerimentos->links('pagination::bootstrap-5') }}
     </div>
-
 </x-appcradt>
