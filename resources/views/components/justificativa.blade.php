@@ -74,7 +74,7 @@
                         Gerar PDF
                     </a>
 
-                    <button type="submit" name="status" value="em_andamento" class="btn btn-primary mb-2">Em Andamento</button>
+                    <!-- <button type="submit" name="status" value="em_andamento" class="btn btn-primary mb-2">Em Andamento</button> -->
                     <button type="submit" name="status" value="finalizado" class="btn btn-success mb-2">Finalizar</button>
                     <button type="submit" name="status" value="indeferido" class="btn btn-danger mb-2">Indeferir</button>
                     <button type="submit" name="status" value="pendente" class="btn btn-warning mb-2">Pendência</button>
