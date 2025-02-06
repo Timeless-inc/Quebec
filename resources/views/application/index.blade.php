@@ -50,7 +50,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label for="rg" class="form-label">RG</label>
-                                            <input type="text" class="form-control" id="rg" name="rg" value="{{ Auth::user()->email }}" readonly>
+                                            <input type="text" class="form-control" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="orgaoExpedidor" class="form-label">Órgão Expedidor</label>
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label for="matricula" class="form-label">Número de Matrícula</label>
-                                            <input type="text" class="form-control" id="matricula" name="matricula">
+                                            <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" required>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="situacao" class="form-label">Situação</label>
