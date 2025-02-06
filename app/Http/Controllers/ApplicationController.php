@@ -42,7 +42,7 @@ class ApplicationController extends Controller
             'orgaoExpedidor' => 'required|string|max:50',
             'campus' => 'required|string|max:255',
             'matricula' => 'required|string|max:50', // removed unique validation
-            'situacao' => 'required|in:1,2,3',
+            'situacao' => 'required|in:Matriculado,Graduado,Desvinculado',
             'curso' => 'required|string|max:255',
             'periodo' => 'required|in:1,2,3,4,5,6',
             'turno' => 'required|in:manhã,tarde',
@@ -85,8 +85,8 @@ class ApplicationController extends Controller
         ];
 
         $situacoes = [
-            1 => 'Ativo',
-            2 => 'Inativo',
+            1 => 'Matriculado',
+            2 => 'Graduado',
             3 => 'Desvinculado',
         ];
 
