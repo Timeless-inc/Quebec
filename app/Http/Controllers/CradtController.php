@@ -29,6 +29,9 @@ class CradtController extends Controller
                   ->orWhere('matricula', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('cpf', 'like', "%{$search}%")
+                  ->orWhere('matricula', 'like', "%{$search}%")
+                  ->orWhere('tipoRequisicao', 'like', "%{$search}%")
+                  ->orWhereDate('created_at', 'like', $search)
                   ->orWhere('key', 'like', "%{$search}%");
             });
         }
