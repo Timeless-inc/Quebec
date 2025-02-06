@@ -64,25 +64,25 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-    /*public function updatePhoto(Request $request): RedirectResponse
+    public function updatePhoto(Request $request): RedirectResponse
     {
         $request->validate([
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096', // Limite de 4MB
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB máx.
         ]);
-
+    
         $user = Auth::user();
-
-        // Exclui a foto antiga, se houver
+    
+        // Deletar a foto antiga (se existir)
         if ($user->profile_photo_path) {
-            Storage::delete($user->profile_photo_path);
+            Storage::disk('public')->delete($user->profile_photo_path);
         }
-
-        // Salva a nova foto no storage/public/profile-photos/
+    
+        // Salvar a nova foto
         $path = $request->file('profile_photo')->store('profile-photos', 'public');
-
-        // Atualiza a foto no banco de dados
+    
+        // Atualizar o caminho da foto no banco de dados
         $user->update(['profile_photo_path' => $path]);
-
+    
         return Redirect::route('profile.edit')->with('status', 'photo-updated');
-    }*/
+    }
 }
