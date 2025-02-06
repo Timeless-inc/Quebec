@@ -1,66 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Quebec
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Bem-vindo ao Quebec, uma aplicação web desenvolvida com o framework [Laravel](https://laravel.com).
 
-## About Laravel
+## Estrutura do Projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A estrutura do projeto segue o padrão do Laravel e inclui os seguintes diretórios e arquivos principais:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- `app/`: Contém o código-fonte da aplicação, incluindo os controladores, modelos e serviços.
+- `bootstrap/`: Contém o arquivo de inicialização da aplicação.
+- `config/`: Contém os arquivos de configuração da aplicação.
+- `database/`: Contém as migrações e seeds do banco de dados.
+- `public/`: Contém o arquivo `index.php`, que é o ponto de entrada da aplicação, além de ativos públicos como imagens, scripts e estilos.
+- `resources/`: Contém as views e os recursos de linguagem.
+- `routes/`: Contém os arquivos de definição de rotas.
+- `storage/`: Contém os logs e outros arquivos gerados pela aplicação.
+- `tests/`: Contém os testes automatizados da aplicação.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requisitos
 
-## Learning Laravel
+Antes de começar, certifique-se de ter as seguintes dependências instaladas:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- [PHP](https://www.php.net/) (versão 8.0 ou superior)
+- [Composer](https://getcomposer.org/)
+- [Node.js](https://nodejs.org/) com npm
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalação
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Siga os passos abaixo para configurar o ambiente de desenvolvimento:
 
-## Laravel Sponsors
+1. **Clone o repositório:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   git clone https://github.com/Timeless-inc/Quebec.git
+   cd Quebec
+   ```
 
-### Premium Partners
+2. **Instale as dependências do PHP:**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    ```bash
+    composer install
+    ```
 
-## Contributing
+3. **Instale as dependências do Node.js:**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```bash
+    npm install
+    ```
 
-## Code of Conduct
+4. **Configure o arquivo .env:**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    Copie o arquivo `.env.example` para `.env` e ajuste as configurações conforme necessário, especialmente as configurações de banco de dados.
 
-## Security Vulnerabilities
+5. **Gere a chave da aplicação:**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    php artisan key:generate
+    ```
 
-## License
+6. **Execute as migrações do banco de dados e seeds:**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    ```bash
+    php artisan migrate --seed
+    ```
+
+7. **Inicie o servidor de desenvolvimento:**
+    ```bash
+    php artisan serve
+    ```
+
+    #### A aplicação estará disponível em http://localhost:8000.
+
+## Contribuição
+Contribuições são bem-vindas! Se você deseja contribuir para o projeto, siga as etapas abaixo:
+1. Faça um fork do repositório.
+2. Crie uma branch para sua contribuição: 
+```bash
+git checkout -b minha-contribuicao.
+```
+3. Faça as alterações desejadas e faça commit das suas mudanças: 
+```bash 
+ git commit -m "Minha contribuição".
+```
+4. Envie suas alterações para o repositório remoto: 
+```bash
+git push origin minha-contribuicao.
+```
+5. Abra um pull request no repositório original.
+## Licença
+Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE para obter mais informações.
+## Contato
+Para mais informações, entre em contato com o desenvolvedor do projeto:
+
+- GitHub: [GitHub](https://github.com/Timeless-inc)
+
+- E-mail Time: 
+    #### [Aristoteles Lins](mailto:aristoteles.lins.silva@gmail.com)
+    #### [João Pedro](mailto:joaopedro.s.dev@gmail.com)
+    #### [Joyce Kelle](mailto:joycekelle.cordeiro@gmail.com)
+    #### [Kauê Luí](mailto:klls2@discente.ifpe.edu.br)
+    #### [Luís Eduardo](mailto:luisemoliveira1000@gmail.com)
+
