@@ -31,26 +31,26 @@
                                     <div class="row mb-3">
                                         <div class="col-md-4">
                                             <label for="nomeCompleto" class="form-label">Nome Completo</label>
-                                            <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto">
+                                            <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="cpf" class="form-label">CPF</label>
-                                            <input type="text" class="form-control" id="cpf" name="cpf">
+                                            <input type="text" class="form-control" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="celular" class="form-label">Celular</label>
-                                            <input type="text" class="form-control" id="celular" name="celular">
+                                            <input type="text" class="form-control" id="celular" name="celular" value="{{ Auth::user()->celular }}" required>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <div class="col-md-4">
                                             <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" name="email">
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="rg" class="form-label">RG</label>
-                                            <input type="text" class="form-control" id="rg" name="rg">
+                                            <input type="text" class="form-control" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="orgaoExpedidor" class="form-label">Órgão Expedidor</label>
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label for="matricula" class="form-label">Número de Matrícula</label>
-                                            <input type="text" class="form-control" id="matricula" name="matricula">
+                                            <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" required>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="situacao" class="form-label">Situação</label>
