@@ -47,9 +47,9 @@ class ApplicationSeeder extends Seeder
 
         // Opções de situação
         $situacaoOptions = [
-            1 => 'Ativo',
-            2 => 'Inativo',
-            3 => 'Desvinculado',
+            'Matriculado',
+            'Graduado',
+            'Desvinculado',
         ];
 
         for ($i = 0; $i < 30; $i++) {
@@ -63,7 +63,7 @@ class ApplicationSeeder extends Seeder
                 'orgaoExpedidor' => $faker->randomElement(['SSP', 'SDS', 'PM']),
                 'campus' => $faker->city,
                 'matricula' => $faker->randomNumber(8, true),
-                'situacao' => $faker->randomElement(array_keys($situacaoOptions)),
+                'situacao' => $faker->randomElement($situacaoOptions),
                 'curso' => $faker->randomElement(['Informática para Internet', 'Logística', 'Gestão da Qualidade', 'Administração', 'Tecnologia em Sistemas para Internet']),
                 'periodo' => $faker->numberBetween(1, 6),
                 'turno' => $faker->randomElement(['Manhã', 'Tarde']),
