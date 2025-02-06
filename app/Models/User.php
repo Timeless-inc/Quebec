@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'matricula',
         'cpf',
+        'rg',
         'password',
         'role',
     ];
