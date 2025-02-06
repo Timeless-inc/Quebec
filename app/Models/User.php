@@ -24,6 +24,7 @@ class User extends Authenticatable
         'cpf',
         'password',
         'role',
+        'profile_photo_path', // Adicionado para permitir atualização
     ];
 
     /**
