@@ -70,8 +70,8 @@
                     @csrf
                     @method('PATCH')
 
-                    <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
-                        Gerar PDF
+                    <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
+                        Baixar PDF
                     </a>
 
                     <!-- <button type="submit" name="status" value="em_andamento" class="btn btn-primary mb-2">Em Andamento</button> -->

@@ -41,6 +41,7 @@ class JustificativaAluno extends Component
                 $this->observacoes = $requerimento->observacoes;
                 $this->tipoRequisicao = $requerimento->tipoRequisicao;
                 $this->key = $requerimento->key;
+                $this->requerimentos = $requerimento->requerimentos;
                 $this->status = $requerimento->status;
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 $this->id = $id ?: uniqid();

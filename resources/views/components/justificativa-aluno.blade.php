@@ -8,7 +8,8 @@
 'andamento',
 'anexos',
 'observacoes',
-'status'
+'status',
+'requerimento',
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}">
@@ -65,9 +66,9 @@
             <hr class="my-2">
 
             <div class="d-flex justify-content-end gap-2">
-            <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
-                        Gerar PDF
-                    </a>
+                <a href="{{ route('requerimento.pdf', ['id' => $id]) }}" target="_blank" class="btn btn-secondary mb-2">
+                    Baixar PDF
+                </a>
             </div>
 
         </div>

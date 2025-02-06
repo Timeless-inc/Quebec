@@ -21,7 +21,7 @@
                 <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
                     <div class="input-group">
                         <input type="text" 
-                               class="form-control" 
+                               class="form-control border border-secundary" 
                                name="search" 
                                placeholder="Buscar por nome, CPF, matrícula..."
                                value="{{ request('search') }}">
