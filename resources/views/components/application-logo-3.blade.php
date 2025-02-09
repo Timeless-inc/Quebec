@@ -1,0 +1,1 @@
+<img class="h-24 d-inline-block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Instituto_Federal_de_Pernambuco_-_Marca_Vertical_2015.svg/1920px-Instituto_Federal_de_Pernambuco_-_Marca_Vertical_2015.svg.png" alt="Logo" />
