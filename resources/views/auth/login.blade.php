@@ -1,7 +1,21 @@
 
-<div style="margin-left: 20%; font-size: 25px; position:relative; color:10A11A; font-family: 'Impact', sans-serif, sans-serif, sans-serif;" class="p-3 bg-white text-success">SRE.</div>
+<nav class="navbar sticky-top bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url('/') }}">SRE.</a>
+  </div>
+</nav>
 
-
+<style>
+    .navbar {
+            background-color: white;
+            padding: 15px 50px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #10A11A;
+            font-size: 24px;
+        }
+</style>
 
 <x-guest-layout>
 
