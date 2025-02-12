@@ -67,8 +67,6 @@
             <x-primary-button class="btn-green">
                 {{ __('Login') }}
             </x-primary-button>
-            
-            <img src="/img/g1.jpg" alt="Descrição da imagem" width="50px" height="50px" style="margin-top: 20px;">
 
             
         </div>

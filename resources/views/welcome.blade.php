@@ -69,7 +69,7 @@
         <div class="ms-auto">
             <a href="{{ url('/dashboard') }}" class="text-dark me-3">Tutorial</a>
             <a href="{{ url('/dashboard') }}" class="text-dark me-3">Equipe</a>
-            <a href="{{ url('/dashboard') }}" class="btn btn-primary">Login</a>
+            <a href="{{ url('/dashboard') }}" class="btn btn-success">Login</a>
 
         
         </div>
@@ -80,8 +80,10 @@
         <!-- Texto -->
         <div class="hero-text">
             <h1>Sistema de requerimento do estudante.</h1>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the 
-            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+            <p>O SRE foi criado para tornar suas solicitações acadêmicas mais rápidas e eficientes. Envie pedidos, acompanhe o status e resolva
+                suas pendências sem burocracia, tudo em um só lugar<br>
+                Cadastre-se agora e tenha acesso a um ambiente simples e intuitivo para gerenciar suas demandas estudantis!
+            </p>
             <a href="{{ route('register') }}" class="btn btn-success ms-2">Cadastre-se</a>
         </div>
 
