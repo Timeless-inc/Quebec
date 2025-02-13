@@ -154,9 +154,14 @@ class ApplicationController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $application = ApplicationRequest::findOrFail($id);
-        $application->status = $request->status;
-        $application->save();
+        $requerimento = ApplicationRequest::findOrFail($id);
+        $requerimento->status = $request->status;
+
+        if ($request->status === 'indeferido') {
+            $requerimento->motivo = $request->motivo;
+        }
+
+        $requerimento->save();
 
         return redirect()->back()->with('success', 'Status atualizado com sucesso!');
     }

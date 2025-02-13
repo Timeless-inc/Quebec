@@ -1,7 +1,7 @@
 @props([
     'id',
     'nome',
-    'matricula', 
+    'matricula',
     'email',
     'cpf',
     'datas',
@@ -10,6 +10,7 @@
     'observacoes',
     'status',
     'requerimento',
+    'motivo',
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}" data-status="{{ $status }}">
@@ -59,6 +60,11 @@
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
                     <p>{{ $observacoes }}</p>
+
+                    @if($requerimento->status === 'indeferido' && $requerimento->motivo)
+                        <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
+                        <p>{{ $requerimento->motivo }}</p>
+                    @endif
                 </div>
             </div>
 
@@ -74,7 +80,9 @@
                         </a>
 
                         <button type="submit" name="status" value="finalizado" class="btn btn-success mb-2">Finalizar</button>
-                        <button type="submit" name="status" value="indeferido" class="btn btn-danger mb-2">Indeferir</button>
+                        <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $id }}">
+                            Indeferir
+                        </button>
                         <button type="submit" name="status" value="pendente" class="btn btn-warning mb-2">Pendência</button>
                     </form>
                 @else
@@ -82,6 +90,32 @@
                         Gerar PDF
                     </a>
                 @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Indeferimento -->
+    <div class="modal fade" id="indeferimentoModal-{{ $id }}" tabindex="-1" aria-labelledby="indeferimentoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="indeferimentoModalLabel">Motivo do Indeferimento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Explique o motivo do indeferimento:</label>
+                            <textarea class="form-control" id="motivo" name="motivo" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="status" value="indeferido" class="btn btn-danger">Confirmar Indeferimento</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
