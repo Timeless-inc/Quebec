@@ -10,6 +10,7 @@
 'observacoes',
 'status',
 'requerimento',
+'motivo',
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}">
@@ -60,6 +61,11 @@
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
                     <p>{{ $observacoes }}</p>
+
+                    @if($status === 'indeferido' && $motivo)
+                        <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
+                        <p>{{ $motivo }}</p>
+                    @endif
                 </div>
             </div>
 

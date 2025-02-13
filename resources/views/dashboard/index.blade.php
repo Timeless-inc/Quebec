@@ -23,6 +23,7 @@
                 datas="{{ $requerimento->created_at->format('d/m/Y') }}"
                 :anexos="[$requerimento->anexarArquivos]"
                 observacoes="{{ $requerimento->observacoes }}"
+                motivo="{{ $requerimento->motivo }}"
                 class="justificativa-item" />
             @endforeach
             @else

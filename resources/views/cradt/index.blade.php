@@ -51,6 +51,7 @@
                 status="{{ $requerimento->status }}"
                 :anexos="[$requerimento->anexarArquivos]"
                 observacoes="{{ $requerimento->observacoes }}"
+                motivo="{{ $requerimento->motivo }}"
                 class="justificativa-item" />
             @endforeach
         </div>
