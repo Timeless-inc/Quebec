@@ -38,7 +38,6 @@ Route::middleware('auth')->group(function () {
 });
 
 //Alunos
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
 Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
 Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create');

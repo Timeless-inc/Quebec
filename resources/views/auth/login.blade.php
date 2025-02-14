@@ -18,10 +18,12 @@
         }
 </style>
 
-<x-guest-layout>
-
 
 <x-guest-layout>
+
+  <form method="POST" action="{{ route('login') }}">
+    @csrf
+
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -67,12 +69,6 @@
                     {{ __('Esqueceu sua senha?') }}
                 </a>
             @endif
-
-            
-            <x-primary-button class="btn-green">
-                {{ __('Login') }}
-            </x-primary-button>
-
             
             <x-primary-button class="ms-3">
                 {{ __('Entrar') }}
