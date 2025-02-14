@@ -110,7 +110,7 @@ class ApplicationController extends Controller
         // Salva os dados no banco
         ApplicationRequest::create($validatedData);
 
-        return redirect()->route('application.create')->with('success', 'Requerimento enviado com sucesso!');
+        return redirect()->route('dashboard')->with('success', 'Requerimento enviado com sucesso!');
     }
 
 
@@ -154,11 +154,6 @@ class ApplicationController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-<<<<<<< HEAD
-        $application = ApplicationRequest::findOrFail($id);
-        $application->status = $request->status;
-        $application->save();
-=======
         $requerimento = ApplicationRequest::findOrFail($id);
         $requerimento->status = $request->status;
 
@@ -167,7 +162,6 @@ class ApplicationController extends Controller
         }
 
         $requerimento->save();
->>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
 
         return redirect()->back()->with('success', 'Status atualizado com sucesso!');
     }

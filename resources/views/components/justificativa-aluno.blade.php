@@ -10,10 +10,7 @@
 'observacoes',
 'status',
 'requerimento',
-<<<<<<< HEAD
-=======
 'motivo',
->>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}">
@@ -64,14 +61,11 @@
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
                     <p>{{ $observacoes }}</p>
-<<<<<<< HEAD
-=======
 
                     @if($status === 'indeferido' && $motivo)
                         <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
                         <p>{{ $motivo }}</p>
                     @endif
->>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
                 </div>
             </div>
 
