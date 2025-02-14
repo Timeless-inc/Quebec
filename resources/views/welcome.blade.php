@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
