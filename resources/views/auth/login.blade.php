@@ -1,28 +1,4 @@
-
-
-<nav class="navbar sticky-top bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url('/') }}">SRE.</a>
-  </div>
-</nav>
-
-<style>
-    .navbar {
-            background-color: white;
-            padding: 15px 50px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #10A11A;
-            font-size: 24px;
-        }
-</style>
-
 <x-guest-layout>
-
-
-<x-guest-layout>
-
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -49,17 +25,12 @@
         </div>
 
         <!-- Remember Me -->
-
-
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                 <span class="ms-2 text-sm text-gray-600">{{ __('Lembrar minha senha') }}</span>
             </label>
         </div>
-
-
-        <div class="flex flex-col items-center justify-end mt-4 space-y-2">
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
@@ -68,12 +39,6 @@
                 </a>
             @endif
 
-            
-            <x-primary-button class="btn-green">
-                {{ __('Login') }}
-            </x-primary-button>
-
-            
             <x-primary-button class="ms-3">
                 {{ __('Entrar') }}
             </x-primary-button>

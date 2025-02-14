@@ -110,7 +110,7 @@ class ApplicationController extends Controller
         // Salva os dados no banco
         ApplicationRequest::create($validatedData);
 
-        return redirect()->route('dashboard')->with('success', 'Requerimento enviado com sucesso!');
+        return redirect()->route('application.create')->with('success', 'Requerimento enviado com sucesso!');
     }
 
 

@@ -93,8 +93,7 @@ Para mais informações, entre em contato com o desenvolvedor do projeto:
 
 - GitHub: [GitHub](https://github.com/Timeless-inc)
 
-- E-mail do Time: 
-    #### [Aristoteles Lins](mailto:aristoteles.lins.silva@gmail.com)
+- E-mail do Time:
     #### [Anderson Gabriel](mailto:agm4@discente.ifpe.edu.br)
     #### [Aristoteles Lins](mailto:aristoteles.lins.silva@gmail.com)
     #### [Brenno Victor](mailto:bvps1@discente.ifpe.edu.br)
