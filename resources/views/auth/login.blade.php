@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <nav class="navbar sticky-top bg-body-tertiary">
   <div class="container-fluid">
@@ -20,6 +21,9 @@
 <x-guest-layout>
 
 
+=======
+<x-guest-layout>
+>>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -46,8 +50,11 @@
         </div>
 
         <!-- Remember Me -->
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
@@ -55,20 +62,30 @@
             </label>
         </div>
 
+<<<<<<< HEAD
         <div class="flex flex-col items-center justify-end mt-4 space-y-2">
 
+=======
+        <div class="flex items-center justify-end mt-4">
+>>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
                     {{ __('Esqueceu sua senha?') }}
                 </a>
             @endif
 
+<<<<<<< HEAD
             
             <x-primary-button class="btn-green">
                 {{ __('Login') }}
             </x-primary-button>
 
             
+=======
+            <x-primary-button class="ms-3">
+                {{ __('Entrar') }}
+            </x-primary-button>
+>>>>>>> cea589139812699c8270fdc8312a85ebdfbcd21f
         </div>
     </form>
 </x-guest-layout>
