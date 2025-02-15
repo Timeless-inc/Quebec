@@ -11,6 +11,8 @@
     'status',
     'requerimento',
     'motivo',
+    'tipoRequisicao',
+    'key'
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}" data-status="{{ $status }}">
@@ -23,7 +25,7 @@
             <div class="d-flex justify-content-between">
                 <div>
                     <h5 class="fw-bold mb-3">{{ $tipoRequisicao }}</h5>
-                    <h6 class="fw-bold mb-1">Requerimento #{{ $requerimento->id }}</h3>
+                    <h6 class="fw-bold mb-1">Requerimento #{{ $requerimento->id }}</h6>
                     <span class="fw-bold">Nome:</span> {{ $nome }}<br>
                     <span class="fw-bold">Matrícula:</span> {{ $matricula }}<br>
                     <span class="fw-bold">E-mail:</span> {{ $email }}<br>
@@ -65,6 +67,11 @@
                         <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
                         <p>{{ $requerimento->motivo }}</p>
                     @endif
+
+                    @if($requerimento->status === 'pendente' && $requerimento->motivo)
+                        <h5 class="fw-bold mt-4">Motivo da Pendência:</h5>
+                        <p>{{ $requerimento->motivo }}</p>
+                    @endif
                 </div>
             </div>
 
@@ -83,7 +90,9 @@
                         <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $id }}">
                             Indeferir
                         </button>
-                        <button type="submit" name="status" value="pendente" class="btn btn-warning mb-2">Pendência</button>
+                        <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $id }}">
+                            Pendência
+                        </button>
                     </form>
                 @else
                     <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
@@ -114,6 +123,32 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" name="status" value="indeferido" class="btn btn-danger">Confirmar Indeferimento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pendência -->
+    <div class="modal fade" id="pendenciaModal-{{ $id }}" tabindex="-1" aria-labelledby="pendenciaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pendenciaModalLabel">Motivo da Pendência</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Explique o motivo da pendência:</label>
+                            <textarea class="form-control" id="motivo" name="motivo" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="status" value="pendente" class="btn btn-warning">Confirmar Pendência</button>
                     </div>
                 </form>
             </div>
