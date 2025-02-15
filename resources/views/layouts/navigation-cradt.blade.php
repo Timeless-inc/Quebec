@@ -13,7 +13,10 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('cradt')" :active="request()->routeIs('cradt')">
-                        {{ __('SRE.') }}
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('cradt-report')" :active="request()->routeIs('cradt-report')">
+                        {{ __('Relatórios') }}
                     </x-nav-link>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Profile') }}
+            {{ __('Editar Perfil') }}
         </h2>
     </x-slot>
 
@@ -17,22 +17,22 @@
                     <form method="POST" action="{{ route('profile.update-photo') }}" enctype="multipart/form-data" class="mt-4">
                         @csrf
                         <label class="block">
-                            <span class="sr-only">Upload New Photo</span>
+                            <span class="sr-only">+ Adicionar Foto</span>
                             <input type="file" name="profile_photo" class="block w-full text-sm text-gray-500
                                    file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm
                                    file:font-semibold file:bg-blue-50 file:text-blue-700
                                    hover:file:bg-blue-100">
                         </label>
-                        <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">Upload New Photo</button>
+                        <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">+ Adicionar Foto</button>
                     </form>
 
-                    <p class="mt-4 text-gray-500 text-sm">Maximum upload size is <strong>5 MB</strong></p>
-                    <p class="text-gray-500 text-sm">Member Since: <strong>{{ Auth::user()->created_at->format('d F Y') }}</strong></p>
+                    <p class="mt-4 text-gray-500 text-sm">O tamanho máximo de upload é <strong>5 MB</strong></p>
+                    <p class="text-gray-500 text-sm">Membro desde:<strong>{{ Auth::user()->created_at->format('d F Y') }}</strong></p>
                 </div>
 
                 <!-- Formulário de Edição -->
                 <div class="w-2/3">
-                    <h3 class="text-xl font-semibold">Edit Profile</h3>
+                    <h3 class="text-xl font-semibold">Editar Perfil</h3>
 
                     <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-4">
                         @csrf
@@ -83,7 +83,7 @@
 
                             <!-- Botão de Atualização -->
                             <div class="mt-6">
-                                <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Update Info</button>
+                                <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Atualizar Informações</button>
                             </div>
                     </form>
                 </div>
