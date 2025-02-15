@@ -5,7 +5,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             <a href="{{ route('application') }}">
-                <button type="button" class="btn btn-success">+ Novo requerimento</button>
+                <button type="button" class="btn btn-success opacity-80 border border-teal-950 border-solid border-success rounded">+ Novo requerimento</button>
             </a>
         </h2>
     </x-slot>
@@ -27,7 +27,10 @@
                 class="justificativa-item" />
             @endforeach
             @else
-            <p>Nenhum requerimento encontrado para este usuário.</p>
+            <div class="text-center">
+                <p class="mb-3">Você ainda não possui nenhum requerimento. Comece agora mesmo!</p>
+                <a href="{{ route('application') }}" class="btn btn-success">Fazer Requerimento</a>
+            </div>
             @endif
         </div>
     </div>

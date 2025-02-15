@@ -100,7 +100,7 @@ class ApplicationController extends Controller
 
         ApplicationRequest::create($validatedData);
 
-        return redirect()->route('application.create')
+        return redirect()->route('dashboard')
             ->with('success', 'Requerimento enviado com sucesso!');
     }
 
