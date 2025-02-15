@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CradtController;
+use App\Http\Controllers\CradtReportController;
 use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
 use App\Http\Controllers\PDFController;
@@ -61,6 +62,9 @@ Route::get('/requerimentos1', [ApplicationController::class, 'index']);
 Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
 
 Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
+
+Route::get('/cradt/report', [CradtReportController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt-report');
+
 
 
 require __DIR__.'/auth.php';

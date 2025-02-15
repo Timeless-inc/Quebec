@@ -1,1 +1,1 @@
-<img class="h-12 d-inline-block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Instituto_Federal_de_Pernambuco_-_Marca_Vertical_2015.svg/1920px-Instituto_Federal_de_Pernambuco_-_Marca_Vertical_2015.svg.png" alt="Logo" />
+<img class="h-12 d-inline-block" src="https://integra.ifpe.edu.br/img/logos/ifpe/logo-instituto.png" alt="Logo" />
