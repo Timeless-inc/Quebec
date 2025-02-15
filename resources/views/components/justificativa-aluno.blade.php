@@ -63,8 +63,13 @@
                     <p>{{ $observacoes }}</p>
 
                     @if($status === 'indeferido' && $motivo)
-                        <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
-                        <p>{{ $motivo }}</p>
+                    <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
+                    <p>{{ $motivo }}</p>
+                    @endif
+
+                    @if($status === 'pendente' && $motivo)
+                    <h5 class="fw-bold mt-4">Motivo da Pendência:</h5>
+                    <p>{{ $motivo }}</p>
                     @endif
                 </div>
             </div>
@@ -75,6 +80,14 @@
                 <a href="{{ route('requerimento.pdf', ['id' => $id]) }}" target="_blank" class="btn btn-secondary mb-2">
                     Baixar PDF
                 </a>
+
+                @if($status === 'pendente')
+                <a href="{{ route('application.edit', $id) }}" class="btn btn-primary mb-2">
+                    Corrigir
+                </a>
+                @endif
+
+
             </div>
 
         </div>

@@ -51,7 +51,10 @@ Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
 Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
 Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
+Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
+Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
 
+//PDF
 Route::get('/requerimentos1', [ApplicationController::class, 'index']);
 Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
 
