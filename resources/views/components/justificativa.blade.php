@@ -82,7 +82,7 @@
                         @csrf
                         @method('PATCH')
                         
-                        <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
+                        <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
                             Gerar PDF
                         </a>
 
@@ -95,7 +95,7 @@
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('requerimento.pdf', 1) }}" target="_blank" class="btn btn-secondary mb-2">
+                    <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
                         Gerar PDF
                     </a>
                 @endif
