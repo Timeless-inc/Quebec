@@ -8,6 +8,7 @@ use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 //Geral
 Route::get('/', function () {
@@ -38,9 +39,10 @@ Route::middleware('auth')->group(function () {
 });
 
 //Alunos
+Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
 Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
-Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create');
+// Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create');
 Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
 Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
 Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
