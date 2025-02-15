@@ -2,50 +2,83 @@ let currentStatus = 'Em andamento';
 
 function filterJustificativas(status) {
     const justificativas = document.querySelectorAll('.justificativa-item');
+    let visibleCount = 0;
+    
+    // Create or get message container
+    let messageContainer = document.getElementById('status-message');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.id = 'status-message';
+        messageContainer.className = 'alert alert-info mt-3 text-center shadow-sm';
+        messageContainer.style.borderRadius = '10px';
+        messageContainer.style.maxWidth = '600px';
+        messageContainer.style.margin = '20px auto';
+        document.querySelector('.justificativa-item').parentNode.appendChild(messageContainer);
+    }
     
     window.history.pushState({}, '', `#${status}`);
     
     justificativas.forEach(item => {
         if (status === 'todos') {
             item.style.display = 'block';
+            visibleCount++;
         } else {
             if (item.dataset.status === status) {
                 item.style.display = 'block';
+                visibleCount++;
             } else {
                 item.style.display = 'none';
             }
         }
     });
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.status === status) {
-            btn.classList.add('active');
-        }
-    });
-
     const titulo = document.getElementById('situacao-titulo');
-    switch(status) {
-        case 'todos':
-            titulo.textContent = 'Todos os Processos:';
-            break;
-        case 'atencao':
-            titulo.textContent = 'Processos em Atenção:';
-            break;
-        case 'indeferido':
-            titulo.textContent = 'Processos Indeferidos:';
-            break;
-        case 'resolvido':
-            titulo.textContent = 'Processos Resolvidos:';
-            break;
-        case 'em_andamento':
-            titulo.textContent = 'Processos em Andamento:';
-            break;
-        default:
-            titulo.textContent = 'Processos Situação:';
+    if (visibleCount === 0) {
+        messageContainer.style.display = 'block';
+        switch(status) {
+            case 'pendente':
+                messageContainer.innerHTML = '<i class="fas fa-exclamation-circle"></i> Não há requerimentos com pendências';
+                titulo.textContent = 'Processos em Atenção:';
+                break;
+            case 'indeferido':
+                messageContainer.innerHTML = '<i class="fas fa-times-circle"></i> Não há requerimentos indeferidos';
+                titulo.textContent = 'Processos Indeferidos:';
+                break;
+            case 'finalizado':
+                messageContainer.innerHTML = '<i class="fas fa-check-circle"></i> Não há requerimentos resolvidos';
+                titulo.textContent = 'Processos Resolvidos:';
+                break;
+            case 'em_andamento':
+                messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em andamento';
+                titulo.textContent = 'Processos em Andamento:';
+                break;
+            default:
+                messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
+                titulo.textContent = 'Todos os Processos:';
+        }
+    } else {
+        messageContainer.style.display = 'none';
+        switch(status) {
+            case 'todos':
+                titulo.textContent = 'Todos os Processos:';
+                break;
+            case 'atencao':
+                titulo.textContent = 'Processos em Atenção:';
+                break;
+            case 'indeferido':
+                titulo.textContent = 'Processos Indeferidos:';
+                break;
+            case 'resolvido':
+                titulo.textContent = 'Processos Resolvidos:';
+                break;
+            case 'em_andamento':
+                titulo.textContent = 'Processos em Andamento:';
+                break;
+            default:
+                titulo.textContent = 'Processos Situação:';
+        }
     }
     
-    // Update currentStatus
     currentStatus = status;
 }
 
