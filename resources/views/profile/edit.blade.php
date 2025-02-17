@@ -67,20 +67,6 @@
                                     value="{{ Auth::user()->rg }}">
                             </div>
 
-                            <!-- Órgão Expedidor -->
-                            <div>
-                                <label for="orgao_expedidor" class="block font-medium text-sm text-gray-700">Órgão Expedidor</label>
-                                <input id="orgao_expedidor" name="orgao_expedidor" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->orgao_expedidor }}">
-                            </div>
-
-                            <!-- Telefone -->
-                            <div>
-                                <label for="telefone" class="block font-medium text-sm text-gray-700">Número de Telefone</label>
-                                <input id="telefone" name="telefone" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->telefone }}">
-                            </div>
-
                             <!-- Botão de Atualização -->
                             <div class="mt-6">
                                 <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Atualizar Informações</button>
