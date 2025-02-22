@@ -43,9 +43,9 @@
         </thead>
         <tbody>
             <tr>
-                <td class="highlight">{{ $requerimento->campus }}</td>
-                <td class="highlight">{{ $requerimento->nomeCompleto }}</td>
-                <td class="highlight">{{ $requerimento->matricula }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->campus }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->nomeCompleto }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->matricula }}</td>
             </tr>
         </tbody>
     </table>
@@ -61,9 +61,9 @@
         </thead>
         <tbody>
             <tr>
-                <td class="highlight">{{ $requerimento->periodo }}</td>
-                <td class="highlight">{{ $requerimento->curso }}</td>
-                <td class="highlight">{{ $requerimento->turno }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->periodo }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->curso }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->turno }}</td>
                 <td class="highlight">{{ $requerimento->celular }} / {{ $requerimento->email }}</td>
             </tr>
         </tbody>
@@ -80,10 +80,10 @@
         </thead>
         <tbody>
             <tr>
-                <td class="highlight">{{ $requerimento->cpf }}</td>
-                <td class="highlight">{{ $requerimento->rg }}</td>
-                <td class="highlight">{{ $requerimento->orgaoExpedidor }}</td>
-                <td class="highlight">{{ $requerimento->situacao }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->cpf }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->rg }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->orgaoExpedidor }}</td>
+                <td class="highlight" style="text-transform: uppercase">{{ $requerimento->situacao }}</td>
                
             </tr>
         </tbody>

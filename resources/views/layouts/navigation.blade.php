@@ -22,7 +22,7 @@
         <div class="hidden sm:flex sm:items-center sm:ms-6">
             <!-- Botão com o nome do usuário -->
             <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 font-medium text-sm border-2 border-gray-900 p-2 rounded-md">
-                Olá, <strong>{{ Auth::user()->name }}</strong>
+                Olá, @<strong>{{ Auth::user()->username }}</strong>
             </a>
 
             <!-- Botão "Sair" -->

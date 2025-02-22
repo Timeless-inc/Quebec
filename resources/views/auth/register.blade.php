@@ -1,28 +1,16 @@
-<nav class="navbar sticky-top bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url('/') }}">SRE.</a>
-  </div>
-</nav>
-
-<style>
-    .navbar {
-            background-color: white;
-            padding: 15px 50px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #10A11A;
-            font-size: 24px;
-        }
-</style>
-
-
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
+        <!-- Username -->
         <div>
+            <x-input-label for="username" :value="__('Nome de Usuário')" />
+            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('username')" class="mt-2" />
+        </div>
+
+        <!-- Name -->
+        <div class="mt-4">
             <x-input-label for="name" :value="__('Nome')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
