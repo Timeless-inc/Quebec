@@ -1,3 +1,5 @@
+<script src="{{ asset('js/annexButton.js') }}"></script>
+
 <title>SRE | Timeless</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -163,3 +165,25 @@
       </div>
   </div>
 </x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoRequisicao = document.getElementById('tipoRequisicao');
+        const anexoDiv = document.querySelector('[for="anexarArquivos"]').parentElement;
+        
+        function toggleAnexoVisibility() {
+            const showAnexoFor = [1, 3, 4, 5, 10, 28];
+            
+            if (showAnexoFor.includes(Number(tipoRequisicao.value))) {
+                anexoDiv.style.display = 'block';
+            } else {
+                anexoDiv.style.display = 'none';
+            }
+        }
+
+        toggleAnexoVisibility();
+        
+        tipoRequisicao.addEventListener('change', toggleAnexoVisibility);
+    });
+</script>
+
