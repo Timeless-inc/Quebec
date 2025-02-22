@@ -53,16 +53,22 @@
                 <div>
                     <h5 class="fw-bold mb-3">Anexos:</h5>
                     <ul class="list-unstyled">
-                        @forelse ($anexos as $anexo)
+                        @php
+                        $anexosArray = is_string($anexos[0]) ? json_decode($anexos[0], true) : $anexos[0];
+                        @endphp
+                        @if($anexosArray)
+                        @foreach($anexosArray as $anexo)
                         <li>
-                            <a href="{{ asset('storage/' . $anexo) }}" class="text-primary text-decoration-none" target="_blank">
-                                {{ basename($anexo) }}
+                            <a href="{{ asset('storage/' . trim($anexo, '[]"')) }}" class="text-primary text-decoration-none" target="_blank">
+                                {{ basename(trim($anexo, '[]"')) }}
                             </a>
                         </li>
-                        @empty
+                        @endforeach
+                        @else
                         <li><em>Sem anexos</em></li>
-                        @endforelse
+                        @endif
                     </ul>
+
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
                     <p>{{ $observacoes }}</p>
