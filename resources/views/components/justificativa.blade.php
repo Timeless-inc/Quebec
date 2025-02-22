@@ -1,18 +1,18 @@
 @props([
-    'id',
-    'nome',
-    'matricula',
-    'email',
-    'cpf',
-    'datas',
-    'andamento',
-    'anexos',
-    'observacoes',
-    'status',
-    'requerimento',
-    'motivo',
-    'tipoRequisicao',
-    'key'
+'id',
+'nome',
+'matricula',
+'email',
+'cpf',
+'datas',
+'andamento',
+'anexos',
+'observacoes',
+'status',
+'requerimento',
+'motivo',
+'tipoRequisicao',
+'key'
 ])
 
 <div class="justificativa-item" id="justificativa-{{ $id }}" data-status="{{ $status }}">
@@ -35,18 +35,18 @@
 
                     <span class="fw-bold">Status:</span>
                     @switch($requerimento->status ?? 'em_andamento')
-                        @case('em_andamento')
-                            <span class="badge bg-primary">Em Andamento</span>
-                            @break
-                        @case('finalizado')
-                            <span class="badge bg-success">Finalizado</span>
-                            @break
-                        @case('indeferido')
-                            <span class="badge bg-danger">Indeferido</span>
-                            @break
-                        @case('pendente')
-                            <span class="badge bg-warning">Pendente</span>
-                            @break
+                    @case('em_andamento')
+                    <span class="badge bg-primary">Em Andamento</span>
+                    @break
+                    @case('finalizado')
+                    <span class="badge bg-success">Finalizado</span>
+                    @break
+                    @case('indeferido')
+                    <span class="badge bg-danger">Indeferido</span>
+                    @break
+                    @case('pendente')
+                    <span class="badge bg-warning">Pendente</span>
+                    @break
                     @endswitch
                 </div>
 
@@ -54,9 +54,13 @@
                     <h5 class="fw-bold mb-3">Anexos:</h5>
                     <ul class="list-unstyled">
                         @forelse ($anexos as $anexo)
-                            <li><a href="{{ $anexo }}" class="text-primary text-decoration-none">{{ $anexo }}</a></li>
+                        <li>
+                            <a href="{{ asset('storage/' . $anexo) }}" class="text-primary text-decoration-none" target="_blank">
+                                {{ basename($anexo) }}
+                            </a>
+                        </li>
                         @empty
-                            <li><em>Sem anexos</em></li>
+                        <li><em>Sem anexos</em></li>
                         @endforelse
                     </ul>
 
@@ -64,13 +68,13 @@
                     <p>{{ $observacoes }}</p>
 
                     @if($requerimento->status === 'indeferido' && $requerimento->motivo)
-                        <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
-                        <p>{{ $requerimento->motivo }}</p>
+                    <h5 class="fw-bold mt-4">Motivo do Indeferimento:</h5>
+                    <p>{{ $requerimento->motivo }}</p>
                     @endif
 
                     @if($requerimento->status === 'pendente' && $requerimento->motivo)
-                        <h5 class="fw-bold mt-4">Motivo da Pendência:</h5>
-                        <p>{{ $requerimento->motivo }}</p>
+                    <h5 class="fw-bold mt-4">Motivo da Pendência:</h5>
+                    <p>{{ $requerimento->motivo }}</p>
                     @endif
                 </div>
             </div>
@@ -78,26 +82,26 @@
             <hr class="my-2">
             <div class="d-flex justify-content-end gap-2">
                 @if($requerimento->status !== 'finalizado' && $requerimento->status !== 'indeferido')
-                    <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        
-                        <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
-                            Gerar PDF
-                        </a>
+                <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
 
-                        <button type="submit" name="status" value="finalizado" class="btn btn-success mb-2">Finalizar</button>
-                        <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $id }}">
-                            Indeferir
-                        </button>
-                        <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $id }}">
-                            Pendência
-                        </button>
-                    </form>
-                @else
                     <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
                         Gerar PDF
                     </a>
+
+                    <button type="submit" name="status" value="finalizado" class="btn btn-success mb-2">Finalizar</button>
+                    <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $id }}">
+                        Indeferir
+                    </button>
+                    <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $id }}">
+                        Pendência
+                    </button>
+                </form>
+                @else
+                <a href="{{ route('requerimento.pdf', ['id' => $requerimento->id]) }}" target="_blank" class="btn btn-secondary mb-2">
+                    Gerar PDF
+                </a>
                 @endif
             </div>
         </div>

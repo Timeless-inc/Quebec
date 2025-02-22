@@ -46,17 +46,17 @@
                 </div>
 
                 <div>
-                    <h5 class="fw-bold mb-3">Anexos:</h5>
+                <h5 class="fw-bold mb-3">Anexos:</h5>
                     <ul class="list-unstyled">
-                        @isset($anexos)
                         @forelse ($anexos as $anexo)
-                        <li><a href="{{ $anexo }}" class="text-primary text-decoration-none">{{ $anexo }}</a></li>
+                        <li>
+                            <a href="{{ asset('storage/' . $anexo) }}" class="text-primary text-decoration-none" target="_blank">
+                                {{ basename($anexo) }}
+                            </a>
+                        </li>
                         @empty
                         <li><em>Sem anexos</em></li>
                         @endforelse
-                        @else
-                        <li><em>Sem anexos</em></li>
-                        @endisset
                     </ul>
 
                     <h5 class="fw-bold mt-4">Observações:</h5>

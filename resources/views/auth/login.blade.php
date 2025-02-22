@@ -1,24 +1,4 @@
 
-
-<nav class="navbar sticky-top bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url('/') }}">SRE.</a>
-  </div>
-</nav>
-
-<style>
-    .navbar {
-            background-color: white;
-            padding: 15px 50px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #10A11A;
-            font-size: 24px;
-        }
-</style>
-
-
 <x-guest-layout>
 
   <form method="POST" action="{{ route('login') }}">
