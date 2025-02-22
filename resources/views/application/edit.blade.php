@@ -16,19 +16,19 @@
                         <div class="container mt-5">
                             <div class="card-body">
                                 @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                                 @endif
 
                                 <form method="POST" action="{{ route('application.update', $requerimento->id) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    
+
                                     <div class="row mb-3">
                                         <div class="col-md-4">
                                             <label for="nomeCompleto" class="form-label">Nome Completo</label>
@@ -88,7 +88,7 @@
                                             <select class="form-select" id="periodo" name="periodo">
                                                 @for($i = 1; $i <= 6; $i++)
                                                     <option value="{{ $i }}" {{ $requerimento->periodo == $i ? 'selected' : '' }}>{{ $i }}º</option>
-                                                @endfor
+                                                    @endfor
                                             </select>
                                         </div>
                                         <div class="col-md-4">
@@ -110,12 +110,24 @@
                                     <div class="row mb-3">
                                         <div class="col-md-12">
                                             <label for="anexarArquivos" class="form-label">Anexar Novos Arquivos</label>
-                                            <input type="file" class="form-control" id="anexarArquivos" name="anexarArquivos">
+                                            <input type="file" class="form-control" id="anexarArquivos" name="anexarArquivos[]" multiple>
                                             @if($requerimento->anexarArquivos)
-                                                <small class="text-muted">Arquivo atual: {{ basename($requerimento->anexarArquivos) }}</small>
+                                            <div class="mt-2">
+                                                <small class="text-muted">
+                                                    Arquivos atuais:
+                                                    @foreach(json_decode($requerimento->anexarArquivos) as $arquivo)
+                                                    <div>
+                                                        <a href="{{ asset('storage/' . $arquivo) }}" target="_blank" class="text-decoration-none">
+                                                            {{ basename($arquivo) }}
+                                                        </a>
+                                                    </div>
+                                                    @endforeach
+                                                </small>
+                                            </div>
                                             @endif
                                         </div>
                                     </div>
+
 
                                     <div class="mb-3">
                                         <label for="observacoes" class="form-label">Observações</label>
