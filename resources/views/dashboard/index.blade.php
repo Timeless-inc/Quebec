@@ -10,31 +10,55 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <!-- Events Section -->
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($requerimentos->count() > 0)
-            @foreach($requerimentos as $requerimento)
-            <x-justificativa-aluno
-                id="{{ $requerimento->id }}"
-                nome="{{ $requerimento->nomeCompleto }}"
-                matricula="{{ $requerimento->matricula }}"
-                email="{{ $requerimento->email }}"
-                cpf="{{ $requerimento->cpf }}"
-                datas="{{ $requerimento->created_at->format('d/m/Y') }}"
-                :anexos="[$requerimento->anexarArquivos]"
-                observacoes="{{ $requerimento->observacoes }}"
-                motivo="{{ $requerimento->motivo }}"
-                class="justificativa-item" />
-            @endforeach
-            @else
-            <div class="text-center">
-                <p class="mb-3">Você ainda não possui nenhum requerimento. Comece agora mesmo!</p>
-                <a href="{{ route('application') }}" class="btn btn-success">Fazer Requerimento</a>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-3">Eventos Acadêmicos</h3>
+                <div class="row">
+                    @foreach($events as $event)
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $event->title }}</h5>
+                                    <p class="card-text">
+                                        {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} - 
+                                        {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-            @endif
         </div>
     </div>
 
+    <!-- Existing Requerimentos Section -->
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if($requerimentos->count() > 0)
+                @foreach($requerimentos as $requerimento)
+                    <x-justificativa-aluno
+                        id="{{ $requerimento->id }}"
+                        nome="{{ $requerimento->nomeCompleto }}"
+                        matricula="{{ $requerimento->matricula }}"
+                        email="{{ $requerimento->email }}"
+                        cpf="{{ $requerimento->cpf }}"
+                        datas="{{ $requerimento->created_at->format('d/m/Y') }}"
+                        :anexos="[$requerimento->anexarArquivos]"
+                        observacoes="{{ $requerimento->observacoes }}"
+                        motivo="{{ $requerimento->motivo }}"
+                        class="justificativa-item" />
+                @endforeach
+            @else
+                <div class="text-center">
+                    <p class="mb-3">Você ainda não possui nenhum requerimento. Comece agora mesmo!</p>
+                    <a href="{{ route('application') }}" class="btn btn-success">Fazer Requerimento</a>
+                </div>
+            @endif
+        </div>
+    </div>
 
     <div class="d-flex justify-content-center mt-4">
         {{ $requerimentos->links('pagination::bootstrap-5') }}

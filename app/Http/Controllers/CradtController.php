@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ApplicationRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Event;
 use Carbon\Carbon;
 
 class CradtController extends Controller
@@ -24,24 +25,28 @@ class CradtController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nomeCompleto', 'like', "%{$search}%")
-                  ->orWhere('matricula', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('cpf', 'like', "%{$search}%")
-                  ->orWhere('matricula', 'like', "%{$search}%")
-                  ->orWhere('tipoRequisicao', 'like', "%{$search}%")
-                  ->orWhereDate('created_at', 'like', $search)
-                  ->orWhere('key', 'like', "%{$search}%");
+                    ->orWhere('matricula', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('cpf', 'like', "%{$search}%")
+                    ->orWhere('matricula', 'like', "%{$search}%")
+                    ->orWhere('tipoRequisicao', 'like', "%{$search}%")
+                    ->orWhereDate('created_at', 'like', $search)
+                    ->orWhere('key', 'like', "%{$search}%");
             });
         }
 
         $requerimentos = $query->latest()->paginate(10);
+
+        $events = Event::orderBy('start_date')->get();
+
         $datas = Carbon::now()->format('d/m/Y');
 
         return view('cradt.index', [
             'requerimentos' => $requerimentos,
-            'datas' => $datas
+            'datas' => $datas,
+            'events' => $events
         ]);
     }
 }
