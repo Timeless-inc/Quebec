@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class Event extends Model
 {
@@ -15,18 +15,23 @@ class Event extends Model
     ];
 
     protected static function boot()
-{
-    parent::boot();
-    
-    static::addGlobalScope('active', function ($query) {
-        $query->whereDate('end_date', '>=', now()->subDay());
-        $query->orWhereNull('end_date');
-    });
-    
-    static::created(function ($event) {
-        $deleteDate = Carbon::parse($event->end_date)->addDay();
-        $event->delete_at = $deleteDate;
-    });
-}
+    {
+        parent::boot();
+        
+        static::addGlobalScope('active', function ($query) {
+            $query->whereDate('end_date', '>=', now()->subDay())
+                  ->orWhereNull('end_date');
+        });
 
+        static::created(function ($event) {
+            if ($event->end_date) {
+                $event->delete_at = Carbon::parse($event->end_date)->addDay();
+                $event->save();
+            }
+        });
+
+        static::booted(function () {
+            static::whereDate('end_date', '<', now()->subDay())->delete();
+        });
+    }
 }
