@@ -32,8 +32,9 @@ class DatabaseSeeder extends Seeder
             'role'=> 'Aluno',
         ]);
 
-        $this->call([
-            ApplicationSeeder::class
+        $this->call([  
+            ApplicationSeeder::class,
+            EventSeeder::class
         ]);
     }
 }
