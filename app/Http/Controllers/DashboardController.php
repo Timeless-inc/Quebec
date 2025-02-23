@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Event;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -21,6 +22,7 @@ class DashboardController extends Controller
         ->get();
         
     $requerimentos = ApplicationRequest::where('email', $user->email)->paginate(10);
+    $events = Event::orderBy('start_date')->get();
     $datas = Carbon::now()->format('d/m/Y');
     $nome = $user->name;
     $matricula = $user->matricula;
@@ -40,7 +42,8 @@ class DashboardController extends Controller
         'datas',
         'currentStatus',
         'anexos',
-        'observacoes'
+        'observacoes',
+        'events'
     ));
 }
 

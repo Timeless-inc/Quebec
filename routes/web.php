@@ -7,6 +7,7 @@ use App\Http\Controllers\CradtController;
 use App\Http\Controllers\CradtReportController;
 use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -23,7 +24,7 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     // Verifica se o usuário tem a role "Cradt"
     if ($user->role === 'Cradt') {
         // Redireciona para a rota "cradt"
-        return redirect()->route('cradt');
+        return redirect()->route('cradt.index');
     }
 
     // Caso não seja "Cradt", chama o controller do Dashboard
@@ -65,6 +66,12 @@ Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updat
 
 Route::get('/cradt/report', [CradtReportController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt-report');
 
+//Eventos
+Route::middleware(['auth'])->group(function () {
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+});
+Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
 
 
 require __DIR__.'/auth.php';
