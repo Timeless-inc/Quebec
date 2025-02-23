@@ -5,34 +5,40 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo/>
+                    <a href="{{ Auth::user()->role === 'Cradt' ? url('/cradt/dashboard') : url('/aluno/dashboard') }}">
+                        <x-application-logo />
                     </a>
                 </div>
 
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if(Auth::user()->role === 'Cradt')
+                    <x-nav-link :href="route('cradt-report')" :active="request()->routeIs('cradt-report')">
+                        {{ __('Relatórios') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
             <!-- User Actions -->
-        <div class="hidden sm:flex sm:items-center sm:ms-6">
-            <!-- Botão com o nome do usuário -->
-            <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 font-medium text-sm border-2 border-gray-900 p-2 rounded-md">
-                Olá, @<strong>{{ Auth::user()->username }}</strong>
-            </a>
+            <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Botão com o nome do usuário -->
+                <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 font-medium text-sm border-2 border-gray-900 p-2 rounded-md">
+                    Olá, @<strong>{{ Auth::user()->username }}</strong>
+                </a>
 
-            <!-- Botão "Sair" -->
-            <form method="POST" action="{{ route('logout') }}" class="ml-4" style="margin-top: 8.5%; margin-left: 55px">
-                @csrf
-                <button type="submit" class="text-gray-700 hover:text-gray-900 font-medium text-sm ">
-                    <strong>{{ __('Sair') }}</strong>
-                </button>
-            </form>
-        </div>
+                <!-- Botão "Sair" -->
+                <form method="POST" action="{{ route('logout') }}" class="ml-4" style="margin-top: 8.5%; margin-left: 55px">
+                    @csrf
+                    <button type="submit" class="text-gray-700 hover:text-gray-900 font-medium text-sm ">
+                        <strong>{{ __('Sair') }}</strong>
+                    </button>
+                </form>
+            </div>
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
@@ -52,6 +58,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if(Auth::user()->role === 'Cradt')
+            <x-nav-link :href="route('cradt-report')" :active="request()->routeIs('cradt-report')">
+                {{ __('Relatórios') }}
+            </x-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -71,7 +82,7 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

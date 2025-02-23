@@ -39,8 +39,9 @@
     </div>
 
     <div class="container mt-4 mb-4">
-        <div class="row">
-            <div class="col-12">
+    <div class="row">
+        <div class="col-12">
+            @if($events->isNotEmpty())
                 <h3 class="text-xl font-semibold mb-3">Eventos Acadêmicos</h3>
                 <div class="row">
                     @foreach($events as $event)
@@ -104,9 +105,11 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
+            @endif
         </div>
     </div>
+</div>
+
 
     <div class="py-12">
         <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
