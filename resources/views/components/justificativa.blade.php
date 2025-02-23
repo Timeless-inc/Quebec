@@ -54,7 +54,7 @@
                     <h5 class="fw-bold mb-3">Anexos:</h5>
                     <ul class="list-unstyled">
                         @php
-                        $anexosArray = is_string($anexos[0]) ? json_decode($anexos[0], true) : $anexos[0];
+                        $anexosArray = is_string($anexos) ? json_decode($anexos, true) : $anexos;
                         @endphp
                         @if($anexosArray)
                         @foreach($anexosArray as $anexo)
