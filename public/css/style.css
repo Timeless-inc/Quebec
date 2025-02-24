@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+    text-decoration: none;
+}
+
+body {
+    font-size: 100%;
+    background-color: #F5F7FA;
+}
+
+.cabecalho{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 24px;
+    font-family: "Inter", serif;
+}
+
+.cabecalho-logo{
+    color: #10A11A;
+    font-weight: 900;
+    font-size: 30px;
+    text-decoration: none;
+}
+
+.cabecalho-menu{
+    display: flex;
+    gap: 32px;
+    font-size: 15px;
+}
+
+.cabecalho-menu-item{
+    color: #4D4D4D;
+    text-decoration: none;
+}
+
+.conteudo{
+    height: 860px;
+}
+
+.conteudo-principal{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 70px 140px;
+    justify-content: space-around;
+}
+
+.conteudo-principal-escrito{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.conteudo-principal-escrito-titulo{
+    font-family: "Inter", serif;
+    font-weight: 600;
+    font-size: 64px;
+    color: #4D4D4D;
+}
+
+.conteudo-principal-escrito-titulo-estudantil{
+    color: #10A11A;
+    
+}
+
+.conteudo-principal-escrito-subtitulo{
+    font-family: "Inter", serif;
+    font-weight: 400;
+    color: #717171;
+}
+
+.botoes-container {
+    display: flex;
+    gap: 20px;
+}
+
+.conteudo-principal-escrito-botao-informacao{
+    background-color: #14616d;
+    width: 140px;
+    height: 60px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: "Inter", serif;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.conteudo-principal-escrito-botao-acesso{
+    background-color: #10A11A;
+    width: 170px;
+    height: 60px;
+    border: none;
+    border-radius: 10px;
+    font-family: "Inter", serif;
+    font-weight: 400;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+}
+
+.conteudo-principal-imagem{
+    height: 600px;
+}
+
