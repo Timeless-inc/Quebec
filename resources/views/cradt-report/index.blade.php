@@ -44,6 +44,27 @@
                                     <option value="turno">Turno</option>
                                     <option value="curso">Curso</option>
                                 </select>
+                                <label for="mes" class="form-label me-2 mb-0">Mês:</label>
+                                <select id="mes" class="form-select me-3" style="width: 120px;">
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                                <label for="ano" class="form-label me-2 mb-0">Ano:</label>
+                                <select id="ano" class="form-select me-3" style="width: 120px;">
+                                    @for ($i = 2025; $i <= date('Y'); $i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                        @endfor
+                                </select>
                             </div>
                             <button id="generateChart" class="btn btn-primary">Gerar Gráfico</button>
                         </div>
@@ -55,7 +76,6 @@
             </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -76,90 +96,76 @@
             const ctx = canvas.getContext('2d');
 
             const selectedValue = document.getElementById("filtro").value;
-            let labels, data, title;
+            const selectedMes = document.getElementById("mes").value;
+            const selectedAno = document.getElementById("ano").value;
 
-            switch (selectedValue) {
-                case 'tipo':
-                    labels = labelsTipo;
-                    data = dataTipo;
-                    title = "Total de Requerimentos por Tipo";
-                    break;
-                case 'status':
-                    labels = labelsStatus;
-                    data = dataStatus;
-                    title = "Total de Requerimentos por Status";
-                    break;
-                case 'turno':
-                    labels = labelsTurno;
-                    data = dataTurno;
-                    title = "Total de Requerimentos por Turno";
-                    break;
-                case 'curso':
-                    labels = labelsCurso;
-                    data = dataCurso;
-                    title = "Total de Requerimentos por Curso";
-                    break;
-            }
+            fetch(`/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`)
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.map(item => item.label);
+                    const dataValues = data.map(item => item.total);
+                    const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)}`;
 
-            if (chart) {
-                chart.destroy();
-            }
-
-            chart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: title,
-                        data: data,
-                        backgroundColor: [
-                            "rgba(255, 99, 132, 0.5)",
-                            "rgba(54, 162, 235, 0.5)",
-                            "rgba(255, 206, 86, 0.5)",
-                            "rgba(75, 192, 192, 0.5)",
-                            "rgba(153, 102, 255, 0.5)",
-                            "rgba(255, 159, 64, 0.5)",
-                            "rgba(201, 203, 207, 0.5)",
-                            "rgba(0, 128, 0, 0.5)",
-                            "rgba(128, 0, 128, 0.5)",
-                            "rgba(255, 0, 255, 0.5)",
-                            "rgba(0, 255, 255, 0.5)",
-                            "rgba(255, 69, 0, 0.5)"
-                        ],
-                        borderColor: [
-                            "rgba(255, 99, 132, 1)",
-                            "rgba(54, 162, 235, 1)",
-                            "rgba(255, 206, 86, 1)",
-                            "rgba(75, 192, 192, 1)",
-                            "rgba(153, 102, 255, 1)",
-                            "rgba(255, 159, 64, 1)",
-                            "rgba(201, 203, 207, 1)",
-                            "rgba(0, 128, 0, 1)",
-                            "rgba(128, 0, 128, 1)",
-                            "rgba(255, 0, 255, 1)",
-                            "rgba(0, 255, 255, 1)",
-                            "rgba(255, 69, 0, 1)"
-                        ],
-                        borderWidth: 1,
-                        barPercentage: 0.8,
-                        categoryPercentage: 0.5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+                    if (chart) {
+                        chart.destroy();
                     }
-                }
-            });
+
+                    chart = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: title,
+                                data: dataValues,
+                                backgroundColor: [
+                                    "rgba(255, 99, 132, 0.5)",
+                                    "rgba(54, 162, 235, 0.5)",
+                                    "rgba(255, 206, 86, 0.5)",
+                                    "rgba(75, 192, 192, 0.5)",
+                                    "rgba(153, 102, 255, 0.5)",
+                                    "rgba(255, 159, 64, 0.5)",
+                                    "rgba(201, 203, 207, 0.5)",
+                                    "rgba(0, 128, 0, 0.5)",
+                                    "rgba(128, 0, 128, 0.5)",
+                                    "rgba(255, 0, 255, 0.5)",
+                                    "rgba(0, 255, 255, 0.5)",
+                                    "rgba(255, 69, 0, 0.5)"
+                                ],
+                                borderColor: [
+                                    "rgba(255, 99, 132, 1)",
+                                    "rgba(54, 162, 235, 1)",
+                                    "rgba(255, 206, 86, 1)",
+                                    "rgba(75, 192, 192, 1)",
+                                    "rgba(153, 102, 255, 1)",
+                                    "rgba(255, 159, 64, 1)",
+                                    "rgba(201, 203, 207, 1)",
+                                    "rgba(0, 128, 0, 1)",
+                                    "rgba(128, 0, 128, 1)",
+                                    "rgba(255, 0, 255, 1)",
+                                    "rgba(0, 255, 255, 1)",
+                                    "rgba(255, 69, 0, 1)"
+                                ],
+                                borderWidth: 1,
+                                barPercentage: 0.8,
+                                categoryPercentage: 0.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                });
         });
 
         document.getElementById("filtro").addEventListener("change", function() {

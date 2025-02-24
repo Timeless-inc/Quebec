@@ -56,6 +56,7 @@ Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])-
 Route::get('/cradt/dashboard', [CradtController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt');
 Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
 Route::get('/cradt/report/chart-data', [CradtReportController::class, 'getChartData'])->name('cradt.chart-data');
+Route::get('/getFilteredData', [CradtReportController::class, 'getFilteredData']);
 
 //Justificativa
 Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
