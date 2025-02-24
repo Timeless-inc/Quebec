@@ -44,13 +44,18 @@ Route::middleware('auth')->group(function () {
 Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
 Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
-// Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create');
+
+// Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create'); --> SEM USO
+
 Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
+Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
 Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
 Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
+
 //Cradt
 Route::get('/cradt/dashboard', [CradtController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt');
 Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
+
 //Justificativa
 Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
 Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
