@@ -101,7 +101,7 @@ class ApplicationController extends Controller
             'matricula'        => 'required|string|max:50',
             'situacao'         => 'required|in:1,2,3',
             'curso'            => 'required|in:1,2,3,4,5',
-            'periodo'          => 'required|in:1,2,3,4,5,6',
+            'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
             'tipoRequisicao'   => 'required|integer',
             'anexarArquivos'   => 'nullable',
@@ -151,7 +151,9 @@ class ApplicationController extends Controller
                 ->with('error', 'Você não tem permissão para editar este requerimento.');
         }
 
-        return view('application.edit', compact('requerimento'));
+        $cursos = $this->cursos;
+
+        return view('application.edit', compact('requerimento', 'cursos'));
     }
 
     public function update(Request $request, $id)
@@ -163,7 +165,7 @@ class ApplicationController extends Controller
             'campus'           => 'required|string|max:255',
             'situacao'         => 'required|in:1,2,3',
             'curso'            => 'required|in:1,2,3,4,5',
-            'periodo'          => 'required|in:1,2,3,4,5,6',
+            'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
             'observacoes'      => 'nullable|string|max:1000',
             'anexarArquivos'   => 'nullable',
