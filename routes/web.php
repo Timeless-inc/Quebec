@@ -73,5 +73,7 @@ Route::middleware(['auth'])->group(function () {
 Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
 
-
+Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
+Route::post('/cradt/register', [CradtController::class, 'register']);
+               
 require __DIR__.'/auth.php';
