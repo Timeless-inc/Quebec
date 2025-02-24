@@ -48,6 +48,14 @@ class ApplicationController extends Controller
         3 => 'Desvinculado',
     ];
 
+    private $cursos = [
+        1 => 'Administração',
+        2 => 'Sistemas para Internet',
+        3 => 'Logística',
+        4 => 'Gestão de Qualidade',
+        5 => 'Informatica para Internet',
+    ];
+
     public function index()
     {
         $requerimentos = ApplicationRequest::where('email', Auth::user()->email)
@@ -62,6 +70,8 @@ class ApplicationController extends Controller
             }
         }
 
+        $cursos = $this->cursos;
+
         return view('application.index', compact('requerimentos'));
     }
 
@@ -74,6 +84,7 @@ class ApplicationController extends Controller
             'email'        => $user->email,
             'cpf'          => $user->cpf,
             'data'         => now()->format('Y-m-d'),
+            'cursos'       => $this->cursos,
         ]);
     }
 
@@ -89,7 +100,7 @@ class ApplicationController extends Controller
             'campus'           => 'required|string|max:255',
             'matricula'        => 'required|string|max:50',
             'situacao'         => 'required|in:1,2,3',
-            'curso'            => 'required|string|max:255',
+            'curso'            => 'required|in:1,2,3,4,5',
             'periodo'          => 'required|in:1,2,3,4,5,6',
             'turno'            => 'required|in:manhã,tarde',
             'tipoRequisicao'   => 'required|integer',
@@ -101,6 +112,8 @@ class ApplicationController extends Controller
         $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
         $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
         $validatedData['key'] = Guid::uuid4()->toString();
+        $validatedData['curso'] = $this->cursos[$validatedData['curso']];
+
 
         $attachmentPaths = [];
         if ($request->hasFile('anexarArquivos')) {
@@ -149,7 +162,7 @@ class ApplicationController extends Controller
             'orgaoExpedidor'   => 'required|string|max:50',
             'campus'           => 'required|string|max:255',
             'situacao'         => 'required|in:1,2,3',
-            'curso'            => 'required|string|max:255',
+            'curso'            => 'required|in:1,2,3,4,5',
             'periodo'          => 'required|in:1,2,3,4,5,6',
             'turno'            => 'required|in:manhã,tarde',
             'observacoes'      => 'nullable|string|max:1000',

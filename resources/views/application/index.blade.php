@@ -81,8 +81,15 @@
 
                                   <div class="row mb-3">
                                       <div class="col-md-4">
-                                          <label for="curso" class="form-label">Curso</label>
-                                          <input type="text" class="form-control" id="curso" name="curso">
+                                      <label for="curso" class="form-label">Curso</label>
+                                          <select class="form-select" id="curso" name="curso">
+                                              <option selected>Escolha</option>
+                                              <option value="1">Administrição</option>
+                                              <option value="2">Sistemas para Internet</option>
+                                              <option value="3">Logistica</option>
+                                              <option value="4">Gestão de Qualidade</option>
+                                              <option value="5">Informatica para Internet </option>
+                                          </select>
                                       </div>
                                       <div class="col-md-4">
                                           <label for="periodo" class="form-label">Período</label>
@@ -94,6 +101,8 @@
                                               <option value="4">4º</option>
                                               <option value="5">5º</option>
                                               <option value="6">6º</option>
+                                              <option value="7">7º</option>
+                                              <option value="8">8º</option>
                                           </select>
                                       </div>
                                       <div class="col-md-4">
