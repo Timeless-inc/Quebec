@@ -8,11 +8,11 @@
         </h2>
     </x-slot>
 
-    <div class="container mt-4 justify-content-between align-items-center justify-content-center">
-        <div class="row">
-            <!-- Card do Resumo -->
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm h-100">
+    <div class="container mt-4">
+        <div class="d-flex">
+            <!-- Container for Resumo Card -->
+            <div class="d-flex flex-column" style="width: 280px; flex-shrink: 0;">
+                <div class="card shadow-sm">
                     <div class="card-header bg-white p-2">
                         <h5 class="card-title mb-0">Resumo por Situação</h5>
                     </div>
@@ -20,8 +20,8 @@
                         <ul class="list-group list-group-flush">
                             @forelse($requerimentos as $requerimento)
                             <li class="list-group-item d-flex justify-content-between align-items-center p-1">
-                                <span class="text-muted">{{ $requerimento->situacao }}</span>
-                                <span class="badge bg-primary rounded-pill">{{ $requerimento->total }}</span>
+                                <span class="text-muted">{{ $requerimento['situacao'] }}</span>
+                                <span class="badge bg-primary rounded-pill">{{ $requerimento['total'] }}</span>
                             </li>
                             @empty
                             <li class="list-group-item text-center p-1">Nenhum dado disponível</li>
@@ -30,83 +30,171 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Container for Graph Card -->
+            <div class="d-flex flex-grow-1 ms-3">
+                <div class="card shadow-sm w-100 d-flex flex-column">
+                    <div class="card-header bg-white p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <label for="filtro" class="form-label me-2 mb-0">Filtrar por:</label>
+                                <select id="filtro" class="form-select me-3" style="width: 200px;">
+                                    <option value="tipo">Tipo de Requisição</option>
+                                    <option value="status">Status</option>
+                                    <option value="turno">Turno</option>
+                                    <option value="curso">Curso</option>
+                                </select>
+                            </div>
+                            <button id="generateChart" class="btn btn-primary">Gerar Gráfico</button>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-grow-1">
+                        <canvas id="graficoRequerimentos" style="display: none; flex-grow: 1;"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-       
-    
-    <div id="grafico-container" class="container mt-4 w-50 p-4 card-header bg-white p-2 rounded border shadow-sm mb-3">
-    <div class="d-flex justify-content-between align-items-center mb-4 row justify-content-center">
-        <label for="filtro" class="form-label me-2">Filtrar por:</label>
-        <select id="filtro" class="form-select w-auto">
-            <option value="situacao">Situação</option>
-            <option value="tipo">Tipo de Requisição</option>
-        </select>
-    </div>
-    <canvas id="graficoRequerimentos"></canvas>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const ctx = document.getElementById("graficoRequerimentos").getContext("2d");
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labelsTipo = JSON.parse('{!! $requerimentosTipo->pluck("tipoRequisicao") !!}');
+        const dataTipo = JSON.parse('{!! $requerimentosTipo->pluck("total") !!}');
+        const labelsStatus = JSON.parse('{!! $requerimentosStatus->pluck("status") !!}');
+        const dataStatus = JSON.parse('{!! $requerimentosStatus->pluck("total") !!}');
+        const labelsTurno = JSON.parse('{!! $requerimentosTurnos->pluck("turno") !!}');
+        const dataTurno = JSON.parse('{!! $requerimentosTurnos->pluck("total") !!}');
+        const labelsCurso = JSON.parse('{!! $requerimentosCursos->pluck("curso") !!}');
+        const dataCurso = JSON.parse('{!! $requerimentosCursos->pluck("total") !!}');
 
-        const labelsSituacao = JSON.parse('{!! $requerimentos->pluck("situacao") !!}');
-        const dataSituacao = JSON.parse('{!! $requerimentos->pluck("total") !!}');
-        const labelsTipo = JSON.parse('{!! $requerimentos->pluck("tipo_requisicao") !!}');
-        const dataTipo = JSON.parse('{!! $requerimentos->pluck("total") !!}');
-        
-        let chart = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: labelsSituacao,
-                datasets: [{
-                    label: "Total de Requerimentos por Situação",
-                    data: dataSituacao,
-                    backgroundColor: [
-                        "rgba(255, 99, 132, 0.5)",
-                        "rgba(54, 162, 235, 0.5)",
-                        "rgba(255, 206, 86, 0.5)",
-                        "rgba(75, 192, 192, 0.5)",
-                        "rgba(153, 102, 255, 0.5)",
-                        "rgba(255, 159, 64, 0.5)"
-                    ],
-                    borderColor: [
-                        "rgba(255, 99, 132, 1)",
-                        "rgba(54, 162, 235, 1)",
-                        "rgba(255, 206, 86, 1)",
-                        "rgba(75, 192, 192, 1)",
-                        "rgba(153, 102, 255, 1)",
-                        "rgba(255, 159, 64, 1)"
-                    ],
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                    categoryPercentage: 0.5
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+        let chart;
+
+        document.getElementById('generateChart').addEventListener('click', function() {
+            const canvas = document.getElementById('graficoRequerimentos');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+
+            const selectedValue = document.getElementById("filtro").value;
+            let labels, data, title;
+
+            switch (selectedValue) {
+                case 'tipo':
+                    labels = labelsTipo;
+                    data = dataTipo;
+                    title = "Total de Requerimentos por Tipo";
+                    break;
+                case 'status':
+                    labels = labelsStatus;
+                    data = dataStatus;
+                    title = "Total de Requerimentos por Status";
+                    break;
+                case 'turno':
+                    labels = labelsTurno;
+                    data = dataTurno;
+                    title = "Total de Requerimentos por Turno";
+                    break;
+                case 'curso':
+                    labels = labelsCurso;
+                    data = dataCurso;
+                    title = "Total de Requerimentos por Curso";
+                    break;
+            }
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.5)",
+                            "rgba(54, 162, 235, 0.5)",
+                            "rgba(255, 206, 86, 0.5)",
+                            "rgba(75, 192, 192, 0.5)",
+                            "rgba(153, 102, 255, 0.5)",
+                            "rgba(255, 159, 64, 0.5)",
+                            "rgba(201, 203, 207, 0.5)",
+                            "rgba(0, 128, 0, 0.5)",
+                            "rgba(128, 0, 128, 0.5)",
+                            "rgba(255, 0, 255, 0.5)",
+                            "rgba(0, 255, 255, 0.5)",
+                            "rgba(255, 69, 0, 0.5)"
+                        ],
+                        borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                            "rgba(153, 102, 255, 1)",
+                            "rgba(255, 159, 64, 1)",
+                            "rgba(201, 203, 207, 1)",
+                            "rgba(0, 128, 0, 1)",
+                            "rgba(128, 0, 128, 1)",
+                            "rgba(255, 0, 255, 1)",
+                            "rgba(0, 255, 255, 1)",
+                            "rgba(255, 69, 0, 1)"
+                        ],
+                        borderWidth: 1,
+                        barPercentage: 0.8,
+                        categoryPercentage: 0.5
+                    }]
                 },
-                plugins: {
-                    legend: {
-                        display: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     }
                 }
-            }
+            });
         });
 
-        document.getElementById("filtro").addEventListener("change", function () {
-            const isSituacao = this.value === "situacao";
-            chart.data.labels = isSituacao ? labelsSituacao : labelsTipo;
-            chart.data.datasets[0].data = isSituacao ? dataSituacao : dataTipo;
-            chart.data.datasets[0].label = isSituacao ? "Total de Requerimentos por Situação" : "Total de Requerimentos por Tipo";
+        document.getElementById("filtro").addEventListener("change", function() {
+            if (!chart) return;
+
+            const selectedValue = this.value;
+            let labels, data, title;
+
+            switch (selectedValue) {
+                case 'tipo':
+                    labels = labelsTipo;
+                    data = dataTipo;
+                    title = "Total de Requerimentos por Tipo";
+                    break;
+                case 'status':
+                    labels = labelsStatus;
+                    data = dataStatus;
+                    title = "Total de Requerimentos por Status";
+                    break;
+                case 'turno':
+                    labels = labelsTurno;
+                    data = dataTurno;
+                    title = "Total de Requerimentos por Turno";
+                    break;
+                case 'curso':
+                    labels = labelsCurso;
+                    data = dataCurso;
+                    title = "Total de Requerimentos por Curso";
+                    break;
+            }
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.data.datasets[0].label = title;
             chart.update();
         });
-    });
-</script>
-
+    </script>
 </x-appcradt>
