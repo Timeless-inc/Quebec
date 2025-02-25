@@ -82,3 +82,8 @@ Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])-
 Route::post('/cradt/register', [CradtController::class, 'register']);
                
 require __DIR__.'/auth.php';
+
+
+Route::get('/team', function () {
+    return view('team.team'); 
+});
