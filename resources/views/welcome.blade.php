@@ -69,7 +69,7 @@
         <a class="navbar-brand" href="#">SRE.</a>
         <div class="ms-auto">
             <a href="{{ url('/dashboard') }}" class="text-dark me-3">Tutorial</a>
-            <a href="{{ url('/dashboard') }}" class="text-dark me-3">Equipe</a>
+            <a href="{{ url('/team') }}" class="text-dark me-3">Equipe</a>
             <a href="{{ url('/dashboard') }}" class="btn btn-success">Login</a>
 
         
