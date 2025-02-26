@@ -6,93 +6,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SRE | Timeless</title>
 
-    <!-- Bootstrap CSS -->
+    <link rel = "stylesheet" type="text/css" href="/css/style.css"
+ 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-    <style>
-        body {
-            font-family: 'Figtree', sans-serif;
-            background-color: #dce3d5; /* Cor do fundo da seção principal */
-        }
-        .navbar {
-            background-color: white;
-            padding: 15px 50px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: #10A11A;
-            font-size: 24px;
-        }
-        .hero-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 80vh;
-            padding: 0 10%;
-        }
-        .hero-text {
-            max-width: 500px;
-            text-align: left;
-        }
-        .hero-text h1 {
-            font-weight: 700;
-        }
-        .hero-text p {
-            font-size: 16px;
-            color: #333;
-        }
-        .btn-green {
-            background-color: #10A11A;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px;
-        }
-        .btn-green:hover {
-            background-color: #0d8a15;
-        }
-        .hero-image img {
-            max-width: 400px;
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="#">SRE.</a>
-        <div class="ms-auto">
-            <a href="{{ url('/dashboard') }}" class="text-dark me-3">Tutorial</a>
-            <a href="{{ url('/team') }}" class="text-dark me-3">Equipe</a>
-            <a href="{{ url('/dashboard') }}" class="btn btn-success">Login</a>
+    <header class="cabecalho">
+        <a class="cabecalho-logo" href="#">SRE.</a>
+        <nav class="cabecalho-menu">
+        <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Início</a>
+            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Tutorial</a>
+            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Equipe</a>
+            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Acessar</a>
+            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Cadastrar</a>       
+        </nav>
+    </header>
 
+    <main class="conteudo">
+        <section class="conteudo-principal">
+            <div class="conteudo-principal-escrito">
+                <h1 class="conteudo-principal-escrito-titulo">Sistema de <br>Requerimento <br><span class="conteudo-principal-escrito-titulo-estudantil">Estudantil</span></h1>
+                <p class="conteudo-principal-escrito-subtitulo">Acesse agora um ambiente simples e intuitivo <br> para gerenciar suas demandas estudantis!</p>
+                <div class="botoes-container"> 
+                    <button class="conteudo-principal-escrito-botao-informacao">Saiba Mais</button>
+                    <a href="{{ url('/dashboard') }}"><button class="conteudo-principal-escrito-botao-acesso">Acessar Sistema</button></a>
+                </div>
+            </div>
+            <img class="conteudo-principal-imagem" src="/svg/ilustracao.svg" alt="Ilustração do Sistema">
+        </section>
+
+
+        <section class="conteudo-desenvolvedor">
+            <h1 class="conteudo-desenvolvedor-titulo">Nossa equipe de desenvolvedores</h1>
+            
+            <div class="carousel-container">
+                <div class="container" id="cardContainer">
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/anderson.jpg" alt="Membro1">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Anderson</h1>
+                            <p class="card-content-p">FRONT-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/Aristoteles.jpg" alt="Membro2">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Aristoteles Lins</h1>
+                            <p class="card-content-p">BACK-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/Brenno.jpg" alt="Membro3">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Brenno Victor</h1>
+                            <p class="card-content-p">FRONT-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/luis.jpg" alt="Membro4">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Luís Eduardo</h1>
+                            <p class="card-content-p">BACK-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/Dolly.jpg" alt="Membro5">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">João Pedro</h1>
+                            <p class="card-content-p">BACK-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/Joyce.jpg" alt="Membro6">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Joyce Kelle</h1>
+                            <p class="card-content-p">FRONT-END DEVELOPER</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="img-box">
+                            <img src="../img/kaue.jpg" alt="Membro7">
+                        </div>
+                        <div class="card-content">
+                            <h1 class="card-content-title">Kauê Lui</h1>
+                            <p class="card-content-p">BACK-END DEVELOPER</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn prev-btn" onclick="voltarSlide()">❮</button>
+                <button class="carousel-btn next-btn" onclick="proximoSlide()">❯</button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
         
-        </div>
-    </nav>
+    </footer>
+    
+    <script>
+        const container = document.getElementById('cardContainer');
+        const cards = document.querySelectorAll('.card');
+        const cardWidth = cards[0].offsetWidth + 20; // Largura do card + gap
+        let currentIndex = 0;
+        const visibleCards = 3; // Quantos cards aparecem por vez
+        const maxIndex = cards.length - visibleCards;
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <!-- Texto -->
-        <div class="hero-text">
-            <h1>Sistema de requerimento do estudante.</h1>
-            <p>O SRE foi criado para tornar suas solicitações acadêmicas mais rápidas e eficientes. Envie pedidos, acompanhe o status e resolva
-                suas pendências sem burocracia, tudo em um só lugar<br>
-                Cadastre-se agora e tenha acesso a um ambiente simples e intuitivo para gerenciar suas demandas estudantis!
-            </p>
-            <a href="{{ route('register') }}" class="btn btn-success ms-2">Cadastre-se</a>
-        </div>
+        function updateCarousel() {
+            container.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
 
-        <!-- Imagem -->
-        <div class="hero-image">
-            <img src="/img/estudante.png" alt="Estudante no computador">
-        </div>
-    </div>
+        function proximoSlide() {
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        }
+
+        function voltarSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        }
+    </script>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
