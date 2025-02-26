@@ -1,5 +1,6 @@
 <title>SRE | Timeless</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <x-appcradt>
     <x-slot name="header">
@@ -68,6 +69,9 @@
                                 </select>
                             </div>
                             <button id="generateChart" class="btn btn-primary">Gerar Gráfico</button>
+                            <button id="exportCSV" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-download"></i> Exportar CSV
+                            </button>
                         </div>
                     </div>
                     <div class="card-body d-flex flex-grow-1">
@@ -90,6 +94,31 @@
         const dataCurso = JSON.parse('{!! $requerimentosCursos->pluck("total") !!}');
 
         let chart;
+        let currentChartData = null;
+
+        function exportToCSV(labels, data, title) {
+            const csvRows = [];
+            csvRows.push(['Categoria', 'Total']);
+
+            for (let i = 0; i < labels.length; i++) {
+                csvRows.push([labels[i], data[i]]);
+            }
+
+            const csvContent = csvRows.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${title.replace(/\s+/g, '_')}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         document.getElementById('generateChart').addEventListener('click', function() {
             const canvas = document.getElementById('graficoRequerimentos');
@@ -112,6 +141,11 @@
                     const timeFrame = selectedMes === 'all' ? 'Ano' : 'Mês';
                     const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)} - ${timeFrame}: ${selectedAno}`;
 
+                    currentChartData = {
+                        labels: labels,
+                        data: dataValues,
+                        title: title
+                    };
 
                     if (chart) {
                         chart.destroy();
@@ -172,7 +206,19 @@
                             }
                         }
                     });
+
+                    document.getElementById('exportCSV').style.display = 'inline-block';
                 });
+        });
+
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            if (currentChartData) {
+                exportToCSV(
+                    currentChartData.labels,
+                    currentChartData.data,
+                    currentChartData.title
+                );
+            }
         });
     </script>
 </x-appcradt>
