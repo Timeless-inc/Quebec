@@ -1,5 +1,6 @@
 <title>SRE | Timeless</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <x-appcradt>
     <x-slot name="header">
@@ -46,6 +47,7 @@
                                 </select>
                                 <label for="mes" class="form-label me-2 mb-0">Mês:</label>
                                 <select id="mes" class="form-select me-3" style="width: 120px;">
+                                    <option value="all">Anual</option>
                                     <option value="01">Janeiro</option>
                                     <option value="02">Fevereiro</option>
                                     <option value="03">Março</option>
@@ -67,6 +69,9 @@
                                 </select>
                             </div>
                             <button id="generateChart" class="btn btn-primary">Gerar Gráfico</button>
+                            <button id="exportCSV" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-download"></i> Exportar CSV
+                            </button>
                         </div>
                     </div>
                     <div class="card-body d-flex flex-grow-1">
@@ -89,6 +94,31 @@
         const dataCurso = JSON.parse('{!! $requerimentosCursos->pluck("total") !!}');
 
         let chart;
+        let currentChartData = null;
+
+        function exportToCSV(labels, data, title) {
+            const csvRows = [];
+            csvRows.push(['Categoria', 'Total']);
+
+            for (let i = 0; i < labels.length; i++) {
+                csvRows.push([labels[i], data[i]]);
+            }
+
+            const csvContent = csvRows.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${title.replace(/\s+/g, '_')}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         document.getElementById('generateChart').addEventListener('click', function() {
             const canvas = document.getElementById('graficoRequerimentos');
@@ -99,12 +129,23 @@
             const selectedMes = document.getElementById("mes").value;
             const selectedAno = document.getElementById("ano").value;
 
-            fetch(`/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`)
+            const url = selectedMes === 'all' ?
+                `/getFilteredData?filtro=${selectedValue}&ano=${selectedAno}` :
+                `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     const labels = data.map(item => item.label);
                     const dataValues = data.map(item => item.total);
-                    const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)}`;
+                    const timeFrame = selectedMes === 'all' ? 'Ano' : 'Mês';
+                    const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)} - ${timeFrame}: ${selectedAno}`;
+
+                    currentChartData = {
+                        labels: labels,
+                        data: dataValues,
+                        title: title
+                    };
 
                     if (chart) {
                         chart.destroy();
@@ -165,42 +206,19 @@
                             }
                         }
                     });
+
+                    document.getElementById('exportCSV').style.display = 'inline-block';
                 });
         });
 
-        document.getElementById("filtro").addEventListener("change", function() {
-            if (!chart) return;
-
-            const selectedValue = this.value;
-            let labels, data, title;
-
-            switch (selectedValue) {
-                case 'tipo':
-                    labels = labelsTipo;
-                    data = dataTipo;
-                    title = "Total de Requerimentos por Tipo";
-                    break;
-                case 'status':
-                    labels = labelsStatus;
-                    data = dataStatus;
-                    title = "Total de Requerimentos por Status";
-                    break;
-                case 'turno':
-                    labels = labelsTurno;
-                    data = dataTurno;
-                    title = "Total de Requerimentos por Turno";
-                    break;
-                case 'curso':
-                    labels = labelsCurso;
-                    data = dataCurso;
-                    title = "Total de Requerimentos por Curso";
-                    break;
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            if (currentChartData) {
+                exportToCSV(
+                    currentChartData.labels,
+                    currentChartData.data,
+                    currentChartData.title
+                );
             }
-
-            chart.data.labels = labels;
-            chart.data.datasets[0].data = data;
-            chart.data.datasets[0].label = title;
-            chart.update();
         });
     </script>
 </x-appcradt>
