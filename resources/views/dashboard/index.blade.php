@@ -1,5 +1,6 @@
 <title>SRE | Timeless</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <x-app-layout>
     <x-slot name="header">
@@ -25,6 +26,11 @@
                                 <p class="card-text">
                                     {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} -
                                     {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
+                                    @if(\Carbon\Carbon::parse($event->end_date)->isPast())
+                                    <small class="text-danger d-block mt-1">
+                                        <i class="fas fa-exclamation-circle"></i> Evento próximo de encerramento
+                                    </small>
+                                    @endif
                                 </p>
                             </div>
                         </div>

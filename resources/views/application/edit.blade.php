@@ -81,12 +81,16 @@
                                     <div class="row mb-3">
                                         <div class="col-md-4">
                                             <label for="curso" class="form-label">Curso</label>
-                                            <input type="text" class="form-control" id="curso" name="curso" value="{{ $requerimento->curso }}">
+                                            <select class="form-select" id="curso" name="curso">
+                                                @foreach($cursos as $id => $nome)
+                                                <option value="{{ $id }}" {{ $requerimento->curso == $id ? 'selected' : '' }}>{{ $nome }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="periodo" class="form-label">Período</label>
                                             <select class="form-select" id="periodo" name="periodo">
-                                                @for($i = 1; $i <= 6; $i++)
+                                                @for($i = 1; $i <= 8; $i++)
                                                     <option value="{{ $i }}" {{ $requerimento->periodo == $i ? 'selected' : '' }}>{{ $i }}º</option>
                                                     @endfor
                                             </select>

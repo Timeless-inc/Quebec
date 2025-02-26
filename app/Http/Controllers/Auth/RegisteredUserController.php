@@ -14,19 +14,11 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -34,23 +26,46 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'matricula' => ['required', 'string', 'max:255'],
-            'rg' => ['required', 'string','unique:users', 'max:255'],
-            'cpf' => ['required', 'string','unique:users' , 'max:255'],
+            'rg' => ['required', 'string', 'unique:users', 'max:255'],
+            'cpf' => ['required', 'string', 'max:255'],
         ]);
 
-        $user = User::create([
-            'username' => $request->username,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'matricula' => $request->matricula,
-            'rg' => $request->rg,
-            'cpf' => $request->cpf,
-        ]);
+        // Check for pre-registered CRADT user
+        $cradtPending = User::where('cpf', $request->cpf)
+            ->where('matricula', $request->matricula)
+            ->where('role', 'Cradt')
+            ->first();
+
+        if ($cradtPending) {
+            $user = $cradtPending;
+            $user->update([
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'rg' => $request->rg,
+                'role' => 'Cradt'
+            ]);
+            $user = $cradtPending;
+        } else {
+            $user = User::create([
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'matricula' => $request->matricula,
+                'rg' => $request->rg,
+                'cpf' => $request->cpf,
+                'role' => 'Aluno'
+            ]);
+        }
 
         event(new Registered($user));
-
         Auth::login($user);
+
+        if ($user->role === 'Cradt') {
+            return redirect(route('cradt.index', absolute: false));
+        }
 
         return redirect(route('dashboard', absolute: false));
     }
