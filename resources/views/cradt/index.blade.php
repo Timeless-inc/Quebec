@@ -1,6 +1,7 @@
 <title>SRE | Timeless</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="{{ asset('js/filterJustificativas.js') }}"></script>
 
 <x-appcradt>
@@ -25,10 +26,10 @@
                 <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
                     <div class="input-group">
                         <input type="text"
-                               class="form-control border border-secundary"
-                               name="search"
-                               placeholder="Buscar por nome, CPF, matrícula..."
-                               value="{{ request('search') }}">
+                            class="form-control border border-secundary"
+                            name="search"
+                            placeholder="Buscar por nome, CPF, matrícula..."
+                            value="{{ request('search') }}">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i> Buscar
                         </button>
@@ -39,76 +40,81 @@
     </div>
 
     <div class="container mt-4 mb-4">
-    <div class="row">
-        <div class="col-12">
-            @if($events->isNotEmpty())
+        <div class="row">
+            <div class="col-12">
+                @if($events->isNotEmpty())
                 <h3 class="text-xl font-semibold mb-3">Eventos Acadêmicos</h3>
                 <div class="row">
                     @foreach($events as $event)
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <h5 class="card-title">{{ $event->title }}</h5>
-                                        <div>
-                                            <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
-                                                <i class="fas fa-edit"></i> Editar
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">{{ $event->title }}</h5>
+                                    <div>
+                                        <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Excluir
                                             </button>
-                                            <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i> Excluir
-                                                </button>
-                                            </form>
+                                        </form>
+                                    </div>
+                                </div>
+                                <p class="card-text">
+                                    {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} -
+                                    {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
+                                    @if(\Carbon\Carbon::parse($event->end_date)->isPast())
+                                    <small class="text-danger d-block mt-1">
+                                        <i class="fas fa-exclamation-circle"></i> Evento próximo de encerramento
+                                    </small>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="editEventModal{{ $event->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form action="{{ route('events.update', $event->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Evento</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Título do Evento</label>
+                                            <input type="text" class="form-control" name="title" value="{{ $event->title }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Data de Início</label>
+                                            <input type="date" class="form-control" name="start_date" value="{{ $event->start_date }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Data de Término</label>
+                                            <input type="date" class="form-control" name="end_date" value="{{ $event->end_date }}" required>
                                         </div>
                                     </div>
-                                    <p class="card-text">
-                                        {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} -
-                                        {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
-                                    </p>
-                                </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Atualizar Evento</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-
-                        <div class="modal fade" id="editEventModal{{ $event->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('events.update', $event->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Editar Evento</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Título do Evento</label>
-                                                <input type="text" class="form-control" name="title" value="{{ $event->title }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Data de Início</label>
-                                                <input type="date" class="form-control" name="start_date" value="{{ $event->start_date }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Data de Término</label>
-                                                <input type="date" class="form-control" name="end_date" value="{{ $event->end_date }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Atualizar Evento</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
                     @endforeach
                 </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
-</div>
 
 
     <div class="py-12">
