@@ -46,6 +46,7 @@
                                 </select>
                                 <label for="mes" class="form-label me-2 mb-0">Mês:</label>
                                 <select id="mes" class="form-select me-3" style="width: 120px;">
+                                    <option value="all">Anual</option>
                                     <option value="01">Janeiro</option>
                                     <option value="02">Fevereiro</option>
                                     <option value="03">Março</option>
@@ -99,12 +100,18 @@
             const selectedMes = document.getElementById("mes").value;
             const selectedAno = document.getElementById("ano").value;
 
-            fetch(`/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`)
+            const url = selectedMes === 'all' ?
+                `/getFilteredData?filtro=${selectedValue}&ano=${selectedAno}` :
+                `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     const labels = data.map(item => item.label);
                     const dataValues = data.map(item => item.total);
-                    const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)}`;
+                    const timeFrame = selectedMes === 'all' ? 'Ano' : 'Mês';
+                    const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)} - ${timeFrame}: ${selectedAno}`;
+
 
                     if (chart) {
                         chart.destroy();
@@ -166,41 +173,6 @@
                         }
                     });
                 });
-        });
-
-        document.getElementById("filtro").addEventListener("change", function() {
-            if (!chart) return;
-
-            const selectedValue = this.value;
-            let labels, data, title;
-
-            switch (selectedValue) {
-                case 'tipo':
-                    labels = labelsTipo;
-                    data = dataTipo;
-                    title = "Total de Requerimentos por Tipo";
-                    break;
-                case 'status':
-                    labels = labelsStatus;
-                    data = dataStatus;
-                    title = "Total de Requerimentos por Status";
-                    break;
-                case 'turno':
-                    labels = labelsTurno;
-                    data = dataTurno;
-                    title = "Total de Requerimentos por Turno";
-                    break;
-                case 'curso':
-                    labels = labelsCurso;
-                    data = dataCurso;
-                    title = "Total de Requerimentos por Curso";
-                    break;
-            }
-
-            chart.data.labels = labels;
-            chart.data.datasets[0].data = data;
-            chart.data.datasets[0].label = title;
-            chart.update();
         });
     </script>
 </x-appcradt>
