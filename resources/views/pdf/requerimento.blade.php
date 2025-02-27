@@ -426,6 +426,7 @@
 
     <div class="signature">
         <p><strong>Assinatura Digital:</strong> {{ $assinatura }}</p>
+        <p>Este documento foi autenticado automaticamente e é válido para comprovação.</p>
     </div>
 
 </body>
