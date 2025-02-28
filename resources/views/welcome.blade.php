@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SRE | Timeless</title>
 
-    <link rel = "stylesheet" type="text/css" href="/css/style.css"
- 
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -16,11 +16,11 @@
     <header class="cabecalho">
         <a class="cabecalho-logo" href="#">SRE.</a>
         <nav class="cabecalho-menu">
-        <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Início</a>
+            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Início</a>
             <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Tutorial</a>
             <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Equipe</a>
-            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Acessar</a>
-            <a class="cabecalho-menu-item" href="{{ url('/dashboard') }}">Cadastrar</a>       
+            <a class="cabecalho-menu-item" href="{{ route('login') }}">Acessar</a>
+            <a class="cabecalho-menu-item" href="{{ route('register') }}">Cadastrar</a>
         </nav>
     </header>
 
@@ -29,9 +29,9 @@
             <div class="conteudo-principal-escrito">
                 <h1 class="conteudo-principal-escrito-titulo">Sistema de <br>Requerimento <br><span class="conteudo-principal-escrito-titulo-estudantil">Estudantil</span></h1>
                 <p class="conteudo-principal-escrito-subtitulo">Acesse agora um ambiente simples e intuitivo <br> para gerenciar suas demandas estudantis!</p>
-                <div class="botoes-container"> 
+                <div class="botoes-container">
                     <button class="conteudo-principal-escrito-botao-informacao">Saiba Mais</button>
-                    <a href="{{ url('/dashboard') }}"><button class="conteudo-principal-escrito-botao-acesso">Acessar Sistema</button></a>
+                    <a href="{{ route('login') }}"><button class="conteudo-principal-escrito-botao-acesso">Acessar Sistema</button></a>
                 </div>
             </div>
             <img class="conteudo-principal-imagem" src="/svg/ilustracao.svg" alt="Ilustração do Sistema">
@@ -40,7 +40,7 @@
 
         <section class="conteudo-desenvolvedor">
             <h1 class="conteudo-desenvolvedor-titulo">Nossa equipe de desenvolvedores</h1>
-            
+
             <div class="carousel-container">
                 <div class="container" id="cardContainer">
                     <div class="card">
@@ -116,9 +116,9 @@
     </main>
 
     <footer>
-        
+
     </footer>
-    
+
     <script>
         const container = document.getElementById('cardContainer');
         const cards = document.querySelectorAll('.card');
@@ -151,4 +151,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

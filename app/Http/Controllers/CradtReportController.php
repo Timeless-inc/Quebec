@@ -44,7 +44,18 @@ class CradtReportController extends Controller
             ->orderByDesc('total')
             ->get();
 
-        return view('cradt-report.index', compact('requerimentos', 'requerimentosTipo', 'requerimentosStatus', 'requerimentosTurnos', 'requerimentosCursos'));
+        $anosDisponiveis = DB::table('requerimentos')
+            ->select(DB::raw('YEAR(created_at) as ano'))
+            ->distinct()
+            ->orderBy('ano')
+            ->pluck('ano')
+            ->toArray();
+
+        if(empty($anosDisponiveis)) {
+            $anosDisponiveis = [date('Y')];
+        }
+
+        return view('cradt-report.index', compact('requerimentos', 'requerimentosTipo', 'requerimentosStatus', 'requerimentosTurnos', 'requerimentosCursos', 'anosDisponiveis'));
     }
 
 
