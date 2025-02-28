@@ -87,7 +87,7 @@ git push origin minha-contribuicao.
 ```
 5. Abra um pull request no repositório original.
 ## Licença
-Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE para obter mais informações.
+Este projeto está licenciado sob a AGPL-3.0 license. Consulte o arquivo LICENSE para obter mais informações.
 ## Contato
 Para mais informações, entre em contato com o desenvolvedor do projeto:
 
