@@ -153,7 +153,11 @@
                 <th class="cpf-column">CPF</th>
                 <th class="identidade-column">IDENTIDADE</th>
                 <th class="expedidor-column">ORGÃO EXPED.</th>
-                <th class="vinculo-column" rowspan="2">( ) Matriculado ( ) Graduado ( ) Desvinculado</th>
+                <th class="vinculo-column" rowspan="2">
+                    ({{ $requerimento->situacao == 'Matriculado' ? 'X' : ' ' }}) Matriculado 
+                    ({{ $requerimento->situacao == 'Graduado' ? 'X' : ' ' }}) Graduado 
+                    ({{ $requerimento->situacao == 'Desvinculado' ? 'X' : ' ' }}) Desvinculado
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -180,155 +184,155 @@
         </thead>
         <tbody>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Admissão por Transferência e Análise Curricular' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Admissão por Transferência e Análise Curricular (anexos) - Solicitação no Protocolo Geral</td>
                 <td class="anexo-column">c,f,g,h,i</td>
                 <td class="documentacao-column">a - Atestado Médico</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Ajuste de Matrícula Semestral' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Ajuste de Matrícula Semestral</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">b - Cópia da CTPS - Identificação e Contrato</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Autorização para cursar disciplinas em outras Instituições de Ensino Superior' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Autorização para cursar disciplinas em outras Instituições de Ensino Superior (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">c - Declaração de Transferência</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Cancelamento de Matrícula' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Cancelamento de Matrícula</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">d - Declaração da Empresa com o respectivo horário</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Cancelamento de Disciplina' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Cancelamento de Disciplina (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">e - Guia de Transferência</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Certificado de Conclusão' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Certificado de Conclusão - Ano ( ) Semestre ( )</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">f - Histórico Escolar do Ensino Fundamental (original)</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Certidão - Autenticidade' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Certidão - Autenticidade (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">g - Histórico Escolar do Ensino Médio (original)</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Complementação de Matrícula' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Complementação de Matrícula (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">h - Histórico Escolar do Ensino Superior (original)</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Cópia Xerox de Documento' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Cópia Xerox de Documento (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">i - Ementas das disciplinas cursadas com Aprovação</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração de Colação de Grau e Tramitação de Diploma' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Declaração de Colação de Grau e Tramitação de Diploma (curso tecnológico)</td>
                 <td class="anexo-column">a/b, d</td>
                 <td class="documentacao-column">j - Declaração de Unidade Militar</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração de Matrícula ou Matrícula Vínculo' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Declaração de Matrícula ou Matrícula Vínculo (especifique)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração de Monitoria' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Declaração de Monitoria</td>
                 <td class="anexo-column"></td>
                 <th class="documentacao-column" rowspan="3" class="observacoes-column"><strong>OBSERVAÇÕES:</strong></th>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração para Estágio' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Declaração para Estágio - Conclusão Ano ( ) Semestre ( )</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Diploma 1a Via ( ) 2a ( ) - Conclusão Ano ( ) Semestre ( )</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Dispensa da prática de Educação Física' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Dispensa da prática de Educação Física (anexos)</td>
                 <td class="anexo-column">a/j</td>
                 <td class="documentacao-column" rowspan="14" style="vertical-align: top;">{{ $requerimento->observacoes }}</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração Tramitação de Diploma' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Declaração Tramitação de Diploma (técnico)</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Ementa de disciplina' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Ementa de disciplina - (especifique)</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Guia de Transferência' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Guia de Transferência</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Histórico Escolar' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Histórico Escolar - Ano ( ) Semestre ( )</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Isenção de disciplinas cursadas' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Isenção de disciplinas cursadas (anexo)</td>
                 <td class="anexo-column">f/g/h,i</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Justificativa de falta(s) ou prova 2º chamada' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Justificativa de falta(s) ou prova 2 chamada (anexos)</td>
                 <td class="anexo-column">a,d,i</td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Matriz curricular' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Matriz curricular</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Reabertura de Matrícula' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Reabertura de Matrícula</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Reintegração para Cursar' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Reintegração para Cursar (Solicitar no Protocolo Geral)</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Solicitação de Conselho de Classe' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Solicitação de Conselho de Classe</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Trancamento de Matrícula' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Trancamento de Matrícula</td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Transferência de Turno' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Transferência de Turno (especifique turno)</td>
                 <td class="anexo-column">a/j</td>
             </tr>
