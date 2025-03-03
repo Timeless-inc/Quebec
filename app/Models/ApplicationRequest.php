@@ -4,24 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ApplicationRequest extends Model
 {
     use HasFactory;
 
-    // Definindo a tabela e os campos do modelo
     protected $table = 'requerimentos';
 
-    // Definindo os campos que podem ser preenchidos (atributos mass assignable)
     protected $fillable = [
         'key', 'nomeCompleto', 'cpf', 'celular', 'email', 'rg', 
         'orgaoExpedidor', 'campus', 'matricula', 'situacao', 'curso', 
-        'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes'
+        'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes',
+        'status', 'motivo'
     ];
 
-    // Definindo que o campo 'key' não é incrementado automaticamente
     public $incrementing = false;
-
-    // Definindo que o campo 'key' é do tipo UUID
     protected $keyType = 'string';
+    
+    protected $casts = [
+        'anexarArquivos' => 'array',
+    ];
+    
+    protected $attributes = [
+        'status' => 'em_andamento',
+    ];
+
+    
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->key)) {
+                $model->key = (string) Str::uuid();
+            }
+        });
+    }
 }

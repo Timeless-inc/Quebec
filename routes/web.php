@@ -83,6 +83,33 @@ Route::put('/events/{event}', [EventController::class, 'update'])->name('events.
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
 
+// Rotas para testar emails - REMOVER APÓS OS TESTES! SE SUBIR APAGUEM!!!!!!!!!
+// Route::get('/test-mail/welcome', function() {
+//     $user = Auth::user();
+//     event(new App\Events\UserRegistered($user));
+//     return "Email de boas-vindas enviado para {$user->email}. Verifique o Mailtrap.";
+// });
+
+// Route::get('/test-mail/new-request', function() {
+//     $request = App\Models\ApplicationRequest::first();
+//     if (!$request) {
+//         return "Nenhum requerimento encontrado para teste.";
+//     }
+//     event(new App\Events\ApplicationRequestCreated($request));
+//     return "Email de nova requisição enviado. Verifique o Mailtrap.";
+// });
+
+// Route::get('/test-mail/status-change', function() {
+//     $request = App\Models\ApplicationRequest::first();
+//     if (!$request) {
+//         return "Nenhum requerimento encontrado para teste.";
+//     }
+//     $oldStatus = $request->status ?? 'pendente';
+//     $newStatus = $oldStatus == 'pendente' ? 'em_andamento' : 'deferido';
+//     event(new App\Events\ApplicationStatusChanged($request, $oldStatus, $newStatus));
+//     return "Email de alteração de status enviado. Verifique o Mailtrap.";
+// });
+
 require __DIR__ . '/auth.php';
 
 
