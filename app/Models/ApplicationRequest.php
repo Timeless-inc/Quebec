@@ -9,19 +9,19 @@ class ApplicationRequest extends Model
 {
     use HasFactory;
 
-    // Definindo a tabela e os campos do modelo
     protected $table = 'requerimentos';
 
-    // Definindo os campos que podem ser preenchidos (atributos mass assignable)
     protected $fillable = [
         'key', 'nomeCompleto', 'cpf', 'celular', 'email', 'rg', 
         'orgaoExpedidor', 'campus', 'matricula', 'situacao', 'curso', 
-        'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes'
+        'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes',
+        'dadosExtra'
     ];
 
-    // Definindo que o campo 'key' não é incrementado automaticamente
-    public $incrementing = false;
+    protected $casts = [
+        'dadosExtra' => 'array', // Garante que dadosExtra seja tratado como array
+    ];
 
-    // Definindo que o campo 'key' é do tipo UUID
+    public $incrementing = false;
     protected $keyType = 'string';
 }

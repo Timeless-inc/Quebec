@@ -10,11 +10,12 @@
     'observacoes',
     'status',
     'requerimento',
-    'dados',
+    'assinatura'
 ])
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <title>Requerimento</title>
     <meta charset="UTF-8" />
@@ -23,32 +24,38 @@
         * {
             font-family: sans-serif;
         }
+
         body {
             margin-left: -35px;
             margin-right: -35px;
             margin-top: -40px;
             margin-bottom: -35px;
         }
+
         .header-container {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 10px; /* Espaço abaixo do logo e título */
+            margin-bottom: 10px;
         }
+
         .logo {
             width: 760px;
             height: 65px;
-            margin-right: 20px; /* Espaço entre o logo e o título */
+            margin-right: 20px;
         }
+
         h4 {
             margin-top: -5;
             margin-bottom: -1%;
-            font-size: 16px; /* Ajuste para maior destaque, como no PDF */
+            font-size: 16px;
         }
+
         p.subtitle {
             font-size: 12px;
             margin-top: -1%;
             margin-bottom: 0%;
         }
+
         table {
             border-collapse: collapse;
             border: 1px solid #000000;
@@ -56,22 +63,27 @@
             width: 100%;
             page-break-inside: auto;
         }
+
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #000000;
-            min-height: 20px; /* Mantido em 30px, como solicitado */
+            min-height: 20px;
             text-align: left;
             font-size: 10px;
         }
+
         td {
             background-color: #e3ecc5;
             padding: 2px;
             margin: 0;
             font-size: 12px;
         }
+
         .campus-column { width: 25%; }
         .nome-column { width: 50%; }
         .matricula-column { width: 20%; }
@@ -88,18 +100,11 @@
         .anexo-column { width: 7%; font-size: 8.5px; text-align: center; }
         .documentacao-column { width: auto; font-size: 8.5px; padding-left: 2px; text-align: left; }
         .observacoes-column { width: auto; font-size: 16px; padding-left: 2%; text-align: initial; vertical-align: middle; line-height: 1.5; word-wrap: break-word; background-color: #e3ecc5; border: 1px solid #000000; }
-        .signature {
-            margin-top: 5px;
-            padding: 2px;
-            background-color: #f9f9f9;
-            border: 1px dashed #ccc;
-        }
-        hr {
-            border: 1px solid #ccc;
-            margin: 10px 0;
-        }
+        .signature { margin-top: 5px; padding: 2px; background-color: #f9f9f9; border: 1px dashed #ccc; }
+        hr { border: 1px solid #ccc; margin: 10px 0; }
     </style>
 </head>
+
 <body>
     <div class="header-container">
         <img class="logo" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('img/logo-instituto.png'))) }}" alt="Logo do IFPE">
@@ -154,8 +159,8 @@
                 <th class="identidade-column">IDENTIDADE</th>
                 <th class="expedidor-column">ORGÃO EXPED.</th>
                 <th class="vinculo-column" rowspan="2">
-                    ({{ $requerimento->situacao == 'Matriculado' ? 'X' : ' ' }}) Matriculado 
-                    ({{ $requerimento->situacao == 'Graduado' ? 'X' : ' ' }}) Graduado 
+                    ({{ $requerimento->situacao == 'Matriculado' ? 'X' : ' ' }}) Matriculado
+                    ({{ $requerimento->situacao == 'Graduado' ? 'X' : ' ' }}) Graduado
                     ({{ $requerimento->situacao == 'Desvinculado' ? 'X' : ' ' }}) Desvinculado
                 </th>
             </tr>
@@ -345,38 +350,52 @@
             <tr>
                 <th class="botao-column"></th>
                 <th class="iten-column" style="font-size: 11px; padding-left: 4%;">LANÇAMENTO DE NOTA:</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular:</th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular: {{ $requerimento->dadosExtra['componente_curricular'] ?? '' }}</th>
             </tr>
             <tr>
-                <th class="botao-column">[O]</th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 1 unidade ( ) 2 unidade</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor:</th>
+                <th class="botao-column">{{ $requerimento->tipoRequisicao == 'Lançamento de Nota' ? '[X]' : '[O]' }}</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '1ª unidade' ? 'X' : ' ' }}) 1 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '2ª unidade' ? 'X' : ' ' }}) 2 unidade
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor: {{ $requerimento->dadosExtra['nome_professor'] ?? '' }}</th>
             </tr>
             <tr>
                 <th class="botao-column"></th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 3 unidade ( ) 4 unidade ( ) Exame Final</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre:</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '3ª unidade' ? 'X' : ' ' }}) 3 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '4ª unidade' ? 'X' : ' ' }}) 4 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == 'Exame Final' ? 'X' : ' ' }}) Exame Final
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre: {{ $requerimento->dadosExtra['ano_semestre'] ?? '' }}</th>
             </tr>
         </thead>
     </table>
-    
+
     <!-- Tabela Revisão de Notas -->
     <table>
         <thead>
             <tr>
                 <th class="botao-column"></th>
                 <th class="iten-column" style="font-size: 11px; padding-left: 4%;">REVISÃO DE NOTAS</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular:</th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular: {{ $requerimento->dadosExtra['componente_curricular'] ?? '' }}</th>
             </tr>
             <tr>
-                <th class="botao-column">[O]</th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 1 unidade ( ) 2 unidade</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor:</th>
+                <th class="botao-column">{{ $requerimento->tipoRequisicao == 'Revisão de Notas' ? '[X]' : '[O]' }}</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '1ª unidade' ? 'X' : ' ' }}) 1 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '2ª unidade' ? 'X' : ' ' }}) 2 unidade
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor: {{ $requerimento->dadosExtra['nome_professor'] ?? '' }}</th>
             </tr>
             <tr>
                 <th class="botao-column"></th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 3 unidade ( ) 4 unidade ( ) Exame Final</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre:</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '3ª unidade' ? 'X' : ' ' }}) 3 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '4ª unidade' ? 'X' : ' ' }}) 4 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == 'Exame Final' ? 'X' : ' ' }}) Exame Final
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre: {{ $requerimento->dadosExtra['ano_semestre'] ?? '' }}</th>
             </tr>
         </thead>
     </table>
@@ -387,17 +406,24 @@
             <tr>
                 <th class="botao-column"></th>
                 <th class="iten-column" style="font-size: 11px; padding-left: 4%;">REVISÃO DE FALTAS</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular:</th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do componente curricular: {{ $requerimento->dadosExtra['componente_curricular'] ?? '' }}</th>
             </tr>
             <tr>
-                <th class="botao-column">[O]</th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 1 unidade ( ) 2 unidade</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor:</th>
+                <th class="botao-column">{{ $requerimento->tipoRequisicao == 'Revisão de Faltas' ? '[X]' : '[O]' }}</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '1ª unidade' ? 'X' : ' ' }}) 1 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '2ª unidade' ? 'X' : ' ' }}) 2 unidade
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Nome do professor: {{ $requerimento->dadosExtra['nome_professor'] ?? '' }}</th>
             </tr>
             <tr>
                 <th class="botao-column"></th>
-                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">( ) 3 unidade ( ) 4 unidade ( ) Exame Final</th>
-                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre:</th>
+                <th class="iten-column" style="font-size: 8.5px; padding-left: 4%;">
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '3ª unidade' ? 'X' : ' ' }}) 3 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == '4ª unidade' ? 'X' : ' ' }}) 4 unidade
+                    ({{ isset($requerimento->dadosExtra['unidade']) && $requerimento->dadosExtra['unidade'] == 'Exame Final' ? 'X' : ' ' }}) Exame Final
+                </th>
+                <th class="documentacao-column" style="font-size: 8.5px; padding-left: 4%;">Ano / Semestre: {{ $requerimento->dadosExtra['ano_semestre'] ?? '' }}</th>
             </tr>
         </thead>
     </table>
@@ -406,13 +432,13 @@
     <table>
         <tbody>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Tempo de escolaridade' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Tempo de escolaridade</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column"></td>
             </tr>
             <tr>
-                <td class="botao-column">[O]</td>
+                <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Outros' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Outros (relatar abaixo em OBSERVAÇÕES)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column"></td>
@@ -421,17 +447,15 @@
                 <th class="cpf-column" colspan="4"><strong>OBSERVAÇÕES:</strong></th>
             </tr>
             <tr>
-            <tr>
                 <th class="iten-column" colspan="4">{{ $requerimento->observacoes }}</th>
-            </tr>
             </tr>
         </tbody>
     </table>
 
     <div class="signature">
         <p><strong>Assinatura Digital:</strong> {{ $assinatura }}</p>
-        <p>Este documento foi autenticado automaticamente e é válido para comprovação.</p>
     </div>
 
 </body>
+
 </html>

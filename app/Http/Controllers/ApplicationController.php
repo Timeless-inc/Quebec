@@ -40,6 +40,10 @@ class ApplicationController extends Controller
         27 => 'Trancamento de Matrícula',
         28 => 'Transferência de Turno',
         29 => 'Outros',
+        30 => 'Lançamento de Nota',
+        31 => 'Revisão de Notas',
+        32 => 'Revisão de Faltas',
+        33 => 'Tempo de escolaridade',
     ];
 
     private $situacoes = [
@@ -103,10 +107,13 @@ class ApplicationController extends Controller
             'curso'            => 'required|in:1,2,3,4,5',
             'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
-            'tipoRequisicao'   => 'required|integer',
-            'anexarArquivos'   => 'nullable',
-            'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
+            'tipoRequisicao'   => 'required|integer|in:' . implode(',', array_keys($this->tiposRequisicao)),
+            'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'observacoes'      => 'nullable|string|max:1000',
+            'dadosExtra.componente_curricular' => 'required_if:tipoRequisicao,30,31,32|string|max:255',
+            'dadosExtra.nome_professor'        => 'required_if:tipoRequisicao,30,31,32|string|max:255',
+            'dadosExtra.unidade'               => 'required_if:tipoRequisicao,30,31,32|in:1ª unidade,2ª unidade,3ª unidade,4ª unidade,Exame Final',
+            'dadosExtra.ano_semestre'          => 'required_if:tipoRequisicao,30,31,32|string|max:50',
         ]);
 
         $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
@@ -114,26 +121,34 @@ class ApplicationController extends Controller
         $validatedData['key'] = Guid::uuid4()->toString();
         $validatedData['curso'] = $this->cursos[$validatedData['curso']];
 
-
+        // Processar anexos
         $attachmentPaths = [];
         if ($request->hasFile('anexarArquivos')) {
             foreach ($request->file('anexarArquivos') as $key => $file) {
                 $extension = $file->getClientOriginalExtension();
-                $fileName = 'Doc' . ($key + 1) . '.' . $extension;
+                $fileName = "Doc_{$key}_" . time() . ".{$extension}";
                 $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
-                $attachmentPaths[] = $path;
+                $attachmentPaths[$key] = $path;
             }
         }
         $validatedData['anexarArquivos'] = !empty($attachmentPaths) ? json_encode($attachmentPaths) : null;
 
+        // Garantir que dadosExtra seja salvo como JSON
+        $dadosExtra = $request->input('dadosExtra', []);
+        if (is_array($dadosExtra) && !empty($dadosExtra)) {
+            $validatedData['dadosExtra'] = json_encode($dadosExtra);
+        } else {
+            $validatedData['dadosExtra'] = null;
+        }
+
         ApplicationRequest::create($validatedData);
 
-            return redirect()->route('application.success')->with('success', 'Requerimento enviado com sucesso!');
+        return redirect()->route('application.success')->with('success', 'Requerimento enviado com sucesso!');
     }
 
     public function success()
     {
-    return view('application.success');
+        return view('application.success');
     }
 
     public function show($id)
@@ -145,7 +160,7 @@ class ApplicationController extends Controller
     public function edit($id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
-        
+
         if ($requerimento->email !== Auth::user()->email) {
             return redirect()->route('application.index')
                 ->with('error', 'Você não tem permissão para editar este requerimento.');
@@ -159,7 +174,7 @@ class ApplicationController extends Controller
     public function update(Request $request, $id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
-        
+
         $validatedData = $request->validate([
             'orgaoExpedidor'   => 'required|string|max:50',
             'campus'           => 'required|string|max:255',
@@ -168,8 +183,7 @@ class ApplicationController extends Controller
             'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
             'observacoes'      => 'nullable|string|max:1000',
-            'anexarArquivos'   => 'nullable',
-            'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
+            'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
         ]);
 
         if ($request->hasFile('anexarArquivos')) {
@@ -181,11 +195,11 @@ class ApplicationController extends Controller
                     }
                 }
             }
-            
+
             $attachmentPaths = [];
             foreach ($request->file('anexarArquivos') as $key => $file) {
                 $extension = $file->getClientOriginalExtension();
-                $fileName = 'Doc' . ($key + 1) . '.' . $extension;
+                $fileName = 'Doc_' . ($key + 1) . '_' . time() . '.' . $extension;
                 $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
                 $attachmentPaths[] = $path;
             }
