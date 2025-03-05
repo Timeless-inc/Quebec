@@ -18,16 +18,19 @@ class PDFController extends Controller
     {
         // Buscar os dados do requerimento pelo ID
         $requerimento = ApplicationRequest::findOrFail($id);
-
+    
+        // Converter dadosExtra de JSON para array manualmente
+        $requerimento->dadosExtra = json_decode($requerimento->dadosExtra, true);
+    
         // Gerar assinatura digital usando a chave UUID
         $assinatura = 'Assinatura Digital Automática - ' . $requerimento->key;
-
+    
         // Renderizar a view de PDF com os dados do requerimento e a assinatura
         $pdf = Pdf::loadView('pdf.requerimento', [
             'requerimento' => $requerimento,
             'assinatura' => $assinatura,
         ]);
-
+    
         // Retornar o PDF para download com um nome dinâmico
         return $pdf->download('requerimento_' . $id . '.pdf');
     }
