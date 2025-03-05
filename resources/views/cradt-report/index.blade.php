@@ -140,9 +140,7 @@
             const selectedMes = document.getElementById("mes").value;
             const selectedAno = document.getElementById("ano").value;
 
-            const url = selectedMes === 'all' ?
-                `/getFilteredData?filtro=${selectedValue}&ano=${selectedAno}` :
-                `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
+            const url = `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
 
             fetch(url)
                 .then(response => response.json())
