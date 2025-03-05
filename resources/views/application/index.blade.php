@@ -34,7 +34,7 @@
                                     </div>
                                     @endif
 
-                                    <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm">
+                                    <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" novalidate>
                                         @csrf
                                         <div class="row mb-3">
                                             <div class="col-md-4">
@@ -164,7 +164,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="dropdown" id="anexoDropdown" style="display: none;">
-                                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f8f9fa; border-radius: 0.375rem; border: 1px solid #ccc;">
+                                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="background-color: #f8f9fa; border-radius: 0.375rem; border: 1px solid #ccc;">
                                                         Anexos (clique para abrir)
                                                     </button>
                                                     <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
@@ -197,6 +197,7 @@
             const tipoRequisicao = document.getElementById('tipoRequisicao');
             const anexoDropdown = document.getElementById('anexoDropdown');
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
+            const anexoButton = document.getElementById('anexoButton');
             const form = document.getElementById('applicationForm');
 
             // Tipos de requerimento que precisam de informações adicionais ou anexos
@@ -251,73 +252,61 @@
             };
 
             function updateAnexoDropdown() {
-    const selectedType = Number(tipoRequisicao.value);
+                const selectedType = Number(tipoRequisicao.value);
 
-    anexoDropdown.style.display = 'none';
-    anexoDropdownMenu.innerHTML = '';
+                anexoDropdown.style.display = 'none';
+                anexoDropdownMenu.innerHTML = '';
+                anexoButton.classList.remove('is-invalid'); // Remove o contorno vermelho ao mudar o tipo
 
-    if (tiposComAnexos.includes(selectedType)) {
-        anexoDropdown.style.display = 'block';
+                if (tiposComAnexos.includes(selectedType)) {
+                    anexoDropdown.style.display = 'block';
 
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'dropdown-header text-muted';
-        const tipoDescricao = tipoRequisicao.options[tipoRequisicao.selectedIndex].text;
-        titleDiv.textContent = tipoDescricao || 'Informações Adicionais';
-        titleDiv.style.fontSize = '1rem';
-        anexoDropdownMenu.appendChild(titleDiv);
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'dropdown-header text-muted';
+                    const tipoDescricao = tipoRequisicao.options[tipoRequisicao.selectedIndex].text;
+                    titleDiv.textContent = tipoDescricao || 'Informações Adicionais';
+                    titleDiv.style.fontSize = '1rem';
+                    anexoDropdownMenu.appendChild(titleDiv);
 
-        const containerDiv = document.createElement('div');
-        containerDiv.className = 'mb-3';
-        anexosPorTipo[selectedType].forEach((field, index) => {
-            const simpleName = field.name.replace(/[\[\]]/g, '_') + '_' + index; // Garante nomes únicos
-            const fieldDiv = document.createElement('div');
-            fieldDiv.className = 'mb-2';
+                    const containerDiv = document.createElement('div');
+                    containerDiv.className = 'mb-3';
+                    anexosPorTipo[selectedType].forEach((field, index) => {
+                        const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`; // Nome único para evitar conflitos
+                        const fieldDiv = document.createElement('div');
+                        fieldDiv.className = 'mb-2';
 
-            if (field.type === 'text') {
-                fieldDiv.innerHTML = `
-                    <label for="${simpleName}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                    <input type="text" class="form-control form-control-sm" id="${simpleName}" name="${field.name}" required>
-                `;
-            } else if (field.type === 'select') {
-                let optionsHtml = '<option value="">Selecione</option>';
-                field.options.forEach(option => {
-                    optionsHtml += `<option value="${option}">${option}</option>`;
-                });
-                fieldDiv.innerHTML = `
-                    <label for="${simpleName}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                    <select class="form-select form-select-sm" id="${simpleName}" name="${field.name}" required>
-                        ${optionsHtml}
-                    </select>
-                `;
-            } else {
-                fieldDiv.innerHTML = `
-                    <label for="${simpleName}" class="form-label" style="font-size: 0.9rem; color: #000000;" id="label_${simpleName}">${field.label}</label>
-                    <div class="input-group">
-                        <input type="file" class="form-control form-control-sm file-input" id="${simpleName}" name="${field.name}" style="font-size: 0.7rem;" onchange="updateFileLabel(this)">
-                        <span class="input-group-text" id="fileName_${simpleName}" style="background-color: #fff; color: #7CFC00; font-size: 0.8rem;"></span>
-                    </div>
-                `;
+                        if (field.type === 'text') {
+                            fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" required>
+                            `;
+                        } else if (field.type === 'select') {
+                            let optionsHtml = '<option value="">Selecione</option>';
+                            field.options.forEach(option => {
+                                optionsHtml += `<option value="${option}">${option}</option>`;
+                            });
+                            fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
+                                    ${optionsHtml}
+                                </select>
+                            `;
+                        } else {
+                            fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <input type="file" class="form-control form-control-sm file-input" id="${uniqueId}" name="${field.name}" style="font-size: 0.7rem;" onchange="updateFileLabel(this)">
+                            `;
+                        }
+                        containerDiv.appendChild(fieldDiv);
+                    });
+                    anexoDropdownMenu.appendChild(containerDiv);
+                    initializeFileInputs(); // Re-inicializa os eventos de arquivo após criar os campos
+                }
             }
-            containerDiv.appendChild(fieldDiv);
-        });
-        anexoDropdownMenu.appendChild(containerDiv);
-    }
-}
 
             function updateFileLabel(input) {
-                const simpleName = input.id;
-                const fileNameSpan = document.getElementById(`fileName_${simpleName}`);
-
-                if (fileNameSpan) {
-                    if (input.files && input.files.length > 0) {
-                        fileNameSpan.textContent = input.files[0].name;
-                        fileNameSpan.style.color = '#7CFC00';
-                    } else {
-                        fileNameSpan.textContent = '';
-                    }
-                } else {
-                    console.error('Elemento fileName não encontrado para:', simpleName);
-                }
+                const uniqueId = input.id;
+                // Não exibe o nome do arquivo, apenas mantém vazio (não necessário span)
             }
 
             function initializeFileInputs() {
@@ -326,7 +315,6 @@
                     input.addEventListener('change', function() {
                         updateFileLabel(this);
                     });
-                    updateFileLabel(input);
                 });
             }
 
@@ -399,6 +387,7 @@
                     'tipoRequisicao'
                 ];
 
+                // Validação dos campos principais
                 requiredFields.forEach(field => {
                     const input = document.getElementById(field);
                     if (input) {
@@ -420,32 +409,42 @@
                     }
                 });
 
+                // Validação dos campos dinâmicos no dropdown
                 const selectedType = Number(tipoRequisicao.value);
                 if (tiposComAnexos.includes(selectedType)) {
-                    anexosPorTipo[selectedType].forEach(field => {
-                        const simpleName = field.name.replace(/[\[\]]/g, '_');
-                        const input = document.getElementById(simpleName);
+                    anexosPorTipo[selectedType].forEach((field, index) => {
+                        const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
+                        const input = document.getElementById(uniqueId);
                         if (input) {
-                            if (field.type === 'text' || field.type === 'select') {
+                            if (field.type === 'text') {
                                 if (!input.value || input.value.trim() === '') {
                                     hasEmpty = true;
-                                    input.classList.add('is-invalid');
-                                } else {
-                                    input.classList.remove('is-invalid');
                                 }
-                            } else if (!input.files || input.files.length === 0) {
-                                hasEmpty = true;
-                                input.classList.add('is-invalid');
-                            } else {
-                                input.classList.remove('is-invalid');
+                            } else if (field.type === 'select') {
+                                if (!input.value || input.value === '') {
+                                    hasEmpty = true;
+                                }
+                            } else { // Campo de arquivo
+                                if (!input.files || input.files.length === 0) {
+                                    hasEmpty = true;
+                                }
                             }
                         }
                     });
+                    // Aplica ou remove o contorno vermelho no botão do dropdown
+                    if (hasEmpty) {
+                        anexoButton.classList.add('is-invalid');
+                    } else {
+                        anexoButton.classList.remove('is-invalid');
+                    }
+                } else {
+                    // Remove o contorno vermelho do botão se não houver anexos
+                    anexoButton.classList.remove('is-invalid');
                 }
 
                 if (hasEmpty) {
                     e.preventDefault();
-                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    alert('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.');
                 }
             });
 
@@ -483,11 +482,6 @@
 
         .form-control-sm::-moz-file-upload-button:hover {
             background-color: #0056b3;
-        }
-
-        .input-group-text {
-            border-left: none;
-            padding: 0.2rem 0.5rem;
         }
 
         #anexoDropdownMenu {
