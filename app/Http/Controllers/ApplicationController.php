@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
+use App\Events\ApplicationRequestCreated; 
+use App\Events\ApplicationStatusChanged; 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Guid\Guid;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -90,45 +93,80 @@ class ApplicationController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'nomeCompleto'     => 'required|string|max:255',
-            'cpf'              => 'required|string|max:14',
-            'celular'          => 'required|string|max:15',
-            'email'            => 'required|email|max:255',
-            'rg'               => 'required|string|max:20',
-            'orgaoExpedidor'   => 'required|string|max:50',
-            'campus'           => 'required|string|max:255',
-            'matricula'        => 'required|string|max:50',
-            'situacao'         => 'required|in:1,2,3',
-            'curso'            => 'required|in:1,2,3,4,5',
-            'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
-            'turno'            => 'required|in:manhã,tarde',
-            'tipoRequisicao'   => 'required|integer',
-            'anexarArquivos'   => 'nullable',
-            'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
-            'observacoes'      => 'nullable|string|max:1000',
-        ]);
+        try {
+            Log::info('Iniciando criação de requerimento');
+            
+            $validatedData = $request->validate([
+                'nomeCompleto'     => 'required|string|max:255',
+                'cpf'              => 'required|string|max:14',
+                'celular'          => 'required|string|max:15',
+                'email'            => 'required|email|max:255',
+                'rg'               => 'required|string|max:20',
+                'orgaoExpedidor'   => 'required|string|max:50',
+                'campus'           => 'required|string|max:255',
+                'matricula'        => 'required|string|max:50',
+                'situacao'         => 'required|in:1,2,3',
+                'curso'            => 'required|in:1,2,3,4,5',
+                'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
+                'turno'            => 'required|in:manhã,tarde',
+                'tipoRequisicao'   => 'required|integer',
+                'anexarArquivos'   => 'nullable',
+                'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
+                'observacoes'      => 'nullable|string|max:1000',
+            ]);
 
-        $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
-        $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
-        $validatedData['key'] = Guid::uuid4()->toString();
-        $validatedData['curso'] = $this->cursos[$validatedData['curso']];
+            $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
+            $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
+            $validatedData['key'] = Guid::uuid4()->toString();
+            $validatedData['curso'] = $this->cursos[$validatedData['curso']];
+            $validatedData['status'] = 'em_andamento'; 
 
+            Log::info('Dados validados com sucesso, processando arquivos');
 
-        $attachmentPaths = [];
-        if ($request->hasFile('anexarArquivos')) {
-            foreach ($request->file('anexarArquivos') as $key => $file) {
-                $extension = $file->getClientOriginalExtension();
-                $fileName = 'Doc' . ($key + 1) . '.' . $extension;
-                $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
-                $attachmentPaths[] = $path;
+            $attachmentPaths = [];
+            if ($request->hasFile('anexarArquivos')) {
+                foreach ($request->file('anexarArquivos') as $key => $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = 'Doc' . ($key + 1) . '.' . $extension;
+                    $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
+                    $attachmentPaths[] = $path;
+                }
             }
-        }
-        $validatedData['anexarArquivos'] = !empty($attachmentPaths) ? json_encode($attachmentPaths) : null;
+            $validatedData['anexarArquivos'] = !empty($attachmentPaths) ? json_encode($attachmentPaths) : null;
 
-        ApplicationRequest::create($validatedData);
+            $applicationRequest = ApplicationRequest::create($validatedData);
+            
+            if (!isset($applicationRequest->id) || !$applicationRequest->id) {
+                Log::info('ID não disponível após criação, buscando pela key', ['key' => $applicationRequest->key]);
+                
+                $applicationRequest = ApplicationRequest::where('key', $validatedData['key'])->first();
+                
+                if (!$applicationRequest) {
+                    Log::error('Não foi possível recuperar o requerimento após criar', ['key' => $validatedData['key']]);
+                    throw new \Exception('Erro ao recuperar requerimento após criação');
+                }
+            }
+            
+            Log::info('Requerimento criado com sucesso', [
+                'id' => $applicationRequest->id, 
+                'key' => $applicationRequest->key
+            ]);
 
+            Log::info('Disparando evento ApplicationRequestCreated');
+            event(new ApplicationRequestCreated($applicationRequest));
+            Log::info('Evento disparado com sucesso');
+            
             return redirect()->route('application.success')->with('success', 'Requerimento enviado com sucesso!');
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar requerimento', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Erro ao processar requerimento. Por favor, tente novamente.']);
+        }
     }
 
     public function success()
@@ -225,6 +263,8 @@ class ApplicationController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
+        $oldStatus = $requerimento->status; 
+        
         $requerimento->status = $request->status;
 
         if (in_array($request->status, ['indeferido', 'pendente'])) {
@@ -232,6 +272,9 @@ class ApplicationController extends Controller
         }
 
         $requerimento->save();
+        
+        // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado
+        event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');

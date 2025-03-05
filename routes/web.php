@@ -83,6 +83,7 @@ Route::put('/events/{event}', [EventController::class, 'update'])->name('events.
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
 
+
 require __DIR__ . '/auth.php';
 
 
