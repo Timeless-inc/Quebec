@@ -119,7 +119,7 @@ class ApplicationController extends Controller
             $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
             $validatedData['key'] = Guid::uuid4()->toString();
             $validatedData['curso'] = $this->cursos[$validatedData['curso']];
-            $validatedData['status'] = 'em_andamento'; // Definição padrão de status para novo requerimento
+            $validatedData['status'] = 'em_andamento'; 
 
             Log::info('Dados validados com sucesso, processando arquivos');
 

@@ -61,7 +61,7 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        //EVENTO DE REGISTRO AUTOMÁTICO - Mantido e sem modificações
+        
         event(new Registered($user));   
 
         //Evento de registro de usuário para envio de e-mail - passível de ser modificado
