@@ -7,9 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "barryvdh/laravel-dompdf": "*",
+        "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^11.31",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "mpdf/mpdf": "*",
+        "setasign/fpdi": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

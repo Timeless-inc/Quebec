@@ -75,13 +75,32 @@
             min-height: 20px;
             text-align: left;
             font-size: 10px;
+            padding: 2px;
+            margin: 0;
         }
 
         td {
-            background-color: #e3ecc5;
-            padding: 2px;
-            margin: 0;
             font-size: 12px;
+            /* Keep font size but remove background */
+        }
+
+        /* Specific classes for green background */
+        .green-background {
+            background-color: #e3ecc5;
+        }
+
+        .campus-column,
+        .nome-column,
+        .matricula-column,
+        .periodo-column,
+        .curso-column,
+        .turno-column,
+        .contato-column,
+        .cpf-column,
+        .identidade-column,
+        .expedidor-column {
+            width: auto;
+            /* Reset widths if needed */
         }
 
         .campus-column {
@@ -136,6 +155,13 @@
             text-align: center;
         }
 
+        .iten {
+            width: 52%;
+            font-size: 8.5px;
+            padding-left: 2px;
+            text-align: center;
+        }
+
         .iten-column {
             width: 52%;
             font-size: 8.5px;
@@ -149,11 +175,28 @@
             text-align: center;
         }
 
+        .documentacao {
+            width: auto;
+            font-size: 8.5px;
+            padding-left: 2px;
+            text-align: center;
+        }
+
         .documentacao-column {
             width: auto;
             font-size: 8.5px;
             padding-left: 2px;
             text-align: left;
+        }
+
+        .observacoes-column-conteudo {
+            width: auto;
+            padding-left: 2%;
+            text-align: initial;
+            vertical-align: middle;
+            line-height: 1.5;
+            background-color: #e3ecc5;
+            /* Green background only for Observações */
         }
 
         .observacoes-column {
@@ -164,7 +207,6 @@
             vertical-align: middle;
             line-height: 1.5;
             word-wrap: break-word;
-            background-color: #e3ecc5;
             border: 1px solid #000000;
         }
 
@@ -201,9 +243,9 @@
         </thead>
         <tbody>
             <tr>
-                <td class="campus-column" style="text-transform: uppercase">{{ $requerimento->campus }}</td>
-                <td class="nome-column" style="text-transform: uppercase">{{ $requerimento->nomeCompleto }}</td>
-                <td class="matricula-column" style="text-transform: uppercase">{{ $requerimento->matricula }}</td>
+                <td class="campus-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->campus }}</td>
+                <td class="nome-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->nomeCompleto }}</td>
+                <td class="matricula-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->matricula }}</td>
             </tr>
         </tbody>
     </table>
@@ -220,10 +262,10 @@
         </thead>
         <tbody>
             <tr>
-                <td class="periodo-column" style="text-transform: uppercase">{{ $requerimento->periodo }}</td>
-                <td class="curso-column" style="text-transform: uppercase">{{ $requerimento->curso }}</td>
-                <td class="turno-column" style="text-transform: uppercase">{{ $requerimento->turno }}</td>
-                <td class="contato-column">{{ $requerimento->celular }} / {{ $requerimento->email }}</td>
+                <td class="periodo-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->periodo }}</td>
+                <td class="curso-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->curso }}</td>
+                <td class="turno-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->turno }}</td>
+                <td class="contato-column observacoes-column-conteudo">{{ $requerimento->celular }} / {{ $requerimento->email }}</td>
             </tr>
         </tbody>
     </table>
@@ -244,9 +286,9 @@
         </thead>
         <tbody>
             <tr>
-                <td class="cpf-column" style="text-transform: uppercase">{{ $requerimento->cpf }}</td>
-                <td class="identidade-column" style="text-transform: uppercase">{{ $requerimento->rg }}</td>
-                <td class="expedidor-column" style="text-transform: uppercase">{{ $requerimento->orgaoExpedidor }}</td>
+                <td class="cpf-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->cpf }}</td>
+                <td class="identidade-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->rg }}</td>
+                <td class="expedidor-column observacoes-column-conteudo" style="text-transform: uppercase">{{ $requerimento->orgaoExpedidor }}</td>
             </tr>
         </tbody>
     </table>
@@ -259,9 +301,9 @@
             </tr>
             <tr>
                 <th class="botao-column">[X]</th>
-                <th class="iten-column">ITENS</th>
+                <th class="iten">ITENS</th>
                 <th class="anexo-column">ANEXOS -------></th>
-                <th class="documentacao-column">DOCUMENTAÇÃO EXIGIDA (ANEXOS)</th>
+                <th class="documentacao">DOCUMENTAÇÃO EXIGIDA (ANEXOS)</th>
             </tr>
         </thead>
         <tbody>
@@ -351,7 +393,22 @@
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Dispensa da prática de Educação Física' ? '[X]' : '[O]' }}</td>
                 <td class="iten-column">Dispensa da prática de Educação Física (anexos)</td>
                 <td class="anexo-column">a/j</td>
-                <td class="documentacao-column" rowspan="14" style="vertical-align: top;">{{ $requerimento->observacoes }}</td>
+                <td class="documentacao-column observacoes-column-conteudo" rowspan="14" style="vertical-align: top;">
+                    <br>
+                    @php
+                    $observacoes = $requerimento->observacoes;
+                    $partes = explode("\n\n", $observacoes);
+                    $infoRequerimento = isset($partes[0]) ? $partes[0] : $observacoes;
+                    $obsUsuario = isset($partes[1]) ? $partes[1] : '';
+                    @endphp
+                    <strong>Informações do Requerimento:</strong><br>
+                    {{ $infoRequerimento }}<br>
+                    @if($obsUsuario)
+                    <hr style="border: 1px solid #ccc; margin: 5px 0;">
+                    <strong>Observações do Usuário:</strong><br>
+                    {{ $obsUsuario }}
+                    @endif
+                </td>
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração Tramitação de Diploma' ? '[X]' : '[O]' }}</td>
@@ -516,15 +573,9 @@
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Outros' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Outros (relatar abaixo em OBSERVAÇÕES)</td>
+                <td class="iten-column">Outros (relatar em OBSERVAÇÕES)</td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column"></td>
-            </tr>
-            <tr>
-                <th class="cpf-column" colspan="4"><strong>OBSERVAÇÕES:</strong></th>
-            </tr>
-            <tr>
-                <th class="iten-column" colspan="4">{{ $requerimento->observacoes }}</th>
             </tr>
         </tbody>
     </table>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf; // Namespace correto
+use Barryvdh\DomPDF\Facade\Pdf; // Namespace do DOMPDF
 use App\Models\ApplicationRequest;
 
 class PDFController extends Controller
