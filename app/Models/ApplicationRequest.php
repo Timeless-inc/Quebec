@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ApplicationRequest extends Model
 {
@@ -15,13 +16,29 @@ class ApplicationRequest extends Model
         'key', 'nomeCompleto', 'cpf', 'celular', 'email', 'rg', 
         'orgaoExpedidor', 'campus', 'matricula', 'situacao', 'curso', 
         'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes',
-        'dadosExtra'
+        'status', 'motivo', 'dadosExtra'
     ];
-
+    
     protected $casts = [
+        'anexarArquivos' => 'array',
         'dadosExtra' => 'array', // Garante que dadosExtra seja tratado como array
+    ];
+    
+    protected $attributes = [
+        'status' => 'em_andamento',
     ];
 
     public $incrementing = false;
     protected $keyType = 'string';
+    
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->key)) {
+                $model->key = (string) Str::uuid();
+            }
+});
+    }
 }
