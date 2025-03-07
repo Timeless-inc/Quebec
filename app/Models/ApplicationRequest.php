@@ -39,6 +39,6 @@ class ApplicationRequest extends Model
             if (empty($model->key)) {
                 $model->key = (string) Str::uuid();
             }
-});
+        });
     }
 }

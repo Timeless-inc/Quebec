@@ -337,5 +337,5 @@ class ApplicationController extends Controller
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');
-        }
+    }
 }
