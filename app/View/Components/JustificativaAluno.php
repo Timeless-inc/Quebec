@@ -37,7 +37,7 @@ class JustificativaAluno extends Component
                 $this->cpf = $requerimento->cpf;
                 $this->datas = $requerimento->created_at->toDateString(); 
                 $this->andamento = $requerimento->situacao;
-                $this->anexos = json_decode($requerimento->anexarArquivos); 
+                $this->anexos = $requerimento->anexarArquivos;
                 $this->observacoes = $requerimento->observacoes;
                 $this->tipoRequisicao = $requerimento->tipoRequisicao;
                 $this->key = $requerimento->key;

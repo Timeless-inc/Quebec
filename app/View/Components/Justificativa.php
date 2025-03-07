@@ -40,7 +40,7 @@ class Justificativa extends Component
                 $this->cpf = $requerimento->cpf;
                 $this->datas = $requerimento->created_at->toDateString();  // Exemplo de data
                 $this->andamento = $requerimento->situacao;  // Substituir pela lógica de andamento
-                $this->anexos = explode(",", $requerimento->anexarArquivos); // Caso os arquivos estejam separados por vírgula
+                $this->anexos = $requerimento->anexarArquivos;
                 $this->observacoes = $requerimento->observacoes;
                 $this->tipoRequisicao = $requerimento->tipoRequisicao;  // Busca o tipoRequisicao
                 $this->key = $requerimento->key;
