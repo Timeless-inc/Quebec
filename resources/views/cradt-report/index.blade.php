@@ -63,9 +63,20 @@
                                 </select>
                                 <label for="ano" class="form-label me-2 mb-0">Ano:</label>
                                 <select id="ano" class="form-select me-3" style="width: 120px;">
-                                    @for ($i = 2025; $i <= date('Y'); $i++)
+                                    @if(isset($anosDisponiveis))
+                                    @foreach($anosDisponiveis as $ano)
+                                    <option value="{{ $ano }}">{{ $ano }}</option>
+                                    @endforeach
+                                    @else
+                                    @php
+                                    // Fallback caso a variável $anosDisponiveis não esteja disponível
+                                    $anoAtual = date('Y');
+                                    $anoInicial = 2025;
+                                    @endphp
+                                    @for ($i = $anoInicial; $i <= $anoAtual; $i++)
                                         <option value="{{ $i }}">{{ $i }}</option>
                                         @endfor
+                                        @endif
                                 </select>
                             </div>
                             <button id="generateChart" class="btn btn-primary">Gerar Gráfico</button>
@@ -129,9 +140,7 @@
             const selectedMes = document.getElementById("mes").value;
             const selectedAno = document.getElementById("ano").value;
 
-            const url = selectedMes === 'all' ?
-                `/getFilteredData?filtro=${selectedValue}&ano=${selectedAno}` :
-                `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
+            const url = `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
 
             fetch(url)
                 .then(response => response.json())

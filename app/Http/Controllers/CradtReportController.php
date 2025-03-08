@@ -44,47 +44,66 @@ class CradtReportController extends Controller
             ->orderByDesc('total')
             ->get();
 
-        return view('cradt-report.index', compact('requerimentos', 'requerimentosTipo', 'requerimentosStatus', 'requerimentosTurnos', 'requerimentosCursos'));
+        $anosDisponiveis = DB::table('requerimentos')
+            ->select(DB::raw('YEAR(created_at) as ano'))
+            ->distinct()
+            ->orderBy('ano')
+            ->pluck('ano')
+            ->toArray();
+
+        if(empty($anosDisponiveis)) {
+            $anosDisponiveis = [date('Y')];
+        }
+
+        return view('cradt-report.index', compact('requerimentos', 'requerimentosTipo', 'requerimentosStatus', 'requerimentosTurnos', 'requerimentosCursos', 'anosDisponiveis'));
     }
 
 
 
     public function getFilteredData(Request $request)
-    {
-        $mes = $request->input('mes');
-        $ano = $request->input('ano');
-        $filtro = $request->input('filtro');
+{
+    $mes = $request->input('mes');
+    $ano = $request->input('ano');
+    $filtro = $request->input('filtro');
+
+    $query = ApplicationRequest::query();
+
+    if ($mes === 'all') {
+        $startDate = Carbon::createFromDate($ano, 1, 1)->startOfYear();
+        $endDate = Carbon::createFromDate($ano, 12, 31)->endOfYear();
+    } else {
 
         $startDate = Carbon::createFromDate($ano, $mes, 1)->startOfMonth();
         $endDate = Carbon::createFromDate($ano, $mes, 1)->endOfMonth();
-
-        $query = ApplicationRequest::whereBetween('created_at', [$startDate, $endDate]);
-
-        switch ($filtro) {
-            case 'tipo':
-                $data = $query->select('tipoRequisicao as label', DB::raw('count(*) as total'))
-                    ->groupBy('tipoRequisicao')
-                    ->get();
-                break;
-            case 'status':
-                $data = $query->select('status as label', DB::raw('count(*) as total'))
-                    ->groupBy('status')
-                    ->get();
-                break;
-            case 'turno':
-                $data = $query->select('turno as label', DB::raw('count(*) as total'))
-                    ->groupBy('turno')
-                    ->get();
-                break;
-            case 'curso':
-                $data = $query->select('curso as label', DB::raw('count(*) as total'))
-                    ->groupBy('curso')
-                    ->get();
-                break;
-            default:
-                $data = collect();
-        }
-
-        return response()->json($data);
     }
+
+    $query = $query->whereBetween('created_at', [$startDate, $endDate]);
+
+    switch ($filtro) {
+        case 'tipo':
+            $data = $query->select('tipoRequisicao as label', DB::raw('count(*) as total'))
+                ->groupBy('tipoRequisicao')
+                ->get();
+            break;
+        case 'status':
+            $data = $query->select('status as label', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->get();
+            break;
+        case 'turno':
+            $data = $query->select('turno as label', DB::raw('count(*) as total'))
+                ->groupBy('turno')
+                ->get();
+            break;
+        case 'curso':
+            $data = $query->select('curso as label', DB::raw('count(*) as total'))
+                ->groupBy('curso')
+                ->get();
+            break;
+        default:
+            $data = collect();
+    }
+
+    return response()->json($data);
+}
 }

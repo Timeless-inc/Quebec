@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Events\UserRegistered; // Adicione esta linha
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class RegisteredUserController extends Controller
             'cpf' => ['required', 'string', 'max:255'],
         ]);
 
-        // Check for pre-registered CRADT user
+        
         $cradtPending = User::where('cpf', $request->cpf)
             ->where('matricula', $request->matricula)
             ->where('role', 'Cradt')
@@ -60,7 +61,12 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        event(new Registered($user));
+        
+        event(new Registered($user));   
+
+        //Evento de registro de usuário para envio de e-mail - passível de ser modificado
+        event(new UserRegistered($user));
+        
         Auth::login($user);
 
         if ($user->role === 'Cradt') {
