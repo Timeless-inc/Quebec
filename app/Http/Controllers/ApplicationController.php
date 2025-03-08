@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ApplicationController extends Controller
 {
@@ -43,6 +44,10 @@ class ApplicationController extends Controller
         27 => 'Trancamento de Matrícula',
         28 => 'Transferência de Turno',
         29 => 'Outros',
+        30 => 'Lançamento de Nota',
+        31 => 'Revisão de Notas',
+        32 => 'Revisão de Faltas',
+        33 => 'Tempo de escolaridade',
     ];
 
     private $situacoes = [
@@ -109,10 +114,17 @@ class ApplicationController extends Controller
                 'curso'            => 'required|in:1,2,3,4,5',
                 'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
                 'turno'            => 'required|in:manhã,tarde',
-                'tipoRequisicao'   => 'required|integer',
-                'anexarArquivos'   => 'nullable',
-                'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
+                'tipoRequisicao' => 'required|integer|in:' . implode(',', array_keys($this->tiposRequisicao)),
+                'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
                 'observacoes'      => 'nullable|string|max:1000',
+                'dadosExtra.ano' => 'required_if:tipoRequisicao,6,13,14,19|string|max:4', // Removido 24
+                'dadosExtra.semestre' => 'required_if:tipoRequisicao,6,13,14,19|in:1,2', // Removido 24
+                'dadosExtra.via' => 'required_if:tipoRequisicao,14|in:1ª via,2ª via',
+                'dadosExtra.opcao_reintegracao' => 'required_if:tipoRequisicao,24|in:Reintegração,Estágio,Entrega do Relatório de Estágio,TCC',
+                'dadosExtra.componente_curricular' => 'required_if:tipoRequisicao,30,31,32|string|max:255',
+                'dadosExtra.nome_professor' => 'required_if:tipoRequisicao,30,31,32|string|max:255',
+                'dadosExtra.unidade' => 'required_if:tipoRequisicao,30,31,32|in:1ª unidade,2ª unidade,3ª unidade,4ª unidade,Exame Final',
+                'dadosExtra.ano_semestre' => 'required_if:tipoRequisicao,30,31,32|string|max:50',
             ]);
 
             $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
@@ -123,16 +135,64 @@ class ApplicationController extends Controller
 
             Log::info('Dados validados com sucesso, processando arquivos');
 
-            $attachmentPaths = [];
-            if ($request->hasFile('anexarArquivos')) {
-                foreach ($request->file('anexarArquivos') as $key => $file) {
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = 'Doc' . ($key + 1) . '.' . $extension;
-                    $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
-                    $attachmentPaths[] = $path;
-                }
+        // Processar anexos
+        $attachmentPaths = [];
+        if ($request->hasFile('anexarArquivos')) {
+            foreach ($request->file('anexarArquivos') as $key => $file) {
+                $extension = $file->getClientOriginalExtension();
+                $fileName = "Doc_{$key}_" . time() . ".{$extension}";
+                $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
+                $attachmentPaths[$key] = $path;
             }
+        }
             $validatedData['anexarArquivos'] = !empty($attachmentPaths) ? json_encode($attachmentPaths) : null;
+
+                    // Garantir que dadosExtra seja salvo como JSON com todas as chaves possíveis
+        $dadosExtra = $request->input('dadosExtra', []);
+        $defaultDadosExtra = [
+            'ano' => null,
+            'semestre' => null,
+            'via' => null,
+            'opcao_reintegracao' => null, // Apenas o campo necessário para o tipo 24
+            'componente_curricular' => null,
+            'nome_professor' => null,
+            'unidade' => null,
+            'ano_semestre' => null,
+        ];
+        $dadosExtra = array_merge($defaultDadosExtra, $dadosExtra);
+        $validatedData['dadosExtra'] = json_encode($dadosExtra);
+
+        // Adicionar informações dinâmicas ao campo observações para tipos 6, 13, 14, 19, 24
+        $observacoesDinamicas = '';
+        $tipoId = array_search($validatedData['tipoRequisicao'], $this->tiposRequisicao);
+        if (in_array($tipoId, [6, 13, 14, 19, 24])) {
+            $ano = $dadosExtra['ano'] ?? 'Não informado';
+            $semestre = $dadosExtra['semestre'] ?? 'Não informado';
+            $via = $dadosExtra['via'] ?? 'Não informado';
+            $opcaoReintegracao = $dadosExtra['opcao_reintegracao'] ?? 'Não informado';
+
+            switch ($tipoId) {
+                case 6: // Certificado de Conclusão
+                    $observacoesDinamicas = "Certificado de Conclusão - Ano: $ano, Semestre: $semestre";
+                    break;
+                case 13: // Declaração para Estágio
+                    $observacoesDinamicas = "Declaração para Estágio - Ano: $ano, Semestre: $semestre";
+                    break;
+                case 14: // Diploma 1ªvia/2ªvia
+                    $observacoesDinamicas = "Diploma - $via - Ano: $ano, Semestre: $semestre";
+                    break;
+                case 19: // Histórico Escolar
+                    $observacoesDinamicas = "Histórico Escolar - Ano: $ano, Semestre: $semestre";
+                    break;
+                case 24: // Reintegração
+                    $observacoesDinamicas = "Reintegração - $opcaoReintegracao"; // Removido Ano e Semestre
+                    break;
+            }
+        }
+
+        // Concatenar observações dinâmicas e do usuário sem formatação adicional
+        $observacoesUsuario = $validatedData['observacoes'] ?? '';
+        $validatedData['observacoes'] = $observacoesDinamicas . ($observacoesUsuario ? "\n\n" . $observacoesUsuario : '');
 
             $applicationRequest = ApplicationRequest::create($validatedData);
             
@@ -171,7 +231,7 @@ class ApplicationController extends Controller
 
     public function success()
     {
-    return view('application.success');
+        return view('application.success');
     }
 
     public function show($id)
@@ -183,7 +243,7 @@ class ApplicationController extends Controller
     public function edit($id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
-        
+
         if ($requerimento->email !== Auth::user()->email) {
             return redirect()->route('application.index')
                 ->with('error', 'Você não tem permissão para editar este requerimento.');
@@ -197,7 +257,7 @@ class ApplicationController extends Controller
     public function update(Request $request, $id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
-        
+
         $validatedData = $request->validate([
             'orgaoExpedidor'   => 'required|string|max:50',
             'campus'           => 'required|string|max:255',
@@ -206,8 +266,7 @@ class ApplicationController extends Controller
             'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
             'observacoes'      => 'nullable|string|max:1000',
-            'anexarArquivos'   => 'nullable',
-            'anexarArquivos.*' => 'file|mimes:pdf,jpg,png|max:2048',
+            'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
         ]);
 
         if ($request->hasFile('anexarArquivos')) {
@@ -219,11 +278,11 @@ class ApplicationController extends Controller
                     }
                 }
             }
-            
+
             $attachmentPaths = [];
             foreach ($request->file('anexarArquivos') as $key => $file) {
                 $extension = $file->getClientOriginalExtension();
-                $fileName = 'Doc' . ($key + 1) . '.' . $extension;
+                $fileName = 'Doc_' . ($key + 1) . '_' . time() . '.' . $extension;
                 $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
                 $attachmentPaths[] = $path;
             }
