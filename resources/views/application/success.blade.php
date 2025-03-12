@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-100 min-h-screen">
-        @include('layouts.navigation-home')
+       
 
         <!-- Page Content -->
         <main class="w-100 d-flex justify-content-center align-items-start pt-20">
@@ -34,7 +34,7 @@
                             <h3 class="text-lg font-medium text-green-700">Seu requerimento foi enviado com sucesso!</h3>
                         </div>
                     @endif
-                    <p class="text-gray-600 text-sm mb-8">Obrigado por utilizar o SRE. Seu pedido já foi registrado no sistema.</p>
+                    <p class="text-gray-600 text-sm mb-8">Obrigado por utilizar o SRE. <BR> Seu pedido já foi registrado no sistema.</p>
                     <a href="{{ route('dashboard') }}" class="btn btn-success px-6 py-3 rounded text-white shadow-md bg-green-600 hover:bg-green-700 transition-colors">
                         Voltar para o Dashboard
                     </a>
