@@ -16,14 +16,14 @@
     <header class="cabecalho">
         <a class="cabecalho-logo" href="#">SRE.</a>
         <nav class="cabecalho-menu">
-            <a class="cabecalho-menu-item" href="{{ url('/register') }}">Cadastrar</a>       
+            <a class="cabecalho-menu-item" href="{{ url('/register') }}">Cadastre-se</a>       
         </nav>
     </header>
 
     <main class="conteudo">
         <section class="conteudo-principal">
             <div class="conteudo-principal-escrito">
-                <h1 class="conteudo-principal-escrito-titulo">Sistema de <br>Requerimento <br><span class="conteudo-principal-escrito-titulo-estudantil">Estudantil</span></h1>
+                <h1 class="conteudo-principal-escrito-titulo">Sistema de <br>Requerimento do <br><span class="conteudo-principal-escrito-titulo-estudantil">Estudante</span></h1>
                 <p class="conteudo-principal-escrito-subtitulo">Acesse agora um ambiente simples e intuitivo <br> para gerenciar suas demandas estudantis!</p>
                 <div class="botoes-container"> 
                     <a href="{{ route ( 'login' )}}"><button class="conteudo-principal-escrito-botao-acesso">Acessar Sistema</button></a>
