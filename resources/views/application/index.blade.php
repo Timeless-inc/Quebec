@@ -163,8 +163,8 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="dropdown" id="anexoDropdown" style="display: none;">
-                                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="background-color: #f8f9fa; border-radius: 0.375rem; border: 1px solid #ccc;">
+                                                <div class="dropdown" id="anexoDropdown" style="display: none;  margin-top: 2rem;">
+                                                    <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
                                                         Anexos/informações (clique para abrir)
                                                     </button>
                                                     <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
