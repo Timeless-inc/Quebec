@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([  
             ApplicationSeeder::class,
-            EventSeeder::class
+            //EventSeeder::class
         ]);
     }
 }

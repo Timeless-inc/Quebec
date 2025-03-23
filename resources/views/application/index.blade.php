@@ -127,43 +127,18 @@
                                                 <label for="tipoRequisicao" class="form-label">Tipo de Requisição <span id="tipoRequisicaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <select class="form-select" id="tipoRequisicao" name="tipoRequisicao" onchange="updateAnexoDropdown()">
                                                     <option value="">Selecione o tipo de requisição</option>
-                                                    <option value="1">Admissão por Transferência e Análise Curricular</option>
-                                                    <option value="2">Ajuste de Matrícula Semestral</option>
-                                                    <option value="3">Autorização para cursar disciplinas em outras Instituições de Ensino Superior (especifique)</option>
-                                                    <option value="4">Cancelamento de Matrícula</option>
-                                                    <option value="5">Cancelamento de Disciplina (especifique)</option>
-                                                    <option value="6">Certificado de Conclusão</option>
-                                                    <option value="7">Certidão - Autenticidade (especifique)</option>
-                                                    <option value="8">Complementação de Matrícula (especifique)</option>
-                                                    <option value="9">Cópia Xerox de Documento (especifique)</option>
-                                                    <option value="10">Declaração de Colação de Grau e Tramitação de Diploma</option>
-                                                    <option value="11">Declaração de Matrícula ou Matrícula Vínculo (especifique)</option>
-                                                    <option value="12">Declaração de Monitoria</option>
-                                                    <option value="13">Declaração para Estágio</option>
-                                                    <option value="14">Diploma 1ªvia/2ªvia</option>
-                                                    <option value="15">Dispensa da prática de Educação Física</option>
-                                                    <option value="16">Declaração Tramitação de Diploma</option>
-                                                    <option value="17">Ementa de disciplina (especifique)</option>
-                                                    <option value="18">Guia de Transferência</option>
-                                                    <option value="19">Histórico Escolar</option>
-                                                    <option value="20">Isenção de disciplinas cursadas</option>
-                                                    <option value="21">Justificativa de falta(s) ou prova 2º chamada</option>
-                                                    <option value="22">Matriz curricular</option>
-                                                    <option value="23">Reabertura de Matrícula</option>
-                                                    <option value="24">Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC</option>
-                                                    <option value="25">Reintegração para Cursar</option>
-                                                    <option value="26">Solicitação de Conselho de Classe</option>
-                                                    <option value="27">Trancamento de Matrícula</option>
-                                                    <option value="28">Transferência de Turno (especifique turno)</option>
-                                                    <option value="30">Lançamento de Nota (especifique periodo e turno que cursou)</option>
-                                                    <option value="31">Revisão de Notas (especifique periodo e turno que cursou)</option>
-                                                    <option value="32">Revisão de Faltas (especifique periodo e turno que cursou)</option>
-                                                    <option value="33">Tempo de escolaridade</option>
-                                                    <option value="29">Outros</option>
+                                                    @foreach($tiposRequisicao as $id => $tipo)
+                                                    <option value="{{ $id }}" @if(in_array($id, $tiposComEventos ?? [])) data-event-required="true" @endif>
+                                                        {{ $tipo }}
+                                                    </option>
+                                                    @endforeach
                                                 </select>
+                                                <small class="text-muted">
+                                                    Nota: Alguns tipos de requerimento só estão disponíveis em períodos específicos.
+                                                </small>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="dropdown" id="anexoDropdown" style="display: none;  margin-top: 2rem;">
+                                                <div class="dropdown" id="anexoDropdown" style="display: none; margin-top: 2rem;">
                                                     <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
                                                         Anexos/informações (clique para abrir)
                                                     </button>
@@ -173,22 +148,25 @@
                                                 </div>
                                             </div>
                                         </div>
+                                </div>
 
-                                        <div class="mb-3">
-                                            <label for="observacoes" class="form-label">Observações</label>
-                                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                                        </div>
 
-                                        <div class="text-end">
-                                            <button type="submit" class="btn btn-success">Enviar</button>
-                                        </div>
-                                    </form>
+                                <div class="mb-3">
+                                    <label for="observacoes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-success">Enviar</button>
                                 </div>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        </div>
         </div>
     </x-app-layout>
 

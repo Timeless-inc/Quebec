@@ -6,18 +6,26 @@
 
 <x-appcradt>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Prioridades:
-        </h2>
-        <button onclick="filterJustificativas('todos')" type="button" class="btn btn-sm btn-secondary filter-btn" data-status="todos">Todos</button>
-        <button onclick="filterJustificativas('pendente')" type="button" class="btn btn-sm btn-warning filter-btn" data-status="pendente">Atenção</button>
-        <button onclick="filterJustificativas('indeferido')" type="button" class="btn btn-sm btn-danger filter-btn" data-status="indeferido">Indeferido</button>
-        <button onclick="filterJustificativas('finalizado')" type="button" class="btn btn-sm btn-success filter-btn" data-status="finalizado">Resolvido</button>
-        <button onclick="filterJustificativas('em_andamento')" type="button" class="btn btn-sm btn-info filter-btn" data-status="em_andamento">Em andamento</button>
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Prioridades:
+                </h2>
+                <div class="mt-2">
+                    <button onclick="filterJustificativas('todos')" type="button" class="btn btn-sm btn-secondary filter-btn" data-status="todos">Todos</button>
+                    <button onclick="filterJustificativas('pendente')" type="button" class="btn btn-sm btn-warning filter-btn" data-status="pendente">Atenção</button>
+                    <button onclick="filterJustificativas('indeferido')" type="button" class="btn btn-sm btn-danger filter-btn" data-status="indeferido">Indeferido</button>
+                    <button onclick="filterJustificativas('finalizado')" type="button" class="btn btn-sm btn-success filter-btn" data-status="finalizado">Resolvido</button>
+                    <button onclick="filterJustificativas('em_andamento')" type="button" class="btn btn-sm btn-info filter-btn" data-status="em_andamento">Em andamento</button>
+                </div>
+            </div>
 
-        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
-            + Novo Evento
-        </button>
+            <div>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
+                    + Novo Evento
+                </button>
+            </div>
+        </div>
     </x-slot>
 
     <div class="container mt-4">
@@ -39,90 +47,74 @@
         </div>
     </div>
 
-    <div class="container mt-4 mb-4">
-        <div class="row">
-            <div class="col-12">
-                @if($events->isNotEmpty())
-                <h3 class="text-xl font-semibold mb-3">Eventos Acadêmicos</h3>
+    <!-- Eventos Acadêmicos Section -->
+    <div class="py-6">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
+            Eventos Acadêmicos:
+        </h2>
+
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if($events->isNotEmpty())
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="row">
                     @foreach($events as $event)
                     <div class="col-md-4 mb-3">
-                        <div class="card">
+                        <div class="card {{ $event->isExpiringSoon() ? 'border-warning' : '' }}">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h5 class="card-title">{{ $event->title }}</h5>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0">{{ $event->title }}</h5>
                                     <div>
-                                        <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
-                                            <i class="fas fa-edit"></i> Editar
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
+                                            <i class="fas fa-edit"></i>
                                         </button>
-                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline ms-1">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i> Excluir
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     </div>
                                 </div>
+
                                 <p class="card-text">
                                     {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} -
                                     {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
-                                    @if(\Carbon\Carbon::parse($event->end_date)->isPast())
-                                    <small class="text-danger d-block mt-1">
-                                        <i class="fas fa-exclamation-circle"></i> Evento próximo de encerramento
+                                </p>
+
+                                @if($event->isExpiringSoon())
+                                <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
+                                    <i class="fas fa-exclamation-triangle"></i> Evento próximo de encerramento
+                                </div>
+                                @elseif($event->daysUntilExpiration() > 0 && $event->daysUntilExpiration() <= 3)
+                                    <small class="text-warning d-block mt-2">
+                                    <i class="fas fa-clock"></i> Expira em {{ $event->daysUntilExpiration() }} dia(s)
                                     </small>
                                     @endif
-                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="modal fade" id="editEventModal{{ $event->id }}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <form action="{{ route('events.update', $event->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Editar Evento</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Título do Evento</label>
-                                            <input type="text" class="form-control" name="title" value="{{ $event->title }}" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Data de Início</label>
-                                            <input type="date" class="form-control" name="start_date" value="{{ $event->start_date }}" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Data de Término</label>
-                                            <input type="date" class="form-control" name="end_date" value="{{ $event->end_date }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary">Atualizar Evento</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    <x-event-edit :event="$event" />
                     @endforeach
                 </div>
-                @endif
             </div>
+            @else
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+                <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
+            </div>
+            @endif
         </div>
     </div>
 
-
-    <div class="py-12">
+    <!-- Processos Section -->
+    <div class="py-6">
         <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
             Processos Situação:
         </h2>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)
             <x-justificativa
                 id="{{ $requerimento->id }}"
@@ -137,6 +129,11 @@
                 motivo="{{ $requerimento->motivo }}"
                 class="justificativa-item" />
             @endforeach
+            @else
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+                <p class="mb-0">Não há requerimentos para exibir no momento.</p>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -144,35 +141,5 @@
         {{ $requerimentos->links('pagination::bootstrap-5') }}
     </div>
 
-    <div class="modal fade" id="eventModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('events.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Criar Novo Evento</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Título do Evento</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Data de Início</label>
-                            <input type="date" class="form-control" name="start_date" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Data de Término</label>
-                            <input type="date" class="form-control" name="end_date" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Evento</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <x-event-add />
 </x-appcradt>
