@@ -13,7 +13,7 @@
 'motivo',
 ])
 
-<div class="justificativa-item" id="justificativa-{{ $id }}">
+<div class="justificativa-item" id="justificativa-{{ $id }}" data-status="{{ $status }}">
     <div class="row bg-primary bg-opacity-25 border border-primary rounded shadow-sm mb-4">
         <div class="col-1 d-flex justify-content-center align-items-center">
             <div class="bg-info rounded" style="width: 8px; height: 80%;"></div>
