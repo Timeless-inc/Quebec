@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (!file_exists(public_path('storage'))) {
+            $this->app->make('files')->link(
+                storage_path('app/public'), public_path('storage')
+            );
+        }
     }
 }

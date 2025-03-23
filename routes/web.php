@@ -74,19 +74,12 @@ Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updat
 Route::get('/cradt/report', [CradtReportController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt-report');
 
 //Eventos
-Route::middleware(['auth'])->group(function () {
-    Route::post('/events', [EventController::class, 'store'])->name('events.store');
-});
-Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+Route::post('/events', [EventController::class, 'store'])->name('events.store');
 Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
+Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
 
 
 require __DIR__ . '/auth.php';
-
-
-Route::get('/team', function () {
-    return view('team.team');
-});

@@ -46,28 +46,29 @@
                 </div>
 
                 <div>
-                <h5 class="fw-bold mb-3">Anexos:</h5>
-                <ul class="list-unstyled">
+                    <h5 class="fw-bold mb-3">Anexos:</h5>
+                    <ul class="list-unstyled">
                         @php
                         $anexosArray = is_string($anexos) ? json_decode($anexos, true) : $anexos;
                         @endphp
-                        @if($anexosArray)
-                        @foreach($anexosArray as $anexoArray)
-                        @if(is_array($anexoArray))
-                        @foreach($anexoArray as $key => $path)
-                        <li>
-                            <a href="{{ asset('storage/' . $path) }}" class="text-primary text-decoration-none" target="_blank">
-                                {{ basename($path) }}
+
+                        @if($anexosArray && is_array($anexosArray) && count($anexosArray) > 0)
+                        @foreach($anexosArray as $key => $anexoItem)
+                        @php
+                        if (is_array($anexoItem)) {
+                        $filePath = $anexoItem['path'] ?? '';
+                        $fileName = $anexoItem['original_name'] ?? basename($filePath);
+                        } else {
+                        $filePath = $anexoItem;
+                        $fileName = basename($filePath);
+                        }
+                        @endphp
+
+                        <li class="mb-2">
+                            <a href="{{ asset('storage/' . $filePath) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-file-download me-1"></i> {{ $fileName }}
                             </a>
                         </li>
-                        @endforeach
-                        @else
-                        <li>
-                            <a href="{{ asset('storage/' . $anexoArray) }}" class="text-primary text-decoration-none" target="_blank">
-                                {{ basename($anexoArray) }}
-                            </a>
-                        </li>
-                        @endif
                         @endforeach
                         @else
                         <li><em>Sem anexos</em></li>

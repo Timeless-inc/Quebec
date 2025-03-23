@@ -10,6 +10,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label class="form-label">Tipo de Requerimento</label>
+                        <select class="form-select" name="requisition_type_id" disabled>
+                            @php
+                                $appController = app('App\Http\Controllers\ApplicationController');
+                                $tiposRequisicao = $appController->getTiposRequisicao();
+                            @endphp
+                            
+                            @foreach($tiposRequisicao as $id => $tipo)
+                                <option value="{{ $id }}" {{ $event->requisition_type_id == $id ? 'selected' : '' }}>
+                                    {{ $tipo }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="requisition_type_id" value="{{ $event->requisition_type_id }}">
+                        <small class="text-muted mt-1 d-block">
+                            O tipo de requerimento não pode ser alterado depois da criação.
+                        </small>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Título do Evento</label>
                         <input type="text" class="form-control" name="title" value="{{ $event->title }}" required>
                     </div>
@@ -20,6 +39,16 @@
                     <div class="mb-3">
                         <label class="form-label">Data de Término</label>
                         <input type="date" class="form-control" name="end_date" value="{{ $event->end_date }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="eventIsActive{{ $event->id }}" 
+                                {{ $event->is_active ? 'checked' : '' }}>
+                            <label class="form-check-label" for="eventIsActive{{ $event->id }}">
+                                Habilitar tipo de requerimento
+                            </label>
+                        </div>
+                        <small class="text-muted">Se desmarcado, este tipo de requerimento não estará disponível mesmo durante o período.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
