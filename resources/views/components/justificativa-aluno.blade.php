@@ -46,34 +46,38 @@
                 </div>
 
                 <div>
-                    <h5 class="fw-bold mb-3">Anexos:</h5>
+                    <h5 class="fw-bold mt-4">Anexos:</h5>
                     <ul class="list-unstyled">
                         @php
                         $anexosArray = is_string($anexos) ? json_decode($anexos, true) : $anexos;
+                        $anexosArray = is_array($anexosArray) ? array_filter($anexosArray) : []; // Garante que é um array e remove valores vazios
                         @endphp
 
-                        @if($anexosArray && is_array($anexosArray) && count($anexosArray) > 0)
-                        @foreach($anexosArray as $key => $anexoItem)
-                        @php
-                        if (is_array($anexoItem)) {
-                        $filePath = $anexoItem['path'] ?? '';
-                        $fileName = $anexoItem['original_name'] ?? basename($filePath);
-                        } else {
-                        $filePath = $anexoItem;
-                        $fileName = basename($filePath);
-                        }
-                        @endphp
-
+                        @if(count($anexosArray) > 0)
+                        @foreach($anexosArray as $anexoItem)
+                        @if(is_array($anexoItem))
+                        @foreach($anexoItem as $path)
+                        @if(!empty($path)) 
                         <li class="mb-2">
-                            <a href="{{ asset('storage/' . $filePath) }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                <i class="fas fa-file-download me-1"></i> {{ $fileName }}
+                            <a href="{{ asset('storage/'.$path) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-file-download me-1"></i> {{ basename($path) }}
                             </a>
                         </li>
+                        @endif
+                        @endforeach
+                        @elseif(!empty($anexoItem)) 
+                        <li class="mb-2">
+                            <a href="{{ asset('storage/'.$anexoItem) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-file-download me-1"></i> {{ basename($anexoItem) }}
+                            </a>
+                        </li>
+                        @endif
                         @endforeach
                         @else
-                        <li><em>Sem anexos</em></li>
+                        <li class="text-muted"><em>Sem anexos</em></li>
                         @endif
                     </ul>
+
 
                     <h5 class="fw-bold mt-4">Observações:</h5>
                     <p>{{ $observacoes }}</p>

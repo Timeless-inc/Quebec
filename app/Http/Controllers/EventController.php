@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -39,16 +40,16 @@ class EventController extends Controller
 
             // Converter checkbox em bool
             $validated['is_active'] = isset($request->is_active) ? true : false;
-            
+
             // Adicionar usuário que criou o evento
             $validated['created_by'] = Auth::id();
 
             Log::info('Antes de criar o evento', $validated);
 
             $event = Event::create($validated);
-            
+
             Log::info('Evento criado com sucesso', ['event_id' => $event->id]);
-            
+
             $this->updateAvailableRequisitionTypes();
 
             return redirect()->back()->with('success', 'Evento criado com sucesso!');
@@ -57,7 +58,7 @@ class EventController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return redirect()->back()->with('error', 'Erro ao criar o evento: ' . $e->getMessage());
         }
     }
@@ -81,9 +82,9 @@ class EventController extends Controller
             $validated['is_active'] = isset($request->is_active) ? true : false;
 
             $event->update($validated);
-            
+
             Log::info('Evento atualizado com sucesso', ['event_id' => $event->id]);
-            
+
             $this->updateAvailableRequisitionTypes();
 
             return redirect()->back()->with('success', 'Evento atualizado com sucesso!');
@@ -93,7 +94,7 @@ class EventController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return redirect()->back()->with('error', 'Erro ao atualizar o evento: ' . $e->getMessage());
         }
     }
@@ -103,9 +104,9 @@ class EventController extends Controller
         try {
             $eventId = $event->id;
             $event->delete();
-            
+
             Log::info('Evento excluído com sucesso', ['event_id' => $eventId]);
-            
+
             $this->updateAvailableRequisitionTypes();
 
             return redirect()->back()->with('success', 'Evento excluído com sucesso!');
@@ -115,7 +116,7 @@ class EventController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return redirect()->back()->with('error', 'Erro ao excluir o evento: ' . $e->getMessage());
         }
     }
@@ -125,24 +126,30 @@ class EventController extends Controller
     {
         try {
             $activeEvents = Event::where('is_active', true)
-                                ->whereDate('end_date', '>=', now())
-                                ->get();
-            
+                ->whereDate('end_date', '>=', now())
+                ->get();
+
             $eventTypes = $activeEvents->pluck('requisition_type_id')->toArray();
-            
+
             Log::info('Atualizando cache de tipos de requisição disponíveis', ['types' => $eventTypes]);
-            
+
             // Armazenar em cache por 1 hora
             Cache::put('event_requisition_types', $eventTypes, 3600);
-            
+
             return true;
         } catch (\Exception $e) {
             Log::error('Erro ao atualizar cache de tipos de requisição', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return false;
         }
+    }
+
+    public function cleanupExpiredEvents()
+    {
+        $deletedCount = Event::where('end_date', '<', Carbon::today())->delete();
+        return response()->json(['message' => "Deleted {$deletedCount} expired events"]);
     }
 }

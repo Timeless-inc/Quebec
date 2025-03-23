@@ -59,7 +59,7 @@
                 <div class="row">
                     @foreach($events as $event)
                     <div class="col-md-4 mb-3">
-                        <div class="card">
+                        <div class="card {{ $event->isExpiringSoon() ? 'border-warning' : '' }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <h5 class="card-title">{{ $event->title }}</h5>
@@ -76,15 +76,21 @@
                                         </form>
                                     </div>
                                 </div>
+
                                 <p class="card-text">
                                     {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }} -
                                     {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
-                                    @if(\Carbon\Carbon::parse($event->end_date)->isPast())
-                                    <small class="text-danger d-block mt-1">
-                                        <i class="fas fa-exclamation-circle"></i> Evento próximo de encerramento
+                                </p>
+
+                                @if($event->isExpiringSoon())
+                                <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
+                                    <i class="fas fa-exclamation-triangle"></i> Evento próximo de encerramento
+                                </div>
+                                @elseif($event->daysUntilExpiration() > 0 && $event->daysUntilExpiration() <= 3)
+                                    <small class="text-warning d-block mt-2">
+                                    <i class="fas fa-clock"></i> Expira em {{ $event->daysUntilExpiration() }} dia(s)
                                     </small>
                                     @endif
-                                </p>
                             </div>
                         </div>
                     </div>
