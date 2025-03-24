@@ -1,4 +1,4 @@
-
+<title>SRE</title>
 <x-guest-layout>
 
   <form method="POST" action="{{ route('login') }}">

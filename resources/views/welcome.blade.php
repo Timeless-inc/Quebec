@@ -3,18 +3,18 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SRE | Timeless</title>
-
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>SRE</title>
 </head>
 
 <body>
 
     <header class="cabecalho">
-        <a class="cabecalho-logo" href="#">SRE.</a>
+        <a class="cabecalho-logo" href="#">
+            <img src="/img/logo-sre.png" alt="SRE Logo" class="w-8 h-auto">
+        </a>
         <nav class="cabecalho-menu">
             <a class="cabecalho-menu-item" href="{{ url('/register') }}">Cadastre-se</a>       
         </nav>

@@ -1,5 +1,6 @@
-<x-app-layout>
-    <x-slot name="header">
+<title>SRE - Perfil</title>
+<x-app-layout>    
+<x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Editar Perfil') }}
         </h2>
@@ -11,7 +12,7 @@
 
                 <!-- Sidebar - Foto de Perfil -->
                 <div class="w-1/3 text-center border-r pr-6">
-                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://via.placeholder.com/150' }}"
+                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg' }}"
                         alt="Profile Photo" class="w-32 h-32 rounded-full mx-auto">
 
                     <form method="POST" action="{{ route('profile.update-photo') }}" enctype="multipart/form-data" class="mt-4">
