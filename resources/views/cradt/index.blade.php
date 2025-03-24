@@ -6,22 +6,22 @@
 
 <x-appcradt>
     <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="flex justify-between items-center w-full">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Prioridades:
                 </h2>
-                <div class="mt-2">
-                    <button onclick="filterJustificativas('todos')" type="button" class="btn btn-sm btn-secondary filter-btn" data-status="todos">Todos</button>
-                    <button onclick="filterJustificativas('pendente')" type="button" class="btn btn-sm btn-warning filter-btn" data-status="pendente">Atenção</button>
-                    <button onclick="filterJustificativas('indeferido')" type="button" class="btn btn-sm btn-danger filter-btn" data-status="indeferido">Indeferido</button>
-                    <button onclick="filterJustificativas('finalizado')" type="button" class="btn btn-sm btn-success filter-btn" data-status="finalizado">Resolvido</button>
-                    <button onclick="filterJustificativas('em_andamento')" type="button" class="btn btn-sm btn-info filter-btn" data-status="em_andamento">Em andamento</button>
+                <div class="flex items-center mt-2 space-x-2">
+                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-500 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
+                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-500 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Atenção</button>
+                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-500 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
+                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-500 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
+                    <button onclick="filterJustificativas('em_andamento')" type="button" class="px-3 py-1 text-sm text-white bg-blue-500 border-blue-400 rounded-md hover:bg-blue-200 filter-btn" data-status="em_andamento">Em andamento</button>
                 </div>
             </div>
 
-            <div>
-                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
+            <div class="mt-8">
+                <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
                     + Novo Evento
                 </button>
             </div>
@@ -135,10 +135,15 @@
             </div>
             @endif
         </div>
-    </div>
 
-    <div class="d-flex justify-content-center mt-4">
-        {{ $requerimentos->links('pagination::bootstrap-5') }}
+        <div class="flex justify-center mt-8">
+            <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+                @if($requerimentos->hasPages())
+                {{ $requerimentos->links('pagination::tailwind') }}
+                @endif
+            </div>
+        </div>
+
     </div>
 
     <x-event-add />

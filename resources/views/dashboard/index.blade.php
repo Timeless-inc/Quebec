@@ -11,16 +11,16 @@
                     Prioridades:
                 </h2>
                 <div class="mt-2">
-                    <button onclick="filterJustificativas('todos')" type="button" class="btn btn-sm btn-secondary filter-btn" data-status="todos">Todos</button>
-                    <button onclick="filterJustificativas('pendente')" type="button" class="btn btn-sm btn-warning filter-btn" data-status="pendente">Atenção</button>
-                    <button onclick="filterJustificativas('indeferido')" type="button" class="btn btn-sm btn-danger filter-btn" data-status="indeferido">Indeferido</button>
-                    <button onclick="filterJustificativas('finalizado')" type="button" class="btn btn-sm btn-success filter-btn" data-status="finalizado">Resolvido</button>
-                    <button onclick="filterJustificativas('em_andamento')" type="button" class="btn btn-sm btn-info filter-btn" data-status="em_andamento">Em andamento</button>
+                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-500 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
+                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-500 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Atenção</button>
+                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-500 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
+                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-500 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
+                    <button onclick="filterJustificativas('em_andamento')" type="button" class="px-3 py-1 text-sm text-white bg-blue-500 border-blue-400 rounded-md hover:bg-blue-200 filter-btn" data-status="em_andamento">Em andamento</button>
                 </div>
             </div>
-            <div>
+            <div class="mt-8">
                 <a href="{{ route('application') }}">
-                    <button type="button" class="btn btn-success opacity-80 border border-teal-950 border-solid border-success rounded">+ Novo requerimento</button>
+                    <button type="button" class="px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-800">+ Novo requerimento</button>
                 </a>
             </div>
         </div>
@@ -97,5 +97,14 @@
             </div>
             @endif
         </div>
+
+        @if($requerimentos->hasPages())
+        <div class="flex justify-center mt-8">
+            <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+                {{ $requerimentos->links('pagination::tailwind') }}
+            </div>
+        </div>
+        @endif
+
     </div>
 </x-app-layout>

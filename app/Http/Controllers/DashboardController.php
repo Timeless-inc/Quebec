@@ -17,6 +17,8 @@ class DashboardController extends Controller
         abort(403, 'Acesso negado.');
     }
 
+    $requerimentos = ApplicationRequest::paginate(10);
+
     $requerimentos = ApplicationRequest::where('email', $user->email)
         ->latest()
         ->get();
