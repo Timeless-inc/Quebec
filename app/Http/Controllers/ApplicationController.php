@@ -382,6 +382,10 @@ class ApplicationController extends Controller
             $requerimento->motivo = $request->motivo;
         }
 
+        if ($request->status === 'finalizado') {
+            $requerimento->finalizado_por = Auth::user()->name;
+        }
+
         $requerimento->save();
 
         // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado

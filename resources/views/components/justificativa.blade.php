@@ -12,7 +12,8 @@
 'requerimento',
 'motivo',
 'tipoRequisicao',
-'key'
+'key',
+'finalizado_por'
 ])
 
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
@@ -40,7 +41,7 @@
                         <p><span class="font-semibold text-gray-600">CPF:</span> {{ $cpf }}</p>
                         <p><span class="font-semibold text-gray-600">Data:</span> {{ $datas }}</p>
                         <p><span class="font-semibold text-gray-600">Key:</span> {{ $key }}</p>
-
+    
                         <div class="mt-2">
                             <span class="font-semibold text-gray-600">Status:</span>
                             @switch($requerimento->status ?? 'em_andamento')
@@ -58,6 +59,14 @@
                             @break
                             @endswitch
                         </div>
+                        @if($requerimento->status === 'finalizado' && isset($requerimento->finalizado_por))
+                        <p>
+                            <span class="font-semibold text-gray-600">Servidor(a):</span>
+                            <span class="inline-block px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
+                                <i class="fas fa-user mr-1"></i>{{ $requerimento->finalizado_por }}
+                            </span>
+                        </p>
+                        @endif
                     </div>
 
                     <div class="space-y-6 w-full max-w-md">
