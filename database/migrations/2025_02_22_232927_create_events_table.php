@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users');
-            $table->timestamp('delete_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
