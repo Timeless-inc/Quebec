@@ -149,7 +149,13 @@ class EventController extends Controller
 
     public function cleanupExpiredEvents()
     {
-        $deletedCount = Event::where('end_date', '<', Carbon::today())->delete();
-        return response()->json(['message' => "Deleted {$deletedCount} expired events"]);
+        $deletedCount = Event::removeExpiredEvents();
+
+        $this->updateAvailableRequisitionTypes();
+
+        return response()->json([
+            'message' => "Removed {$deletedCount} expired events",
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
     }
 }

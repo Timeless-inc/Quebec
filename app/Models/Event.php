@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Event extends Model
 {
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'requisition_type_id',
         'title',
@@ -21,43 +26,114 @@ class Event extends Model
         'end_date' => 'date',
         'is_active' => 'boolean',
     ];
-    
-    public function isExpiringSoon()
+
+    protected static function boot()
     {
-        return $this->end_date->isToday();
+        parent::boot();
+
+        static::addGlobalScope('active', function ($query) {
+            $query->where('is_active', true)
+                  ->whereDate('end_date', '>=', Carbon::today());
+        });
+    }
+
+    public function isExpired()
+    {
+        return $this->end_date->endOfDay()->lt(Carbon::now());
     }
     
-
-    public function hasExpired()
+    public function isEndingToday()
     {
-        return $this->end_date->isPast();
+        return Carbon::now()->isSameDay($this->end_date);
+    }
+    
+    public function isExpiringSoon($days = 3)
+    {
+        if ($this->isEndingToday()) {
+            return true;
+        }
+        
+        $daysLeft = $this->daysUntilEnd();
+        return $daysLeft > 0 && $daysLeft <= $days;
+    }
+
+    public function daysUntilEnd()
+    {
+        if ($this->isExpired()) {
+            return 0;
+        }
+        
+        return Carbon::now()->startOfDay()->diffInDays($this->end_date->startOfDay());
     }
     
     public function daysUntilExpiration()
     {
-        if ($this->hasExpired()) {
-            return 0;
-        }
-        
-        return Carbon::now()->startOfDay()->diffInDays($this->end_date, false);
+        return $this->daysUntilEnd();
     }
     
-    public function getStatusMessage()
+    public function getExpirationMessage()
     {
-        if ($this->hasExpired()) {
-            return 'Evento expirado';
+        if ($this->isEndingToday()) {
+            return "Evento próximo de encerramento";
         }
         
-        if ($this->isExpiringSoon()) {
-            return 'Evento próximo de encerramento';
+        $daysLeft = $this->daysUntilEnd();
+        
+        if ($daysLeft == 1) {
+            return "Expira em 1 dia";
+        }
+        
+        if ($daysLeft > 1 && $daysLeft <= 3) {
+            return "Expira em {$daysLeft} dias";
         }
         
         return null;
     }
-    
-    public function scopeActiveAndCurrent($query)
+
+    public static function removeExpiredEvents()
     {
-        return $query->where('is_active', true)
-                     ->where('end_date', '>=', Carbon::today());
+        $expiredEvents = self::withoutGlobalScopes()
+            ->whereDate('end_date', '<', Carbon::today())
+            ->whereNull('deleted_at')
+            ->get();
+        
+        Log::info('Buscando eventos expirados para remover', [
+            'count' => $expiredEvents->count(),
+            'today' => Carbon::today()->format('Y-m-d'),
+            'ids' => $expiredEvents->pluck('id')->toArray()
+        ]);
+        
+        $deletedCount = 0;
+        
+        foreach ($expiredEvents as $event) {
+            try {
+                $event->delete();
+                $deletedCount++;
+                
+                Log::info('Evento expirado excluído', [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'end_date' => $event->end_date->format('Y-m-d')
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Erro ao excluir evento expirado', [
+                    'id' => $event->id,
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        return $deletedCount;
+    }
+
+    public static function withExpired()
+    {
+        return self::withoutGlobalScope('active');
+    }
+
+    public static function onlyExpired()
+    {
+        return self::withoutGlobalScope('active')
+            ->whereDate('end_date', '<', Carbon::today());
     }
 }

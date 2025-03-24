@@ -29,23 +29,23 @@
     </x-slot>
 
     <div class="container mt-4">
-    <div class="flex justify-center">
-        <div class="w-full md:w-1/2">
-            <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
-                <div class="flex">
-                    <input type="text"
-                        class="w-full border border-gray-400 rounded-l-md p-2"
-                        name="search"
-                        placeholder="Buscar por nome, CPF, matrícula..."
-                        value="{{ request('search') }}">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
+        <div class="flex justify-center">
+            <div class="w-full md:w-1/2">
+                <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
+                    <div class="flex">
+                        <input type="text"
+                            class="w-full border border-gray-400 rounded-l-md p-2"
+                            name="search"
+                            placeholder="Buscar por nome, CPF, matrícula..."
+                            value="{{ request('search') }}">
+                        <button class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Eventos Acadêmicos Section -->
     <div class="py-6">
@@ -59,7 +59,7 @@
                 <div class="row">
                     @foreach($events as $event)
                     <div class="col-md-4 mb-3">
-                        <div class="card {{ $event->isExpiringSoon() ? 'border-warning' : '' }}">
+                        <div class="card {{ $event->isEndingToday() ? 'border-danger' : ($event->isExpiringSoon() ? 'border-warning' : '') }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="card-title mb-0">{{ $event->title }}</h5>
@@ -82,28 +82,32 @@
                                     {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
                                 </p>
 
-                                @if($event->isExpiringSoon())
-                                <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
+                                @if($event->isEndingToday())
+                                <div class="alert alert-danger py-1 px-2 mb-0 mt-2">
                                     <i class="fas fa-exclamation-triangle"></i> Evento próximo de encerramento
                                 </div>
-                                @elseif($event->daysUntilExpiration() > 0 && $event->daysUntilExpiration() <= 3)
-                                    <small class="text-warning d-block mt-2">
-                                    <i class="fas fa-clock"></i> Expira em {{ $event->daysUntilExpiration() }} dia(s)
-                                    </small>
-                                    @endif
+                                @elseif($event->daysUntilExpiration() == 1)
+                                <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
+                                    <i class="fas fa-clock"></i> Este evento vai encerrar em 1 dia
+                                </div>
+                                @elseif($event->daysUntilExpiration() > 1 && $event->daysUntilExpiration() <= 3)
+                                    <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
+                                    <i class="fas fa-clock"></i> Este evento vai encerrar em {{ $event->daysUntilExpiration() }} dias
                             </div>
+                            @endif
                         </div>
                     </div>
-
-                    <x-event-edit :event="$event" />
-                    @endforeach
                 </div>
+
+                <x-event-edit :event="$event" />
+                @endforeach
             </div>
-            @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
-                <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
-            </div>
-            @endif
+        </div>
+        @else
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+            <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
+        </div>
+        @endif
         </div>
     </div>
 
