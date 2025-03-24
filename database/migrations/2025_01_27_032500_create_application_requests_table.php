@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->string('tipoRequisicao');
             $table->longText('anexarArquivos')->nullable();
             $table->text('observacoes')->nullable();
-            $table->json('dadosExtra')->nullable(); // Adicionado
+            $table->json('dadosExtra')->nullable(); 
             $table->timestamps();
         });
     }

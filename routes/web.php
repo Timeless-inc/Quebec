@@ -72,6 +72,7 @@ Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('
 Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
 
 Route::get('/cradt/report', [CradtReportController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt-report');
+Route::get('/getCrossReport', [App\Http\Controllers\CradtReportController::class, 'getCrossReport'])->name('reports.getCrossReport');
 
 //Eventos
 Route::post('/events', [EventController::class, 'store'])->name('events.store');

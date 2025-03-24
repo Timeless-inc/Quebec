@@ -16,7 +16,7 @@ class ApplicationRequest extends Model
         'key', 'nomeCompleto', 'cpf', 'celular', 'email', 'rg', 
         'orgaoExpedidor', 'campus', 'matricula', 'situacao', 'curso', 
         'periodo', 'turno', 'tipoRequisicao', 'anexarArquivos', 'observacoes',
-        'status', 'motivo', 'dadosExtra'
+        'status', 'motivo', 'dadosExtra', 'resolved_at', 'tempoResolucao'
     ];
     
     protected $casts = [
