@@ -10,17 +10,19 @@
 'observacoes',
 'status',
 'requerimento',
+'resposta',
 'motivo',
+'anexos_finalizacao',
 ])
 
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
     <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg mb-6">
         <div class="w-12 flex items-center justify-center">
-                <div class="rounded w-2 h-4/5 {{ $status === 'em_andamento' ? 'bg-blue-500' : 
+            <div class="rounded w-2 h-4/5 {{ $status === 'em_andamento' ? 'bg-blue-500' : 
             ($status === 'finalizado' ? 'bg-green-500' : 
             ($status === 'indeferido' ? 'bg-red-500' : 
             ($status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
-            </div>
+        </div>
 
         <div class="flex-1 p-6">
             <div class="flex justify-between gap-6">
@@ -49,6 +51,27 @@
                         @break
                         @endswitch
                     </div>
+
+                    @if($status === 'finalizado' && isset($resposta) && !empty($resposta))
+                    <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                        <h6 class="text-sm font-semibold text-green-800 mb-1">Resposta:</h6>
+                        <p class="text-sm text-gray-700">{{ $resposta }}</p>
+                    </div>
+                    @endif
+
+                    @if($status === 'indeferido' && isset($resposta) && !empty($resposta))
+                    <div class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
+                        <h6 class="text-sm font-semibold text-red-800 mb-1">Resposta:</h6>
+                        <p class="text-sm text-gray-700">{{ $resposta }}</p>
+                    </div>
+                    @endif
+
+                    @if($status === 'pendente' && isset($resposta) && !empty($resposta))
+                    <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                        <h6 class="text-sm font-semibold text-yellow-800 mb-1">Resposta:</h6>
+                        <p class="text-sm text-gray-700">{{ $resposta }}</p>
+                    </div>
+                    @endif
                 </div>
 
                 <div class="space-y-6 w-full max-w-md">
@@ -87,27 +110,49 @@
                         </ul>
                     </div>
 
+                    @if($status === 'finalizado')
+                    <div class="relative min-h-[120px] mt-4">
+                        <h5 class="text-xl font-bold text-gray-800">Anexos da Finalização:</h5>
+                        <div class="absolute -bottom-1 left-0 w-16 h-1 bg-green-300 rounded"></div>
+                        <ul class="space-y-2 mt-2">
+                            @php
+                            $anexosFinalizacao = is_string($anexos_finalizacao) ? json_decode($anexos_finalizacao, true) : $anexos_finalizacao;
+                            $anexosFinalizacao = is_array($anexosFinalizacao) ? array_filter($anexosFinalizacao) : [];
+                            @endphp
+
+                            @if(count($anexosFinalizacao) > 0)
+                            @foreach($anexosFinalizacao as $anexo)
+                            <li>
+                                @php
+                                // Extrair o caminho correto do anexo, independente do formato
+                                $anexoPath = $anexo;
+                                if (is_array($anexo)) {
+                                    $anexoPath = reset($anexo); // Pega o primeiro item do array
+                                } elseif (strpos($anexo, '[') === 0) {
+                                    // Se for uma string que representa um array JSON
+                                    $tempArray = json_decode($anexo, true);
+                                    $anexoPath = is_array($tempArray) ? reset($tempArray) : $anexo;
+                                }
+                                // Remover barras duplas se existirem
+                                $anexoPath = str_replace('//', '/', $anexoPath);
+                                @endphp
+                                <a href="{{ asset('storage/'.$anexoPath) }}" class="inline-flex items-center px-3 py-1 text-sm text-green-600 border border-green-600 rounded-md hover:bg-green-50" target="_blank">
+                                    <i class="fas fa-file-download mr-2"></i> {{ basename($anexoPath) }}
+                                </a>
+                            </li>
+                            @endforeach
+                            @else
+                            <li class="text-gray-500 italic">Sem anexos de finalização</li>
+                            @endif
+                        </ul>
+                    </div>
+                    @endif
+
                     <div class="relative min-h-[120px]">
                         <h5 class="text-xl font-bold text-gray-800">Observações:</h5>
                         <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
                         <p class="text-gray-700 mt-2">{{ $observacoes }}</p>
                     </div>
-
-                    @if($status === 'indeferido' && $motivo)
-                    <div class="relative min-h-[120px]">
-                        <h5 class="text-xl font-bold text-gray-800">Motivo do Indeferimento:</h5>
-                        <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
-                        <p class="text-gray-700 mt-2">{{ $motivo }}</p>
-                    </div>
-                    @endif
-
-                    @if($status === 'pendente' && $motivo)
-                    <div class="relative min-h-[120px]">
-                        <h5 class="text-xl font-bold text-gray-800">Motivo da Pendência:</h5>
-                        <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
-                        <p class="text-gray-700 mt-2">{{ $motivo }}</p>
-                    </div>
-                    @endif
                 </div>
             </div>
 

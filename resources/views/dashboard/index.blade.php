@@ -87,7 +87,8 @@
                 status="{{ $requerimento->status }}"
                 :anexos="[$requerimento->anexarArquivos]"
                 observacoes="{{ $requerimento->observacoes }}"
-                motivo="{{ $requerimento->motivo }}"
+                resposta="{{ $requerimento->resposta }}"
+                :anexos_finalizacao="[$requerimento->anexos_finalizacao]"
                 class="justificativa-item" />
             @endforeach
             @else

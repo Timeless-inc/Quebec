@@ -379,7 +379,29 @@ class ApplicationController extends Controller
         $requerimento->status = $request->status;
 
         if (in_array($request->status, ['indeferido', 'pendente'])) {
-            $requerimento->motivo = $request->motivo;
+            $requerimento->finalizado_por = Auth::user()->name;
+
+            if ($request->has('resposta') && !empty($request->resposta)) {
+                $requerimento->resposta = $request->resposta;
+            }
+        }
+
+        if ($request->status === 'finalizado') {
+            $requerimento->finalizado_por = Auth::user()->name;
+            
+            if ($request->has('resposta')) {
+                $requerimento->resposta = $request->resposta;
+            }
+            
+            // Processar anexos opcionais
+            if ($request->hasFile('anexos_finalizacao')) {
+                $anexosPaths = [];
+                foreach ($request->file('anexos_finalizacao') as $file) {
+                    $path = $file->store('anexos_finalizacao', 'public');
+                    $anexosPaths[] = $path;
+                }
+                $requerimento->anexos_finalizacao = json_encode($anexosPaths);
+            }
         }
 
         $requerimento->save();
