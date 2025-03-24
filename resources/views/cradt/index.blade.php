@@ -6,26 +6,26 @@
 
 <x-appcradt>
     <x-slot name="header">
-    <div class="flex justify-between items-center w-full">
-    <div>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Prioridades:
-        </h2>
-        <div class="flex items-center mt-2 space-x-2">
-            <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-gray-700 bg-gray-200 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
-            <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-yellow-700 bg-yellow-100 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Atenção</button>
-            <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-red-700 bg-red-100 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
-            <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-green-700 bg-green-100 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
-            <button onclick="filterJustificativas('em_andamento')" type="button" class="px-3 py-1 text-sm text-blue-700 bg-blue-100 border-blue-400 rounded-md hover:bg-blue-200 filter-btn" data-status="em_andamento">Em andamento</button>
-        </div>
-    </div>
+        <div class="flex justify-between items-center w-full">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Prioridades:
+                </h2>
+                <div class="flex items-center mt-2 space-x-2">
+                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-500 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
+                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-500 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Atenção</button>
+                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-500 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
+                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-500 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
+                    <button onclick="filterJustificativas('em_andamento')" type="button" class="px-3 py-1 text-sm text-white bg-blue-500 border-blue-400 rounded-md hover:bg-blue-200 filter-btn" data-status="em_andamento">Em andamento</button>
+                </div>
+            </div>
 
-    <div class="mt-8"> <!-- Ajuste para alinhar com os botões de filtro -->
-        <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
-            + Novo Evento
-        </button>
-    </div>
-</div>
+            <div class="mt-8">
+                <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
+                    + Novo Evento
+                </button>
+            </div>
+        </div>
     </x-slot>
 
     <div class="container mt-4">
@@ -135,10 +135,15 @@
             </div>
             @endif
         </div>
-    </div>
 
-    <div class="d-flex justify-content-center mt-4">
-        {{ $requerimentos->links('pagination::bootstrap-5') }}
+        <div class="flex justify-center mt-8">
+            <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+                @if($requerimentos->hasPages())
+                {{ $requerimentos->links('pagination::tailwind') }}
+                @endif
+            </div>
+        </div>
+
     </div>
 
     <x-event-add />

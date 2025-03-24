@@ -16,8 +16,11 @@
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
     <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg mb-6">
         <div class="w-12 flex items-center justify-center">
-            <div class="bg-teal-400 rounded w-2 h-4/5"></div>
-        </div>
+                <div class="rounded w-2 h-4/5 {{ $status === 'em_andamento' ? 'bg-blue-500' : 
+            ($status === 'finalizado' ? 'bg-green-500' : 
+            ($status === 'indeferido' ? 'bg-red-500' : 
+            ($status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
+            </div>
 
         <div class="flex-1 p-6">
             <div class="flex justify-between gap-6">

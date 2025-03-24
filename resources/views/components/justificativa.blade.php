@@ -18,12 +18,15 @@
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
 
     @if(now()->diffInDays($requerimento->created_at) < 7)
-        <span class="absolute top-2 right-2 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full">Novo</span>
+        <span class="absolute top-6 right-6 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full">Novo</span>
         @endif
 
         <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg mb-6">
             <div class="w-12 flex items-center justify-center">
-                <div class="bg-teal-400 rounded w-2 h-4/5"></div>
+                <div class="rounded w-2 h-4/5 {{ $requerimento->status === 'em_andamento' ? 'bg-blue-500' : 
+            ($requerimento->status === 'finalizado' ? 'bg-green-500' : 
+            ($requerimento->status === 'indeferido' ? 'bg-red-500' : 
+            ($requerimento->status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
             </div>
 
             <div class="flex-1 p-6">
