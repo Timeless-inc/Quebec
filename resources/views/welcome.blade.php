@@ -12,7 +12,9 @@
 <body>
 
     <header class="cabecalho">
-        <a class="cabecalho-logo" href="#">SRE.</a>
+        <a class="cabecalho-logo" href="#">
+            <img src="/img/logo-sre.png" alt="SRE Logo" class="w-8 h-auto">
+        </a>
         <nav class="cabecalho-menu">
             <a class="cabecalho-menu-item" href="{{ url('/register') }}">Cadastre-se</a>       
         </nav>

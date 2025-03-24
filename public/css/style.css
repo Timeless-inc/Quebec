@@ -22,10 +22,8 @@ body {
 }
 
 .cabecalho-logo{
-    color: #10A11A;
-    font-weight: 900;
-    font-size: 30px;
-    text-decoration: none;
+    height: 40px;
+    width: 40px;
 }
 
 .cabecalho-menu{
