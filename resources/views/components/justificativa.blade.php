@@ -41,7 +41,7 @@
                         <p><span class="font-semibold text-gray-600">CPF:</span> {{ $cpf }}</p>
                         <p><span class="font-semibold text-gray-600">Data:</span> {{ $datas }}</p>
                         <p><span class="font-semibold text-gray-600">Key:</span> {{ $key }}</p>
-    
+
                         <div class="mt-2">
                             <span class="font-semibold text-gray-600">Status:</span>
                             @switch($requerimento->status ?? 'em_andamento')
@@ -59,13 +59,33 @@
                             @break
                             @endswitch
                         </div>
-                        @if($requerimento->status === 'finalizado' && isset($requerimento->finalizado_por))
+                        @if(in_array($requerimento->status, ['finalizado', 'indeferido', 'pendente']) && isset($requerimento->finalizado_por))
                         <p>
                             <span class="font-semibold text-gray-600">Servidor(a):</span>
                             <span class="inline-block px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
                                 <i class="fas fa-user mr-1"></i>{{ $requerimento->finalizado_por }}
                             </span>
                         </p>
+                        @endif
+                        @if($requerimento->status === 'finalizado' && isset($requerimento->resposta) && !empty($requerimento->resposta))
+                        <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                            <h6 class="text-sm font-semibold text-green-800 mb-1">Resposta:</h6>
+                            <p class="text-sm text-gray-700">{{ $requerimento->resposta }}</p>
+                        </div>
+                        @endif
+
+                        @if($requerimento->status === 'indeferido' && isset($requerimento->resposta) && !empty($requerimento->resposta))
+                        <div class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
+                            <h6 class="text-sm font-semibold text-red-800 mb-1">Resposta:</h6>
+                            <p class="text-sm text-gray-700">{{ $requerimento->resposta }}</p>
+                        </div>
+                        @endif
+
+                        @if($requerimento->status === 'pendente' && isset($requerimento->resposta) && !empty($requerimento->resposta))
+                        <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                            <h6 class="text-sm font-semibold text-yellow-800 mb-1">Resposta:</h6>
+                            <p class="text-sm text-gray-700">{{ $requerimento->resposta }}</p>
+                        </div>
                         @endif
                     </div>
 
@@ -104,6 +124,30 @@
                                 @endif
                             </ul>
                         </div>
+                        @if($requerimento->status === 'finalizado' && isset($requerimento->anexos_finalizacao) && !empty($requerimento->anexos_finalizacao))
+                        <div class="relative min-h-[120px] mt-4">
+                            <h5 class="text-xl font-bold text-gray-800">Anexos da Finalização:</h5>
+                            <div class="absolute -bottom-1 left-0 w-16 h-1 bg-green-300 rounded"></div>
+                            <ul class="space-y-2 mt-2">
+                                @php
+                                $anexosFinalizacao = is_string($requerimento->anexos_finalizacao) ? json_decode($requerimento->anexos_finalizacao, true) : $requerimento->anexos_finalizacao;
+                                $anexosFinalizacao = is_array($anexosFinalizacao) ? array_filter($anexosFinalizacao) : [];
+                                @endphp
+
+                                @if(count($anexosFinalizacao) > 0)
+                                @foreach($anexosFinalizacao as $anexo)
+                                <li>
+                                    <a href="{{ asset('storage/'.$anexo) }}" class="inline-flex items-center px-3 py-1 text-sm text-green-600 border border-green-600 rounded-md hover:bg-green-50" target="_blank">
+                                        <i class="fas fa-file-download mr-2"></i> {{ basename($anexo) }}
+                                    </a>
+                                </li>
+                                @endforeach
+                                @else
+                                <li class="text-gray-500 italic">Sem anexos</li>
+                                @endif
+                            </ul>
+                        </div>
+                        @endif
 
                         <div class="relative min-h-[120px]">
                             <h5 class="text-xl font-bold text-gray-800">Observações:</h5>
@@ -141,13 +185,13 @@
                             <i class="fas fa-file-pdf text-lg"></i>
                         </a>
 
-                        <button type="submit" name="status" value="finalizado" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" title="Finalizar">
+                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" data-bs-toggle="modal" data-bs-target="#finalizacaoModal-{{ $requerimento->id }}" title="Finalizar">
                             <i class="fas fa-check text-lg"></i>
                         </button>
-                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $id }}" title="Indeferir">
+                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" data-bs-toggle="modal" data-bs-target="#indeferimentoModal-{{ $requerimento->id }}" title="Indeferir">
                             <i class="fas fa-times text-lg"></i>
                         </button>
-                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $id }}" title="Pendência">
+                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $requerimento->id }}" title="Pendência">
                             <i class="fas fa-exclamation text-lg"></i>
                         </button>
                     </form>
@@ -160,67 +204,10 @@
             </div>
         </div>
 
+        <x-approve-modal :requerimento="$requerimento" />
 
-        <div class="modal fade" id="indeferimentoModal-{{ $id }}" tabindex="-1" aria-labelledby="indeferimentoModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-lg shadow-lg">
-                    <div class="modal-header p-4 border-b border-gray-200">
-                        <h5 class="text-xl font-bold text-gray-800" id="indeferimentoModalLabel">Motivo do Indeferimento</h5>
-                        <button type="button" class="text-gray-400 hover:text-gray-600" data-bs-dismiss="modal" aria-label="Close">
-                            <span class="text-2xl">×</span>
-                        </button>
-                    </div>
-                    <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <div class="modal-body p-4">
-                            <div class="mb-4">
-                                <label for="motivo" class="block text-sm font-medium text-gray-700 mb-1">Explique o motivo do indeferimento:</label>
-                                <textarea class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500" id="motivo" name="motivo" rows="4" required></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer p-4 border-t border-gray-200 flex justify-end gap-3">
-                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" title="Cancelar">
-                                <i class="fas fa-times text-lg"></i>
-                            </button>
-                            <button type="submit" name="status" value="indeferido" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" title="Confirmar Indeferimento">
-                                <i class="fas fa-check text-lg"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <x-deny-modal :requerimento="$requerimento" />
 
+        <x-pendent-modal :requerimento="$requerimento" />
 
-        <div class="modal fade" id="pendenciaModal-{{ $id }}" tabindex="-1" aria-labelledby="pendenciaModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-lg shadow-lg">
-                    <div class="modal-header p-4 border-b border-gray-200">
-                        <h5 class="text-xl font-bold text-gray-800" id="pendenciaModalLabel">Motivo da Pendência</h5>
-                        <button type="button" class="text-gray-400 hover:text-gray-600" data-bs-dismiss="modal" aria-label="Close">
-                            <span class="text-2xl">×</span>
-                        </button>
-                    </div>
-                    <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <div class="modal-body p-4">
-                            <div class="mb-4">
-                                <label for="motivo" class="block text-sm font-medium text-gray-700 mb-1">Explique o motivo da pendência:</label>
-                                <textarea class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" id="motivo" name="motivo" rows="4" required></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer p-4 border-t border-gray-200 flex justify-end gap-3">
-                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" title="Cancelar">
-                                <i class="fas fa-times text-lg"></i>
-                            </button>
-                            <button type="submit" name="status" value="pendente" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" title="Confirmar Pendência">
-                                <i class="fas fa-check text-lg"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 </div>
