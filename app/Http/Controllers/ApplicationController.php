@@ -87,17 +87,34 @@ class ApplicationController extends Controller
         $cursos = $this->cursos;
 
         $availableTypes = $this->getAvailableRequisitionTypes();
-        $tiposRequisicao = collect($this->tiposRequisicao)
-            ->filter(function ($value, $key) use ($availableTypes) {
-                return in_array($key, $availableTypes);
-            })
-            ->toArray();
+
+        $allRequisitionTypes = $this->tiposRequisicao;
+
+        $tiposDisponiveis = [];
+        $tiposIndisponiveis = [];
+
+        foreach ($allRequisitionTypes as $id => $nome) {
+            if (in_array($id, $availableTypes)) {
+                $tiposDisponiveis[$id] = $nome;
+            } else {
+                $tiposIndisponiveis[$id] = $nome;
+            }
+        }
+
+        // Log para debug
+        Log::info('Tipos de requisição para exibição', [
+            'disponíveis' => count($tiposDisponiveis),
+            'indisponíveis' => count($tiposIndisponiveis),
+            'tiposComEventos' => $this->tiposComEventos
+        ]);
 
         return view('application.index', [
             'requerimentos' => $requerimentos,
             'cursos' => $cursos,
-            'tiposRequisicao' => $tiposRequisicao,
-            'tiposComEventos' => $this->tiposComEventos
+            'tiposRequisicao' => $tiposDisponiveis,         
+            'tiposIndisponiveis' => $tiposIndisponiveis,    
+            'tiposComEventos' => $this->tiposComEventos,    
+            'allTypes' => $allRequisitionTypes              
         ]);
     }
 
@@ -388,11 +405,11 @@ class ApplicationController extends Controller
 
         if ($request->status === 'finalizado') {
             $requerimento->finalizado_por = Auth::user()->name;
-            
+
             if ($request->has('resposta')) {
                 $requerimento->resposta = $request->resposta;
             }
-            
+
             // Processar anexos opcionais
             if ($request->hasFile('anexos_finalizacao')) {
                 $anexosPaths = [];

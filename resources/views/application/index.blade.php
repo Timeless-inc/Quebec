@@ -125,47 +125,59 @@
 
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <label for="tipoRequisicao" class="form-label">Tipo de Requisição <span id="tipoRequisicaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="tipoRequisicao" name="tipoRequisicao" onchange="updateAnexoDropdown()">
+                                                <label for="tipoRequisicao" class="form-label">Tipo de Requisição <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="tipoRequisicao" name="tipoRequisicao" required>
                                                     <option value="">Selecione o tipo de requisição</option>
+
+                                                    <!-- Tipos disponíveis -->
                                                     @foreach($tiposRequisicao as $id => $tipo)
-                                                    <option value="{{ $id }}" @if(in_array($id, $tiposComEventos ?? [])) data-event-required="true" @endif>
-                                                        {{ $tipo }}
-                                                    </option>
+                                                    <option value="{{ $id }}">{{ $tipo }}</option>
                                                     @endforeach
+
+                                                    <!-- Tipos indisponíveis (em vermelho) -->
+                                                    @if(isset($tiposIndisponiveis) && count($tiposIndisponiveis) > 0)
+                                                    <optgroup label="Indisponíveis no momento">
+                                                        @foreach($tiposIndisponiveis as $id => $tipo)
+                                                        <option value="{{ $id }}" class="text-danger" disabled style="color: #dc3545 !important; font-style: italic;">
+                                                            {{ $tipo }} (Indisponível)
+                                                        </option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                    @endif
                                                 </select>
                                                 <small class="text-muted">
-                                                    Nota: Alguns tipos de requerimento só estão disponíveis em períodos específicos.
+                                                    Nota: Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
                                                 </small>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="dropdown" id="anexoDropdown" style="display: none; margin-top: 2rem;">
-                                                    <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
-                                                        Anexos/informações (clique para abrir)
-                                                    </button>
-                                                    <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
-                                                        <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
-                                                    </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="dropdown" id="anexoDropdown" style="display: none; margin-top: 2rem;">
+                                                <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
+                                                    Anexos/informações (clique para abrir)
+                                                </button>
+                                                <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
+                                                    <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
                                                 </div>
                                             </div>
                                         </div>
                                 </div>
-
-
-                                <div class="mb-3">
-                                    <label for="observacoes" class="form-label">Observações</label>
-                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                                </div>
-
-                                <div class="text-end">
-                                    <button type="submit" class="btn btn-success">Enviar</button>
-                                </div>
                             </div>
-                            </form>
+
+
+                            <div class="mb-3">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success">Enviar</button>
+                            </div>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
         </div>
         </div>
@@ -178,6 +190,30 @@
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
             const anexoButton = document.getElementById('anexoButton');
             const form = document.getElementById('applicationForm');
+            const selectElement = document.getElementById('tipoRequisicao');
+            const options = selectElement.querySelectorAll('option');
+
+            options.forEach(option => {
+                if (option.classList.contains('indisponivel')) {
+                    option.style.color = '#dc3545';
+                    option.style.fontStyle = 'italic';
+                }
+            });
+
+            // Adicionar tooltip nas opções indisponíveis
+            selectElement.addEventListener('mouseover', function(e) {
+                if (e.target.classList && e.target.classList.contains('indisponivel')) {
+                    document.getElementById('tipoIndisponivelAlert').style.display = 'block';
+                }
+            });
+
+            selectElement.addEventListener('mouseout', function() {
+                document.getElementById('tipoIndisponivelAlert').style.display = 'none';
+            });
+
+            selectElement.addEventListener('change', function() {
+                document.getElementById('tipoIndisponivelAlert').style.display = 'none';
+            });
 
             // Tipos de requerimento que precisam de informações adicionais ou anexos
             const tiposComAnexos = [1, 10, 15, 20, 21, 28, 30, 31, 32, 6, 13, 14, 19, 24];
@@ -645,6 +681,22 @@
 
         .required-mark {
             margin-left: 4px;
+        }
+
+        option.indisponivel {
+            color: #dc3545 !important;
+            font-style: italic;
+        }
+
+        #tipoIndisponivelAlert {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        #tipoRequisicao option:disabled {
+            color: #dc3545 !important;
+            background-color: #f8d7da;
         }
     </style>
 </body>
