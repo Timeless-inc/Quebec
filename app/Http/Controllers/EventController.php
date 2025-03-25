@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use Carbon\Carbon;
 
 class EventController extends Controller
 {
     public function store(Request $request)
     {
-        // Log inicial com todos os dados recebidos
         Log::info('Tentativa de criação de evento', [
             'request_data' => $request->all(),
             'user_id' => Auth::id()
@@ -30,7 +30,6 @@ class EventController extends Controller
 
             Log::info('Dados validados', $validated);
 
-            // Preencher título se estiver vazio
             if (empty($validated['title'])) {
                 $applicationController = app('App\Http\Controllers\ApplicationController');
                 $tiposRequisicao = $applicationController->getTiposRequisicao();
@@ -38,10 +37,8 @@ class EventController extends Controller
                 Log::info('Título gerado automaticamente', ['title' => $validated['title']]);
             }
 
-            // Converter checkbox em bool
             $validated['is_active'] = isset($request->is_active) ? true : false;
 
-            // Adicionar usuário que criou o evento
             $validated['created_by'] = Auth::id();
 
             Log::info('Antes de criar o evento', $validated);
@@ -78,7 +75,6 @@ class EventController extends Controller
                 'is_active' => 'sometimes|boolean',
             ]);
 
-            // Converter checkbox em bool
             $validated['is_active'] = isset($request->is_active) ? true : false;
 
             $event->update($validated);
@@ -121,28 +117,11 @@ class EventController extends Controller
         }
     }
 
-    // Este é o método que estava faltando
     private function updateAvailableRequisitionTypes()
     {
         try {
-            $activeEvents = Event::where('is_active', true)
-                ->whereDate('end_date', '>=', now())
-                ->get();
-
-            $eventTypes = $activeEvents->pluck('requisition_type_id')->toArray();
-
-            Log::info('Atualizando cache de tipos de requisição disponíveis', ['types' => $eventTypes]);
-
-            // Armazenar em cache por 1 hora
-            Cache::put('event_requisition_types', $eventTypes, 3600);
-
             return true;
         } catch (\Exception $e) {
-            Log::error('Erro ao atualizar cache de tipos de requisição', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
             return false;
         }
     }
@@ -157,5 +136,101 @@ class EventController extends Controller
             'message' => "Removed {$deletedCount} expired events",
             'timestamp' => now()->format('Y-m-d H:i:s')
         ]);
+    }
+
+    public function searchByCpf($cpf)
+    {
+        $user = User::where('cpf', $cpf)->first();
+
+        if ($user) {
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuário não encontrado'
+        ]);
+    }
+
+    public function storeException(Request $request)
+    {
+        Log::info('Tentativa de criação de evento de exceção', [
+            'request_data' => $request->all(),
+            'user_id' => Auth::id()
+        ]);
+
+        try {
+            $validated = $request->validate([
+                'requisition_type_id' => 'required|integer',
+                'title' => 'nullable|string|max:255',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'is_active' => 'sometimes|boolean',
+                'user_id' => 'required|exists:users,id', 
+                'cpf' => 'required|string', 
+            ]);
+
+            Log::info('Dados validados para evento de exceção', $validated);
+
+            if (empty($validated['title'])) {
+                $applicationController = app('App\Http\Controllers\ApplicationController');
+                $tiposRequisicao = $applicationController->getTiposRequisicao();
+                $validated['title'] = $tiposRequisicao[$validated['requisition_type_id']] ?? "Evento de Exceção #" . $validated['requisition_type_id'];
+                Log::info('Título gerado automaticamente', ['title' => $validated['title']]);
+            }
+
+            $validated['is_active'] = isset($request->is_active) ? true : false;
+
+            $validated['created_by'] = Auth::id();
+
+            $validated['is_exception'] = true;
+
+            $validated['exception_user_id'] = $validated['user_id'];
+
+            unset($validated['user_id']);
+            unset($validated['cpf']);
+
+            Log::info('Antes de criar o evento de exceção', $validated);
+
+            $event = Event::create($validated);
+
+            Log::info('Evento de exceção criado com sucesso', ['event_id' => $event->id]);
+
+            $this->updateAvailableRequisitionTypes();
+
+            return redirect()->back()->with('success', 'Evento de exceção criado com sucesso!');
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar evento de exceção', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Erro ao criar o evento de exceção: ' . $e->getMessage());
+        }
+    }
+
+    public function scopeActiveForUser($query, $userId, $isCradt = false)
+    {
+        return $query->where('is_active', true)
+            ->whereDate('end_date', '>=', now())
+            ->where(function ($query) use ($userId, $isCradt) {
+                $query->where('is_exception', false);
+
+                if (!$isCradt) {
+                    $query->orWhere(function ($q) use ($userId) {
+                        $q->where('is_exception', true)
+                            ->where('exception_user_id', $userId);
+                    });
+                } else {
+                    $query->orWhere('is_exception', true);
+                }
+            });
     }
 }

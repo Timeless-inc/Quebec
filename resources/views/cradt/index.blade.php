@@ -24,6 +24,9 @@
                 <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
                     + Novo Evento
                 </button>
+                <button type="button" class="px-3 py-1 text-sm text-white bg-yellow-700 rounded-md hover:bg-yellow-900" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
+                    ⚠ Evento Exceção
+                </button>
             </div>
         </div>
     </x-slot>
@@ -95,6 +98,12 @@
                                     <i class="fas fa-clock"></i> Este evento vai encerrar em {{ $event->daysUntilExpiration() }} dias
                             </div>
                             @endif
+                            @if($event->is_exception && $event->exceptionUser)
+                            <p class="card-text small text-muted">
+                                <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }} {{ $event->exceptionUser->cpf }}
+                            </p>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -108,7 +117,7 @@
             <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
         </div>
         @endif
-        </div>
+    </div>
     </div>
 
     <!-- Processos Section -->
@@ -151,4 +160,5 @@
     </div>
 
     <x-event-add />
+    <x-event-add-exception />
 </x-appcradt>

@@ -12,6 +12,7 @@ use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Event;
 
 class ApplicationController extends Controller
 {
@@ -397,7 +398,7 @@ class ApplicationController extends Controller
 
         if (in_array($request->status, ['indeferido', 'pendente'])) {
             $requerimento->finalizado_por = Auth::user()->name;
-            
+
             $requerimento->resolved_at = now();
             $tempoResolucao = $requerimento->created_at->diffInHours($requerimento->resolved_at);
             $requerimento->tempoResolucao = $tempoResolucao;
@@ -450,23 +451,73 @@ class ApplicationController extends Controller
 
     public function getAvailableRequisitionTypes()
     {
-        $eventTypes = Cache::get('event_requisition_types', []);
+        $user = Auth::user();
+        $userId = Auth::id();
 
-        $allTypes = array_keys($this->tiposRequisicao);
+        $userIsCradt = (isset($user->role) && $user->role === 'cradt');
+
+        $alwaysAvailableTypes = $this->getTiposRequisicaoSemEvento();
+
+        $eventDependentTypes = Event::where('is_active', true)
+            ->whereDate('end_date', '>=', now())
+            ->where(function ($query) use ($userId, $userIsCradt) {
+                $query->where('is_exception', false);
+
+                if (!$userIsCradt) {
+                    $query->orWhere(function ($q) use ($userId) {
+                        $q->where('is_exception', true)
+                            ->where('exception_user_id', $userId);
+                    });
+                } else {
+                    $query->orWhere('is_exception', true);
+                }
+            })
+            ->pluck('requisition_type_id')
+            ->unique()
+            ->toArray();
+
+        $allAvailableTypes = array_merge($alwaysAvailableTypes, $eventDependentTypes);
+
+        return $allAvailableTypes;
+    }
 
 
-        return array_filter($allTypes, function ($typeId) use ($eventTypes) {
-            if (in_array($typeId, $this->tiposComEventos)) {
-                return in_array($typeId, $eventTypes);
-            }
+    public function getTiposRequisicaoSemEvento()
+    {
 
-            return true;
-        });
+        $todosOsTipos = array_keys($this->getTiposRequisicao());
+        $tiposComEventos = $this->tiposComEventos; 
+
+        return array_diff($todosOsTipos, $tiposComEventos);
     }
 
     public function isRequisitionTypeAvailable($typeId)
     {
         $availableTypes = $this->getAvailableRequisitionTypes();
         return in_array($typeId, $availableTypes);
+    }
+
+    public function getAvailableEvents()
+    {
+        $userId = Auth::id();
+        $user = Auth::user();
+        $userIsCradt = $user->role === 'cradt';
+
+        $query = Event::where('is_active', true)
+            ->whereDate('end_date', '>=', now())
+            ->where(function ($query) use ($userId, $userIsCradt) {
+                $query->where('is_exception', false);
+
+                if (!$userIsCradt) {
+                    $query->orWhere(function ($q) use ($userId) {
+                        $q->where('is_exception', true)
+                            ->where('exception_user_id', $userId);
+                    });
+                } else {
+                    $query->orWhere('is_exception', true);
+                }
+            });
+
+        return $query->get();
     }
 }
