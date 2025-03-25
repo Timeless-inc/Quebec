@@ -111,10 +111,10 @@ class ApplicationController extends Controller
         return view('application.index', [
             'requerimentos' => $requerimentos,
             'cursos' => $cursos,
-            'tiposRequisicao' => $tiposDisponiveis,         
-            'tiposIndisponiveis' => $tiposIndisponiveis,    
-            'tiposComEventos' => $this->tiposComEventos,    
-            'allTypes' => $allRequisitionTypes              
+            'tiposRequisicao' => $tiposDisponiveis,
+            'tiposIndisponiveis' => $tiposIndisponiveis,
+            'tiposComEventos' => $this->tiposComEventos,
+            'allTypes' => $allRequisitionTypes
         ]);
     }
 
@@ -397,6 +397,10 @@ class ApplicationController extends Controller
 
         if (in_array($request->status, ['indeferido', 'pendente'])) {
             $requerimento->finalizado_por = Auth::user()->name;
+            
+            $requerimento->resolved_at = now();
+            $tempoResolucao = $requerimento->created_at->diffInHours($requerimento->resolved_at);
+            $requerimento->tempoResolucao = $tempoResolucao;
 
             if ($request->has('resposta') && !empty($request->resposta)) {
                 $requerimento->resposta = $request->resposta;
@@ -405,6 +409,10 @@ class ApplicationController extends Controller
 
         if ($request->status === 'finalizado') {
             $requerimento->finalizado_por = Auth::user()->name;
+
+            $requerimento->resolved_at = now();
+            $tempoResolucao = $requerimento->created_at->diffInHours($requerimento->resolved_at);
+            $requerimento->tempoResolucao = $tempoResolucao;
 
             if ($request->has('resposta')) {
                 $requerimento->resposta = $request->resposta;
