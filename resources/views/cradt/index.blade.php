@@ -24,6 +24,9 @@
                 <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
                     + Novo Evento
                 </button>
+                <button type="button" class="px-3 py-1 text-sm text-white bg-yellow-700 rounded-md hover:bg-yellow-900" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
+                    ⚠ Evento Exceção
+                </button>
             </div>
         </div>
     </x-slot>
@@ -59,10 +62,16 @@
                 <div class="row">
                     @foreach($events as $event)
                     <div class="col-md-4 mb-3">
-                        <div class="card {{ $event->isEndingToday() ? 'border-danger' : ($event->isExpiringSoon() ? 'border-warning' : '') }}">
+                        <div class="card {{ $event->isEndingToday() ? 'border-danger' : ($event->isExpiringSoon() ? 'border-warning' : '') }} 
+                            {{ $event->is_exception ? 'border-warning bg-light' : '' }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="card-title mb-0">{{ $event->title }}</h5>
+                                    <h5 class="card-title mb-0">
+                                        {{ $event->title }}
+                                        @if($event->is_exception)
+                                            <span class="badge bg-warning text-dark">Exceção</span>
+                                        @endif
+                                    </h5>
                                     <div>
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
                                             <i class="fas fa-edit"></i>
@@ -94,6 +103,12 @@
                                     <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
                                     <i class="fas fa-clock"></i> Este evento vai encerrar em {{ $event->daysUntilExpiration() }} dias
                             </div>
+                            @endif
+
+                            @if($event->is_exception && $event->exceptionUser)
+                                <p class="card-text small text-muted">
+                                    <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }}  {{ $event->exceptionUser->cpf }}
+                                </p>
                             @endif
                         </div>
                     </div>
@@ -151,4 +166,5 @@
     </div>
 
     <x-event-add />
+    <x-event-add-exception/>
 </x-appcradt>

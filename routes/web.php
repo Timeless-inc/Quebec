@@ -10,7 +10,6 @@ use App\Http\Controllers\JustificativaController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 //Geral
 Route::get('/', function () {
@@ -79,6 +78,8 @@ Route::post('/events', [EventController::class, 'store'])->name('events.store');
 Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
 Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 Route::get('/cleanup-events', [EventController::class, 'cleanupExpiredEvents']);
+Route::post('/events/store-exception', [EventController::class, 'storeException'])->name('events.store-exception');
+Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByCpf']);
 
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
