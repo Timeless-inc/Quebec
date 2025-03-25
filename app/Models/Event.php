@@ -18,16 +18,13 @@ class Event extends Model
         'start_date',
         'end_date',
         'is_active',
-        'created_by',
-        'is_exception',
-        'exception_user_id'
+        'created_by'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'is_active' => 'boolean',
-        'is_exception' => 'boolean'
     ];
 
     protected static function boot()
@@ -138,28 +135,5 @@ class Event extends Model
     {
         return self::withoutGlobalScope('active')
             ->whereDate('end_date', '<', Carbon::today());
-    }
-
-    public function scopeActiveForUser($query, $userId, $isCradt = false)
-    {
-        return $query->where('is_active', true)
-            ->whereDate('end_date', '>=', now())
-            ->where(function($query) use ($userId, $isCradt) {
-                $query->where('is_exception', false);
-                
-                if (!$isCradt) {
-                    $query->orWhere(function($q) use ($userId) {
-                        $q->where('is_exception', true)
-                          ->where('exception_user_id', $userId);
-                    });
-                } else {
-                    $query->orWhere('is_exception', true);
-                }
-            });
-    }
-
-    public function exceptionUser()
-    {
-        return $this->belongsTo(User::class, 'exception_user_id');
     }
 }

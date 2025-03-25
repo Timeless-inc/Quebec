@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
-use App\Models\Event;
 use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use Illuminate\Support\Facades\Storage;
@@ -432,6 +431,7 @@ class ApplicationController extends Controller
 
         $requerimento->save();
 
+        // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado
         event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
 
         return redirect()->back()
@@ -443,77 +443,30 @@ class ApplicationController extends Controller
         return $this->tiposRequisicao;
     }
 
-    public function getAvailableRequisitionTypes()
-    {
-        $user = Auth::user();
-        $userId = Auth::id();
-        
-        $userIsCradt = (isset($user->role) && $user->role === 'cradt');
-        
-        $alwaysAvailableTypes = $this->getTiposRequisicaoSemEvento();
-        
-        $eventDependentTypes = Event::where('is_active', true)
-            ->whereDate('end_date', '>=', now())
-            ->where(function($query) use ($userId, $userIsCradt) {
-                $query->where('is_exception', false);
-                
-                if (!$userIsCradt) {
-                    $query->orWhere(function($q) use ($userId) {
-                        $q->where('is_exception', true)
-                          ->where('exception_user_id', $userId);
-                    });
-                } else {
-                    $query->orWhere('is_exception', true);
-                }
-            })
-            ->pluck('requisition_type_id')
-            ->unique()
-            ->toArray();
-        
-        $allAvailableTypes = array_merge($alwaysAvailableTypes, $eventDependentTypes);
-        
-        return $allAvailableTypes;
-    }
-
-    public function getTiposRequisicaoSemEvento()
-    {
-        $todosOsTipos = array_keys($this->getTiposRequisicao());
-        $tiposComEventos = $this->tiposComEventos; 
-        return array_diff($todosOsTipos, $tiposComEventos);
-    }
-
     public function getTiposComEventos()
     {
         return $this->tiposComEventos;
+    }
+
+    public function getAvailableRequisitionTypes()
+    {
+        $eventTypes = Cache::get('event_requisition_types', []);
+
+        $allTypes = array_keys($this->tiposRequisicao);
+
+
+        return array_filter($allTypes, function ($typeId) use ($eventTypes) {
+            if (in_array($typeId, $this->tiposComEventos)) {
+                return in_array($typeId, $eventTypes);
+            }
+
+            return true;
+        });
     }
 
     public function isRequisitionTypeAvailable($typeId)
     {
         $availableTypes = $this->getAvailableRequisitionTypes();
         return in_array($typeId, $availableTypes);
-    }
-
-    public function getAvailableEvents()
-    {
-        $userId = Auth::id();
-        $user = Auth::user();
-        $userIsCradt = $user->role === 'cradt';
-        
-        $query = Event::where('is_active', true)
-            ->whereDate('end_date', '>=', now())
-            ->where(function($query) use ($userId, $userIsCradt) {
-                $query->where('is_exception', false);
-                
-                if (!$userIsCradt) {
-                    $query->orWhere(function($q) use ($userId) {
-                        $q->where('is_exception', true)
-                          ->where('exception_user_id', $userId);
-                    });
-                } else {
-                    $query->orWhere('is_exception', true);
-                }
-            });
-        
-        return $query->get();
     }
 }
