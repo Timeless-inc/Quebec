@@ -320,8 +320,28 @@ class ApplicationController extends Controller
         }
 
         $cursos = $this->cursos;
+        $tiposRequisicao = $this->tiposRequisicao;
+        $tiposComEventos = $this->tiposComEventos;
 
-        return view('application.edit', compact('requerimento', 'cursos'));
+        // Processar anexos existentes
+        $anexosAtuais = [];
+        if ($requerimento->anexarArquivos) {
+            $attachmentPaths = json_decode($requerimento->anexarArquivos, true);
+            if (is_array($attachmentPaths)) {
+                foreach ($attachmentPaths as $key => $path) {
+                    $anexosAtuais[$key] = [
+                        'path' => $path,
+                        'url' => Storage::url($path),
+                        'name' => basename($path)
+                    ];
+                }
+            }
+        }
+
+        // Preparar dadosExtra como array
+        $dadosExtra = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : null;
+
+        return view('application.edit', compact('requerimento', 'cursos', 'tiposRequisicao', 'tiposComEventos', 'anexosAtuais', 'dadosExtra'));
     }
 
     public function update(Request $request, $id)
@@ -339,22 +359,25 @@ class ApplicationController extends Controller
             'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
         ]);
 
-        if ($request->hasFile('anexarArquivos')) {
-            if ($requerimento->anexarArquivos) {
-                $existingFiles = json_decode($requerimento->anexarArquivos, true);
-                if (is_array($existingFiles)) {
-                    foreach ($existingFiles as $filePath) {
-                        Storage::disk('public')->delete($filePath);
-                    }
-                }
-            }
+        // Carregar anexos existentes
+        $attachmentPaths = $requerimento->anexarArquivos ? json_decode($requerimento->anexarArquivos, true) : [];
 
-            $attachmentPaths = [];
+        if ($request->hasFile('anexarArquivos')) {
+            $counter = 1;
             foreach ($request->file('anexarArquivos') as $key => $file) {
-                $extension = $file->getClientOriginalExtension();
-                $fileName = 'Doc_' . ($key + 1) . '_' . time() . '.' . $extension;
-                $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
-                $attachmentPaths[] = $path;
+                if ($file) { // Verifica se um novo arquivo foi enviado para essa chave
+                    // Se já existe um arquivo para essa chave, excluí-lo
+                    if (isset($attachmentPaths[$key])) {
+                        Storage::disk('public')->delete($attachmentPaths[$key]);
+                    }
+
+                    // Salvar o novo arquivo
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = "Doc_{$counter}_" . time() . ".{$extension}";
+                    $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
+                    $attachmentPaths[$key] = $path;
+                    $counter++;
+                }
             }
             $validatedData['anexarArquivos'] = json_encode($attachmentPaths);
         }
@@ -486,7 +509,7 @@ class ApplicationController extends Controller
     {
 
         $todosOsTipos = array_keys($this->getTiposRequisicao());
-        $tiposComEventos = $this->tiposComEventos; 
+        $tiposComEventos = $this->tiposComEventos;
 
         return array_diff($todosOsTipos, $tiposComEventos);
     }
