@@ -124,9 +124,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="observacoes" class="form-label">Observações</label>
-                                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ $requerimento->observacoes }}</textarea>
-                                    </div>
+    <label for="observacoes" class="form-label">Observações</label>
+    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+</div>
 
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-success">Atualizar</button>
@@ -139,6 +139,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Armazenar os dados em elementos ocultos -->
+    <div id="dadosExtra" style="display: none;">{{ json_encode($dadosExtra ?? []) }}</div>
+    <div id="anexosAtuais" style="display: none;">{{ json_encode($anexosAtuais ?? []) }}</div>
+
+    <script>
+        // Carregar os dados dos elementos ocultos
+        const dadosExtraElement = document.getElementById('dadosExtra');
+        const anexosAtuaisElement = document.getElementById('anexosAtuais');
+
+        window.dadosExtra = dadosExtraElement ? JSON.parse(dadosExtraElement.textContent) : [];
+        window.anexosAtuais = anexosAtuaisElement ? JSON.parse(anexosAtuaisElement.textContent) : [];
+
+        // Adicionar log para depuração
+        console.log('dadosExtra:', window.dadosExtra);
+        console.log('anexosAtuais:', window.anexosAtuais);
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -356,8 +373,8 @@
             };
 
             // Carregar dados existentes
-            const dadosExtra = @json($dadosExtra);
-            const anexosAtuais = @json($anexosAtuais);
+            const dadosExtra = window.dadosExtra;
+            const anexosAtuais = window.anexosAtuais;
 
             function updateAnexoDropdown() {
                 const selectedType = Number(tipoRequisicao.value);
@@ -383,9 +400,9 @@
                         if (field.type === 'text') {
                             const existingValue = dadosExtra && dadosExtra[field.name.split('[')[1].replace(']', '')] || '';
                             fieldDiv.innerHTML = `
-                    <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                    <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" value="${existingValue}" required>
-                `;
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" value="${existingValue}" required>
+                            `;
                         } else if (field.type === 'select') {
                             const existingValue = dadosExtra && dadosExtra[field.name.split('[')[1].replace(']', '')] || '';
                             let optionsHtml = '<option value="">Selecione</option>';
@@ -393,29 +410,29 @@
                                 optionsHtml += `<option value="${option}" ${existingValue === option ? 'selected' : ''}>${option}</option>`;
                             });
                             fieldDiv.innerHTML = `
-                    <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                    <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
-                        ${optionsHtml}
-                    </select>
-                `;
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
+                                    ${optionsHtml}
+                                </select>
+                            `;
                         } else if (field.type === 'file') {
                             const anexoAtual = anexosAtuais[field.name.split('[')[1].replace(']', '')] || null;
                             fieldDiv.innerHTML = `
-                    <div>
-                        <label class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label}</label>
-                        ${anexoAtual ? `
-                            <div style="font-size: 0.85rem; color: #555;">
-                                Anexo atual: <a href="${anexoAtual.url}" target="_blank">${anexoAtual.name}</a>
-                            </div>
-                        ` : ''}
-                        <div class="mt-1">
-                            <input type="file" class="form-control form-control-sm file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png">
-                            <span id="file-name-${uniqueId}" style="font-size: 0.85rem; color: #555; display: block; margin-top: 0.25rem;">
-                                ${anexoAtual ? '' : 'Nenhum arquivo selecionado'}
-                            </span>
-                        </div>
-                    </div>
-                `;
+                                <div>
+                                    <label class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label}</label>
+                                    ${anexoAtual ? `
+                                        <div style="font-size: 0.85rem; color: #555;">
+                                            Anexo atual: <a href="${anexoAtual.url}" target="_blank">${anexoAtual.name}</a>
+                                        </div>
+                                    ` : ''}
+                                    <div class="mt-1">
+                                        <input type="file" class="form-control form-control-sm file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png">
+                                        <span id="file-name-${uniqueId}" style="font-size: 0.85rem; color: #555; display: block; margin-top: 0.25rem;">
+                                            ${anexoAtual ? '' : 'Nenhum arquivo selecionado'}
+                                        </span>
+                                    </div>
+                                </div>
+                            `;
                         }
                         containerDiv.appendChild(fieldDiv);
                     });
@@ -435,25 +452,6 @@
                         } else {
                             fileNameSpan.textContent = 'Nenhum arquivo selecionado';
                         }
-                    });
-                });
-            }
-
-            function updateFileLabel(input) {
-                const uniqueId = input.id;
-                const label = document.querySelector(`label[for="${uniqueId}"]`);
-                if (input.files && input.files.length > 0) {
-                    label.textContent = `${input.files[0].name} (anexado)`;
-                } else {
-                    label.textContent = input.previousElementSibling ? input.previousElementSibling.textContent : field.label;
-                }
-            }
-
-            function initializeFileInputs() {
-                const fileInputs = document.querySelectorAll('.file-input');
-                fileInputs.forEach(input => {
-                    input.addEventListener('change', function() {
-                        updateFileLabel(this);
                     });
                 });
             }
