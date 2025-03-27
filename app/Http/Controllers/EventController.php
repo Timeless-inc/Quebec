@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EventCreated;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,8 @@ class EventController extends Controller
             $event = Event::create($validated);
 
             Log::info('Evento criado com sucesso', ['event_id' => $event->id]);
+
+            event(new EventCreated($event));
 
             $this->updateAvailableRequisitionTypes();
 
@@ -202,6 +205,8 @@ class EventController extends Controller
             $event = Event::create($validated);
 
             Log::info('Evento de exceção criado com sucesso', ['event_id' => $event->id]);
+
+            event(new EventCreated($event));
 
             $this->updateAvailableRequisitionTypes();
 

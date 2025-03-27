@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Events\UserRegistered;
 use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
+use App\Events\EventCreated;
+use App\Listeners\SendEventNotification;
 use App\Listeners\SendWelcomeEmail;
 use App\Listeners\SendNewRequestNotification;
 use App\Listeners\SendStatusUpdateNotification;
@@ -34,6 +36,10 @@ class EventServiceProvider extends ServiceProvider
         
         ApplicationStatusChanged::class => [
             SendStatusUpdateNotification::class,
+        ],
+
+        EventCreated::class => [
+            SendEventNotification::class,
         ],
     ];
 
