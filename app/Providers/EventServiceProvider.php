@@ -6,6 +6,8 @@ use App\Events\UserRegistered;
 use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use App\Events\EventCreated;
+use App\Events\EventExpiring;
+use App\Listeners\SendEventExpiringNotification;
 use App\Listeners\SendEventNotification;
 use App\Listeners\SendWelcomeEmail;
 use App\Listeners\SendNewRequestNotification;
@@ -41,6 +43,11 @@ class EventServiceProvider extends ServiceProvider
         EventCreated::class => [
             SendEventNotification::class,
         ],
+
+        EventExpiring::class => [
+            SendEventExpiringNotification::class,
+        ],
+
     ];
 
     /**

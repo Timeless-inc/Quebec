@@ -84,6 +84,8 @@ class EventController extends Controller
 
             Log::info('Evento atualizado com sucesso', ['event_id' => $event->id]);
 
+            event(new EventCreated($event));
+
             $this->updateAvailableRequisitionTypes();
 
             return redirect()->back()->with('success', 'Evento atualizado com sucesso!');
@@ -206,7 +208,6 @@ class EventController extends Controller
 
             Log::info('Evento de exceção criado com sucesso', ['event_id' => $event->id]);
 
-            event(new EventCreated($event));
 
             $this->updateAvailableRequisitionTypes();
 

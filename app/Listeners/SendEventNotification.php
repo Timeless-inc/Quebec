@@ -46,7 +46,7 @@ class SendEventNotification implements ShouldQueue
             }
             
             // Busca todos os usuários cadastrados
-            $users = User::all();
+            $users = User::where('role', 'Aluno')->get();
             
             if ($users->isEmpty()) {
                 Log::warning('Nenhum usuário encontrado para enviar notificação de evento');

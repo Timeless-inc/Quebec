@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         })->dailyAt('00:00');
 
         $schedule->command('events:process-expired')->dailyAt('00:00');
+
+        $schedule->command('events:check-expiring')->dailyAt('00:00');
     }
 
     /**
