@@ -216,20 +216,54 @@ class EventController extends Controller
         }
     }
 
+    public function isEventAvailableToday($event)
+    {
+        if (!is_object($event)) {
+            $event = Event::find($event);
+        }
+
+        if (!$event) {
+            return false;
+        }
+
+        $today = Carbon::today();
+        $eventStartDate = Carbon::parse($event->start_date)->startOfDay();
+        $eventEndDate = Carbon::parse($event->end_date)->endOfDay();
+
+        return $today->betweenIncluded($eventStartDate, $eventEndDate);
+    }
+
+    public function getAvailableEventsForToday()
+    {
+        $today = Carbon::today();
+        
+        return Event::where('is_active', true)
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->get();
+    }
+
     public function scopeActiveForUser($query, $userId, $isCradt = false)
     {
+        $today = Carbon::today();
+        
         return $query->where('is_active', true)
             ->whereDate('end_date', '>=', now())
-            ->where(function ($query) use ($userId, $isCradt) {
-                $query->where('is_exception', false);
+            ->where(function ($query) use ($userId, $isCradt, $today) {
+                $query->where('is_exception', false)
+                    ->whereDate('start_date', '<=', $today); 
 
                 if (!$isCradt) {
-                    $query->orWhere(function ($q) use ($userId) {
+                    $query->orWhere(function ($q) use ($userId, $today) {
                         $q->where('is_exception', true)
-                            ->where('exception_user_id', $userId);
+                            ->where('exception_user_id', $userId)
+                            ->whereDate('start_date', '<=', $today); 
                     });
                 } else {
-                    $query->orWhere('is_exception', true);
+                    $query->orWhere(function ($q) use ($today) {
+                        $q->where('is_exception', true)
+                            ->whereDate('start_date', '<=', $today); 
+                    });
                 }
             });
     }

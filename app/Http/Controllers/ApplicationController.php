@@ -173,6 +173,30 @@ class ApplicationController extends Controller
                 'dadosExtra.ano_semestre' => 'required_if:tipoRequisicao,30,31,32|string|max:50',
             ]);
 
+            $tipoId = $validatedData['tipoRequisicao'];
+            if (in_array($tipoId, $this->tiposComEventos)) {
+                $eventController = app(EventController::class);
+                $events = $eventController->getAvailableEventsForToday();
+                
+                $tipoEvents = $events->where('requisition_type_id', $tipoId);
+                
+                if ($tipoEvents->isEmpty()) {
+                    Log::warning('Tentativa de criar requerimento de tipo que requer evento, mas não há eventos disponíveis hoje', [
+                        'tipo_id' => $tipoId, 
+                        'user_id' => Auth::id()
+                    ]);
+                    
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['error' => 'Este tipo de requerimento só pode ser criado durante o período do evento associado. Por favor, verifique o calendário de eventos.']);
+                }
+                
+                Log::info('Evento disponível para criação de requerimento', [
+                    'tipo_id' => $tipoId,
+                    'eventos_disponíveis' => $tipoEvents->count()
+                ]);
+            }
+
             $validatedData['tipoRequisicao'] = $this->tiposRequisicao[$validatedData['tipoRequisicao']];
             $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
             $validatedData['key'] = Guid::uuid4()->toString();
@@ -545,7 +569,7 @@ class ApplicationController extends Controller
 
         $alwaysAvailableTypes = $this->getTiposRequisicaoSemEvento();
 
-        $eventDependentTypes = Event::where('is_active', true)
+        $allActiveEvents = Event::where('is_active', true)
             ->whereDate('end_date', '>=', now())
             ->where(function ($query) use ($userId, $userIsCradt) {
                 $query->where('is_exception', false);
@@ -559,6 +583,17 @@ class ApplicationController extends Controller
                     $query->orWhere('is_exception', true);
                 }
             })
+            ->get();
+
+        // Agora filtrar apenas os que estão na data atual
+        $today = \Carbon\Carbon::today();
+        $currentDateEvents = $allActiveEvents->filter(function($event) use ($today) {
+            $eventStartDate = \Carbon\Carbon::parse($event->start_date)->startOfDay();
+            $eventEndDate = \Carbon\Carbon::parse($event->end_date)->endOfDay();
+            return $today->betweenIncluded($eventStartDate, $eventEndDate);
+        });
+        
+        $eventDependentTypes = $currentDateEvents
             ->pluck('requisition_type_id')
             ->unique()
             ->toArray();
