@@ -4,7 +4,6 @@ function filterJustificativas(status) {
     const justificativas = document.querySelectorAll('.justificativa-item');
     let visibleCount = 0;
     
-    // Create or get message container
     let messageContainer = document.getElementById('status-message');
     if (!messageContainer) {
         messageContainer = document.createElement('div');
@@ -20,8 +19,12 @@ function filterJustificativas(status) {
     
     justificativas.forEach(item => {
         if (status === 'todos') {
-            item.style.display = 'block';
-            visibleCount++;
+            if (item.dataset.status === 'em_andamento') {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
         } else {
             if (item.dataset.status === status) {
                 item.style.display = 'block';
@@ -53,14 +56,14 @@ function filterJustificativas(status) {
                 titulo.textContent = 'Processos em Andamento:';
                 break;
             default:
-                messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
-                titulo.textContent = 'Todos os Processos:';
+                messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em andamento';
+                titulo.textContent = 'Processos em Andamento:';
         }
     } else {
         messageContainer.style.display = 'none';
         switch(status) {
             case 'todos':
-                titulo.textContent = 'Todos os Processos:';
+                titulo.textContent = 'Processos em Andamento:';
                 break;
             case 'atencao':
                 titulo.textContent = 'Processos em Atenção:';
@@ -120,5 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash.replace('#', '');
     if (hash) {
         filterJustificativas(hash);
+    } else {
+        filterJustificativas('em_andamento');
     }
 });
