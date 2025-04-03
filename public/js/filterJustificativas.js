@@ -4,6 +4,7 @@ function filterJustificativas(status) {
     const justificativas = document.querySelectorAll('.justificativa-item');
     let visibleCount = 0;
     
+    // Create or get message container
     let messageContainer = document.getElementById('status-message');
     if (!messageContainer) {
         messageContainer = document.createElement('div');
@@ -18,14 +19,16 @@ function filterJustificativas(status) {
     window.history.pushState({}, '', `#${status}`);
     
     justificativas.forEach(item => {
-        if (status === 'todos') {
-            if (item.dataset.status === 'em_andamento') {
+        if (status === 'em_aberto') {
+            // Mostrar apenas itens com status 'em_andamento' ou 'pendente'
+            if (item.dataset.status === 'em_andamento' || item.dataset.status === 'pendente') {
                 item.style.display = 'block';
                 visibleCount++;
             } else {
                 item.style.display = 'none';
             }
         } else {
+            // Para outros status, comparar diretamente com o status selecionado
             if (item.dataset.status === status) {
                 item.style.display = 'block';
                 visibleCount++;
@@ -56,15 +59,12 @@ function filterJustificativas(status) {
                 titulo.textContent = 'Processos em Andamento:';
                 break;
             default:
-                messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em andamento';
-                titulo.textContent = 'Processos em Andamento:';
+                messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
+                titulo.textContent = 'Processos em aberto:';
         }
     } else {
         messageContainer.style.display = 'none';
         switch(status) {
-            case 'todos':
-                titulo.textContent = 'Processos em Andamento:';
-                break;
             case 'atencao':
                 titulo.textContent = 'Processos em Atenção:';
                 break;
@@ -78,7 +78,7 @@ function filterJustificativas(status) {
                 titulo.textContent = 'Processos em Andamento:';
                 break;
             default:
-                titulo.textContent = 'Processos Situação:';
+                titulo.textContent = 'Processos em aberto:';
         }
     }
     
@@ -115,15 +115,15 @@ function getStatusText(status) {
         case 'resolvido': return 'Resolvido';
         case 'indeferido': return 'Indeferido';
         case 'em_andamento': return 'Em andamento';
-        default: return 'Status';
+        default: return 'Em aberto';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash.replace('#', '');
     if (hash) {
-        filterJustificativas(hash);
+        filterJustificativas(hash); // Aplica o filtro do hash, se existir
     } else {
-        filterJustificativas('em_andamento');
+        filterJustificativas('em_andamento'); // Filtro padrão: "Em andamento"
     }
 });
