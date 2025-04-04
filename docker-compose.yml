@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  # Serviço PHP/Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: quebec_app
+    volumes:
+      - .:/var/www
+      - /var/www/node_modules
+      - /var/www/vendor
+      - /var/www/public/storage
+    working_dir: /var/www
+    ports:
+      - "8000:8000"
+    networks:
+      - quebec-network
+    depends_on:
+      - mysql
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=sre_docker
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+      - VITE_SERVER=http://localhost:5173
+    command: sh -c "php artisan serve --host=0.0.0.0"
+
+  # Serviço Node.js para o npm
+  npm:
+    build:
+      context: .
+      dockerfile: Dockerfile.npm
+    container_name: quebec_npm
+    volumes:
+      - .:/var/www
+      - /var/www/node_modules
+    working_dir: /var/www
+    ports:
+      - "5173:5173"  # Porta padrão do Vite
+    networks:
+      - quebec-network
+    command: sh -c "npm run dev -- --host"
+
+  # Serviço MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: quebec_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sre_docker
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3307:3306"  # Alterada para evitar conflitos
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - quebec-network
+
+networks:
+  quebec-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

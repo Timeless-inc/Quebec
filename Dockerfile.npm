@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+# Definir diretório de trabalho
+WORKDIR /var/www
+
+# Copiar package.json e package-lock.json primeiro para aproveitar o cache
+COPY package*.json ./
+
+# Instalar dependências
+RUN npm install
+
+# Copiar o restante dos arquivos (exceto os ignorados no .dockerignore)
+COPY . .
+
+# Expor porta 5173 (Vite)
+EXPOSE 5173
+
+# Comando padrão
+CMD ["npm", "run", "dev", "--", "--host"]
