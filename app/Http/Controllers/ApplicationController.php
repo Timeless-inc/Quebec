@@ -288,7 +288,7 @@ class ApplicationController extends Controller
             Log::info('Evento disparado com sucesso');
 
             Notification::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), 
                 'title' => 'Requerimento Criado',
                 'message' => 'Seu requerimento foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
                 'is_read' => false
@@ -562,12 +562,18 @@ class ApplicationController extends Controller
         if ($olderStatus !== $newStatus) {
             $statusText = $this->getStatusText($newStatus);
             
-            Notification::create([
-                'user_id' => $requerimento->user_id, 
-                'title' => 'Status Atualizado',
-                'message' => "Seu requerimento teve o status atualizado para: {$statusText}!",
-                'is_read' => false
-            ]);
+            $user = \App\Models\User::where('email', $requerimento->email)->first();
+
+            if ($user) {
+                Notification::create([
+                    'user_id' => $user->id,
+                    'email' => $requerimento->email,
+                    'requerimento_id' => $requerimento->id,
+                    'title' => 'Status Atualizado',
+                    'message' => "Seu requerimento teve o status atualizado para: {$statusText}!",
+                    'is_read' => false
+                ]);
+            } 
         }
 
         // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado
