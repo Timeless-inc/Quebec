@@ -26,8 +26,28 @@
 
             <!-- User Actions -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <!-- Botão de Notificações -->
+            <div id="notification-icon" class="relative mr-4">
+                <button 
+                    onclick="toggleNotifications()" 
+                    id="notification-button" 
+                    class="relative px-3 py-1 text-gray-700 hover:text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm">
+                        <!-- Ícone do Sino -->
+                        <span id="notification-icon-bell" class="text-orange-500">
+                        🔔
+                        </span>
+                        <!-- Contador de Notificações -->
+                        <span id="notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">
+                        0
+                        </span>
+                </button>
+                <!-- Lista de Notificações -->
+                    <div id="notification-list" class="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg w-64" style="display: none;">
+                        <ul id="notifications" class="p-2 text-sm text-green-700 max-h-80 overflow-y-auto"></ul>
+                    </div>
+            </div>
                 <!-- Botão com o nome do usuário -->
-                <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 font-medium text-sm border-2 border-gray-900 p-2 rounded-md">
+                <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm">
                     Olá, @<strong>{{ Auth::user()->username }}</strong>
                 </a>
 

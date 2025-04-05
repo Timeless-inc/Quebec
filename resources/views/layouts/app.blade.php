@@ -14,7 +14,28 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
         
+        <style>
+        // Estilos para a barra de rolagem verde
+        #notifications::-webkit-scrollbar {
+            width: 12px;
+        }
+  
+        #notifications::-webkit-scrollbar-track {
+            background: #f0fdf4; 
+            border-radius: 3px;
+        }
+  
+        #notifications::-webkit-scrollbar-thumb {
+            background: #15803d !important; 
+            border-radius: 3px;
+        }
+  
+        #notifications::-webkit-scrollbar-thumb:hover {
+            background: #166534 !important; 
+        }
+        </style>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -37,5 +58,27 @@
                 {{ $slot }}
             </main>
         </div>
+        <!-- base de pop-up -->
+        
+        <div id="popup-notification" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; color: #333; padding: 16px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; font-weight: 500; overflow: hidden;">
+            <span id="popup-message"></span>
+            <div id="notification-timer" style="position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background-color: #4CAF50;"></div>
+        </div>
+
+         <!-- Importação do script de notificações -->
+        <script src="{{ asset('js/notifications.js') }}"></script>
+
+        <!-- Script para exibir as notificações -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if (session('notification'))
+                    @if (is_array(session('notification')))
+                        showTypedPopupNotification("{{ session('notification.message') }}", "{{ session('notification.type') }}");
+                    @else
+                        showTypedPopupNotification("{{ session('notification') }}", "success");
+                    @endif
+                @endif
+            });
+        </script>
     </body>
 </html>

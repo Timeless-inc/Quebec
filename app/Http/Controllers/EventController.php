@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Events\EventCreated;
 use App\Models\Event;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
 use Carbon\Carbon;
 
 class EventController extends Controller
@@ -51,6 +52,18 @@ class EventController extends Controller
             event(new EventCreated($event));
 
             $this->updateAvailableRequisitionTypes();
+
+            $alunos = User::where('role', 'Aluno')->get();
+
+            foreach ($alunos as $aluno) {
+                Notification::create([
+                    'user_id' => $aluno->id,
+                    'title' => 'Novo Evento Acadêmico',
+                    'message' => "Um novo evento foi cadastrado: {$event->title}. Data: " . 
+                     date('d/m/Y', strtotime($event->start_date)) . " a " . date('d/m/Y', strtotime($event->end_date)),
+                    'is_read' => false
+                ]);
+            }
 
             return redirect()->back()->with('success', 'Evento criado com sucesso!');
         } catch (\Exception $e) {

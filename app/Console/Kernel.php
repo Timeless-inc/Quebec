@@ -31,6 +31,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('events:process-expired')->dailyAt('00:00');
 
         $schedule->command('events:check-expiring')->dailyAt('00:00');
+        // Executar diariamente às 9:00 para notificar eventos que terminam em breve aos alunos
+        $schedule->command('events:notify-ending')->dailyAt('09:00');
     }
 
     /**
