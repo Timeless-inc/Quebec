@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
+use App\Models\Event;
+use App\Models\Notification;
 use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +14,6 @@ use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Event;
 
 class ApplicationController extends Controller
 {
@@ -286,7 +287,19 @@ class ApplicationController extends Controller
             event(new ApplicationRequestCreated($applicationRequest));
             Log::info('Evento disparado com sucesso');
 
-            return redirect()->route('application.success')->with('success', 'Requerimento enviado com sucesso!');
+            Notification::create([
+                'user_id' => Auth::id(), 
+                'title' => 'Requerimento Criado',
+                'message' => 'Seu requerimento foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
+                'is_read' => false
+            ]);
+
+            return redirect()->route('dashboard')
+            ->with('notification', [
+            'message' => 'Requerimento enviado com sucesso!',
+            'type' => 'success'
+            ]);
+
         } catch (\Exception $e) {
             Log::error('Erro ao processar requerimento', [
                 'message' => $e->getMessage(),
@@ -504,6 +517,7 @@ class ApplicationController extends Controller
     {
         $requerimento = ApplicationRequest::findOrFail($id);
         $oldStatus = $requerimento->status;
+        $olderStatus = $requerimento->status;
 
         $requerimento->status = $request->status;
 
@@ -541,13 +555,44 @@ class ApplicationController extends Controller
             }
         }
 
+        $newStatus = $requerimento->status;
+
         $requerimento->save();
+
+        if ($olderStatus !== $newStatus) {
+            $statusText = $this->getStatusText($newStatus);
+            
+            $user = \App\Models\User::where('email', $requerimento->email)->first();
+
+            if ($user) {
+                Notification::create([
+                    'user_id' => $user->id,
+                    'email' => $requerimento->email,
+                    'requerimento_id' => $requerimento->id,
+                    'title' => 'Status Atualizado',
+                    'message' => "Seu requerimento teve o status atualizado para: {$statusText}!",
+                    'is_read' => false
+                ]);
+            } 
+        }
 
         // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado
         event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');
+    }
+
+    private function getStatusText($status)
+    {
+    $statusMap = [
+        'pendente' => 'Pendente',
+        'em_andamento' => 'Em Análise',
+        'finalizado' => 'Aprovado',
+        'indeferido' => 'Indeferido'
+    ];
+        
+    return $statusMap[$status] ?? $status;
     }
 
     public function getTiposRequisicao()

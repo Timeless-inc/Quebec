@@ -50,10 +50,12 @@ class ProfileController extends Controller
     // Salvar as mudanças no banco
     $user->save();
 
-    return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    return Redirect::route('profile.edit')
+        ->with('notification', [
+            'message' => 'Perfil atualizado com sucesso!',
+            'type' => 'success'
+        ]);
 }
-
-
 
     /**
      * Delete the user's account.
