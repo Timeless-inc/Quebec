@@ -92,4 +92,7 @@ Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByC
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
 
+Route::post('/events/configure-required-types', [App\Http\Controllers\EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
+
+
 require __DIR__ . '/auth.php';
