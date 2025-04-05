@@ -56,7 +56,8 @@ class EventController extends Controller
                 Notification::create([
                     'user_id' => $aluno->id,
                     'title' => 'Novo Evento Acadêmico',
-                    'message' => "Um novo evento foi cadastrado: {$event->title}. Data: {$event->date}",
+                    'message' => "Um novo evento foi cadastrado: {$event->title}. Data: " . 
+                     date('d/m/Y', strtotime($event->start_date)) . " a " . date('d/m/Y', strtotime($event->end_date)),
                     'is_read' => false
                 ]);
             }

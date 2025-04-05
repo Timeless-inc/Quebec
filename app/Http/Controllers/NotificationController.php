@@ -10,10 +10,25 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Notification::where('user_id', Auth::id())
+            ->with('event') // Carrega o evento quando existe
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json($notifications);
+
+        // Formatar as notificações para incluir a data do evento (quando existir)
+        $formattedNotifications = $notifications->map(function ($notification) {
+            $data = $notification->toArray();
+            
+            if ($notification->event) {
+                $data['event_date'] = $notification->event->date;
+            } else {
+                $data['event_date'] = null;
+            }
+            
+            return $data;
+        });
+
+        return response()->json($formattedNotifications);
     }
 
     /**
