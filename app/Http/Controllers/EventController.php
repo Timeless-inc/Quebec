@@ -280,4 +280,31 @@ class EventController extends Controller
                 }
             });
     }
+
+    public function configureRequiredTypes(Request $request)
+{
+    try {
+        \App\Models\RequisitionTypeEvent::truncate();
+        
+        $requiredTypes = $request->input('required_types', []);
+        
+        foreach ($requiredTypes as $typeId) {
+            \App\Models\RequisitionTypeEvent::create([
+                'requisition_type_id' => $typeId,
+                'requires_event' => true,
+            ]);
+        }
+        
+        \Illuminate\Support\Facades\Cache::forget('requisition_types_with_events');
+        
+        return redirect()->back()->with('success', 'Configuração de tipos de requerimento atualizada com sucesso!');
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Erro ao configurar tipos de requerimento', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->with('error', 'Erro ao configurar tipos de requerimento: ' . $e->getMessage());
+    }
+}
 }
