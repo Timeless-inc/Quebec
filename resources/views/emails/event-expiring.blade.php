@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Status da Requisição Atualizado</title>
+    <meta charset="utf-8">
+    <title>Aviso de Expiração de Evento</title>
     <style>
-        /* Reset básico e fontes */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; 
@@ -54,13 +54,6 @@
             letter-spacing: 1px;
         }
 
-        .header h2 { 
-            font-size: 18px; 
-            font-weight: 400;
-            opacity: 0.9;
-            margin-top: 8px;
-        }
-
         .content { 
             padding: 30px; 
         }
@@ -78,7 +71,7 @@
             color: #444;
         }
 
-        .status-box { 
+        .event-details { 
             background: #f8fafc; 
             padding: 20px; 
             border-radius: 8px;
@@ -87,14 +80,21 @@
             transition: all 0.3s ease;
         }
 
-        .status-box:hover {
+        .event-details:hover {
             background: #f0fdf4;
             transform: translateX(5px);
         }
 
-        .status-box p { 
+        .event-details h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .event-details p { 
             color: #333;
             font-size: 15px;
+            margin: 5px 0;
         }
 
         .highlight { 
@@ -103,6 +103,11 @@
             background: rgba(16, 161, 26, 0.1);
             padding: 2px 8px;
             border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .highlight:hover {
+            background: rgba(16, 161, 26, 0.2);
         }
 
         .footer { 
@@ -141,19 +146,40 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>STATUS ATUALIZADO</h1>
-            <h2>Requisição #{{ $request->key }}</h2>
+            <h1>O evento expirará em breve</h1>
         </div>
+        
         <div class="content">
-            <p class="subtitle">Olá {{ $request->nomeCompleto }}!</p>
-            <p>Sua solicitação de <span class="highlight">{{ $request->tipoRequisicao }}</span>, feita no dia <span class="highlight">{{ \Carbon\Carbon::parse($request->created_at)->format('d/m/Y') }}</span>, 
-            {{ $newStatus == 'pendente' ? 'está' : 'foi' }} <span class="highlight">{{ $newStatus }}</span>.</p>
-            <p>Requerimento atualizado em <span class="highlight">{{ \Carbon\Carbon::parse($request->updated_at)->format('d/m/Y H:i') }}</span>.</p>
-            <p>Para mais detalhes, acesse o sistema!</p>
-            <a href="#" class="action-button">Acessar Sistema</a>
+            <p class="subtitle">Olá {{ $user->name }},</p>
+            
+            @if($daysLeft === 0)
+                <p>Este é um aviso sobre um evento acadêmico que expira <span class="highlight">HOJE</span>.</p>
+            @elseif($daysLeft === 1)
+                <p>Este é um aviso importante sobre um evento que expirará <span class="highlight">AMANHÃ</span>.</p>
+            @else
+                <p>Este é um aviso sobre um evento que expirará em <span class="highlight">{{ $daysLeft }} dias</span>.</p>
+            @endif
+            
+            <div class="event-details">
+                <h3><span class="highlight">{{ $event->title }}</span></h3>
+                <p><strong>Data de Início:</strong> <span class="highlight">{{ $event->start_date->format('d/m/Y') }}</span></p>
+                <p><strong>Data de Término:</strong> <span class="highlight">{{ $event->end_date->format('d/m/Y') }}</span></p>
+                @php
+                    $applicationController = app('App\Http\Controllers\ApplicationController');
+                    $tiposRequisicao = $applicationController->getTiposRequisicao();
+                    $tipoRequisicao = $tiposRequisicao[$event->requisition_type_id] ?? "Tipo #" . $event->requisition_type_id;
+                @endphp
+                
+                <p><strong>Tipo de Requisição:</strong> <span class="highlight">{{ $tipoRequisicao }}</span></p>
+            </div>
+           
+            <p>Por favor, tome as providências necessárias antes que o evento expire.</p>
+           
+            <a href="{{ url('/eventos/' . $event->id) }}" class="action-button">Ver Detalhes do Evento</a>
         </div>
+        
         <div class="footer">
-            <p>© {{ date('Y') }} Sistema de Requerimentos Quebec - Todos os direitos reservados</p>
+            <p>© {{ date('Y') }} Sistema de Requerimento do Estudante (SRE) - IFPE</p>
             <p>Este é um email automático, por favor não responda.</p>
         </div>
     </div>

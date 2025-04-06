@@ -59,6 +59,154 @@ class Event extends Model
         return $daysLeft > 0 && $daysLeft <= $days;
     }
 
+    public static function notifyExpiringEvents()
+    {
+        $result = [
+            'today' => 0,
+            'tomorrow' => 0,
+            'soon' => 0
+        ];
+        
+        // Eventos expirando hoje
+        $eventsEndingToday = self::withoutGlobalScopes()
+            ->where('is_active', true)
+            ->whereDate('end_date', Carbon::today()->format('Y-m-d'))
+            ->whereNull('deleted_at')
+            ->get();
+            
+        Log::info('Verificando eventos que expiram hoje', [
+            'count' => $eventsEndingToday->count(),
+            'today' => Carbon::today()->format('Y-m-d'),
+            'ids' => $eventsEndingToday->pluck('id')->toArray()
+        ]);
+        
+        foreach ($eventsEndingToday as $event) {
+            try {
+                if ($event->is_exception) {
+                    Log::info('Ignorando envio de email para evento de exceção', [
+                        'event_id' => $event->id,
+                        'title' => $event->title,
+                        'is_exception' => true
+                    ]);
+                    continue; 
+                }
+                
+                $user = User::find($event->created_by);
+                
+                if (!$user) {
+                    Log::warning('Usuário não encontrado para evento', [
+                        'event_id' => $event->id,
+                        'created_by' => $event->created_by
+                    ]);
+                    continue;
+                }
+                
+                event(new \App\Events\EventExpiring($event, $user, 0));
+                $result['today']++;
+                
+            } catch (\Exception $e) {
+                Log::error('Erro ao enviar notificação de expiração para hoje', [
+                    'event_id' => $event->id,
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        $eventsEndingTomorrow = self::withoutGlobalScopes()
+            ->where('is_active', true)
+            ->whereDate('end_date', Carbon::tomorrow()->format('Y-m-d'))
+            ->whereNull('deleted_at')
+            ->get();
+            
+        Log::info('Verificando eventos que expiram amanhã', [
+            'count' => $eventsEndingTomorrow->count(),
+            'tomorrow' => Carbon::tomorrow()->format('Y-m-d'),
+            'ids' => $eventsEndingTomorrow->pluck('id')->toArray()
+        ]);
+        
+        foreach ($eventsEndingTomorrow as $event) {
+            try {
+                if ($event->is_exception) {
+                    Log::info('Ignorando envio de email para evento de exceção', [
+                        'event_id' => $event->id,
+                        'title' => $event->title,
+                        'is_exception' => true
+                    ]);
+                    continue; 
+                }
+                
+                $user = User::find($event->created_by);
+                
+                if (!$user) {
+                    Log::warning('Usuário não encontrado para evento', [
+                        'event_id' => $event->id,
+                        'created_by' => $event->created_by
+                    ]);
+                    continue;
+                }
+                
+                event(new \App\Events\EventExpiring($event, $user, 1));
+                $result['tomorrow']++;
+                
+            } catch (\Exception $e) {
+                Log::error('Erro ao enviar notificação de expiração para amanhã', [
+                    'event_id' => $event->id,
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        
+        $soonDate = Carbon::today()->addDays(3)->format('Y-m-d');
+        $eventsExpiringSoon = self::withoutGlobalScopes()
+            ->where('is_active', true)
+            ->whereDate('end_date', $soonDate)
+            ->whereNull('deleted_at')
+            ->get();
+            
+        Log::info('Verificando eventos que expiram em 3 dias', [
+            'count' => $eventsExpiringSoon->count(),
+            'soon_date' => $soonDate,
+            'ids' => $eventsExpiringSoon->pluck('id')->toArray()
+        ]);
+        
+        foreach ($eventsExpiringSoon as $event) {
+            try {
+                
+                if ($event->is_exception) {
+                    Log::info('Ignorando envio de email para evento de exceção', [
+                        'event_id' => $event->id,
+                        'title' => $event->title,
+                        'is_exception' => true
+                    ]);
+                    continue; 
+                }
+                
+                $user = User::find($event->created_by);
+                
+                if (!$user) {
+                    Log::warning('Usuário não encontrado para evento', [
+                        'event_id' => $event->id,
+                        'created_by' => $event->created_by
+                    ]);
+                    continue;
+                }
+                
+                event(new \App\Events\EventExpiring($event, $user, 3));
+                $result['soon']++;
+                
+            } catch (\Exception $e) {
+                Log::error('Erro ao enviar notificação de expiração para 3 dias', [
+                    'event_id' => $event->id,
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        return $result;
+    }
+    
+    
     public function daysUntilEnd()
     {
         if ($this->isExpired()) {
