@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   # Serviço PHP/Laravel
   app:
@@ -11,7 +9,8 @@ services:
       - .:/var/www
       - /var/www/node_modules
       - /var/www/vendor
-      - /var/www/public/storage
+      #- /var/www/public/storage
+      - quebec-storage:/var/www/storage/app/public
     working_dir: /var/www
     ports:
       - "8000:8000"
@@ -27,7 +26,10 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=
       - VITE_SERVER=http://localhost:5173
-    command: sh -c "php artisan serve --host=0.0.0.0"
+    command: >
+      bash -c "rm -rf public/storage && 
+      php artisan storage:link && 
+      php artisan serve --host=0.0.0.0"
 
   # Serviço Node.js para o npm
   npm:
@@ -54,7 +56,7 @@ services:
       MYSQL_DATABASE: sre_docker
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - "3307:3306"  # Alterada para evitar conflitos
+      - "3308:3306"  # Alterada para evitar conflitos
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -66,3 +68,4 @@ networks:
 
 volumes:
   mysql-data:
+  quebec-storage:

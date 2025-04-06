@@ -94,5 +94,14 @@ Route::post('/cradt/register', [CradtController::class, 'register']);
 
 Route::post('/events/configure-required-types', [App\Http\Controllers\EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
 
+Route::get('/storage/{path}', function ($path) {
+    $storagePath = storage_path('app/public/' . $path);
+    
+    if (!file_exists($storagePath)) {
+        abort(404);
+    }
+    
+    return response()->file($storagePath);
+})->where('path', '.*');
 
 require __DIR__ . '/auth.php';
