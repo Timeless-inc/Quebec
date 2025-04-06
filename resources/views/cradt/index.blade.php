@@ -21,6 +21,9 @@
             </div>
 
             <div class="mt-8">
+                <button type="button" class="px-3 py-1 text-sm text-white bg-gray-600 rounded-md hover:bg-gray-800" onclick="openConfigModal()">
+                    <i class="fas fa-cog"></i> Configurar Eventos
+                </button>
                 <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
                     + Novo Evento
                 </button>
@@ -67,9 +70,15 @@
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="card-title mb-0">{{ $event->title }}</h5>
                                     <div>
+                                        @if(!$event->is_exception)
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editEventModal{{ $event->id }}">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                        @else
+                                        <span class="badge bg-warning text-dark" title="Eventos de exceção não podem ser editados">
+                                            <i class="fas fa-lock"></i> Exceção
+                                        </span>
+                                        @endif
                                         <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline ms-1">
                                             @csrf
                                             @method('DELETE')
@@ -108,7 +117,9 @@
                     </div>
                 </div>
 
-                <x-event-edit :event="$event" />
+                @if(!$event->is_exception)
+                    <x-event-edit :event="$event" />
+                @endif
                 @endforeach
             </div>
         </div>
@@ -161,4 +172,5 @@
 
     <x-event-add />
     <x-event-add-exception />
+    <x-event-config />
 </x-appcradt>

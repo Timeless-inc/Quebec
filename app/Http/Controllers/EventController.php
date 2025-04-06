@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
 use Carbon\Carbon;
 
 class EventController extends Controller
@@ -48,6 +49,18 @@ class EventController extends Controller
             Log::info('Evento criado com sucesso', ['event_id' => $event->id]);
 
             $this->updateAvailableRequisitionTypes();
+
+            $alunos = User::where('role', 'Aluno')->get();
+
+            foreach ($alunos as $aluno) {
+                Notification::create([
+                    'user_id' => $aluno->id,
+                    'title' => 'Novo Evento Acadêmico',
+                    'message' => "Um novo evento foi cadastrado: {$event->title}. Data: " . 
+                     date('d/m/Y', strtotime($event->start_date)) . " a " . date('d/m/Y', strtotime($event->end_date)),
+                    'is_read' => false
+                ]);
+            }
 
             return redirect()->back()->with('success', 'Evento criado com sucesso!');
         } catch (\Exception $e) {
@@ -267,4 +280,31 @@ class EventController extends Controller
                 }
             });
     }
+
+    public function configureRequiredTypes(Request $request)
+{
+    try {
+        \App\Models\RequisitionTypeEvent::truncate();
+        
+        $requiredTypes = $request->input('required_types', []);
+        
+        foreach ($requiredTypes as $typeId) {
+            \App\Models\RequisitionTypeEvent::create([
+                'requisition_type_id' => $typeId,
+                'requires_event' => true,
+            ]);
+        }
+        
+        \Illuminate\Support\Facades\Cache::forget('requisition_types_with_events');
+        
+        return redirect()->back()->with('success', 'Configuração de tipos de requerimento atualizada com sucesso!');
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Erro ao configurar tipos de requerimento', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->with('error', 'Erro ao configurar tipos de requerimento: ' . $e->getMessage());
+    }
+}
 }

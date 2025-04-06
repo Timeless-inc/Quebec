@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ApplicationRequest;
+use App\Models\Event;
+use App\Models\Notification;
+use App\Models\RequisitionTypeEvent;
 use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +15,6 @@ use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Event;
 
 class ApplicationController extends Controller
 {
@@ -66,10 +68,6 @@ class ApplicationController extends Controller
         5 => 'Informatica para Internet',
     ];
 
-    private $tiposComEventos = [
-        2,
-        20,
-    ];
 
     public function index()
     {
@@ -106,7 +104,7 @@ class ApplicationController extends Controller
         Log::info('Tipos de requisição para exibição', [
             'disponíveis' => count($tiposDisponiveis),
             'indisponíveis' => count($tiposIndisponiveis),
-            'tiposComEventos' => $this->tiposComEventos
+            'tiposComEventos' => $this->getTiposComEventos()
         ]);
 
         return view('application.index', [
@@ -114,7 +112,7 @@ class ApplicationController extends Controller
             'cursos' => $cursos,
             'tiposRequisicao' => $tiposDisponiveis,
             'tiposIndisponiveis' => $tiposIndisponiveis,
-            'tiposComEventos' => $this->tiposComEventos,
+            'tiposComEventos' => $this->getTiposComEventos(),
             'allTypes' => $allRequisitionTypes
         ]);
     }
@@ -138,7 +136,7 @@ class ApplicationController extends Controller
             'data'         => now()->format('Y-m-d'),
             'cursos'       => $this->cursos,
             'tiposRequisicao' => $tiposRequisicao,
-            'tiposComEventos' => $this->tiposComEventos,
+            'tiposComEventos' => $this->getTiposComEventos(),
         ]);
     }
 
@@ -174,23 +172,23 @@ class ApplicationController extends Controller
             ]);
 
             $tipoId = $validatedData['tipoRequisicao'];
-            if (in_array($tipoId, $this->tiposComEventos)) {
+            if (in_array($tipoId, $this->getTiposComEventos())) {
                 $eventController = app(EventController::class);
                 $events = $eventController->getAvailableEventsForToday();
-                
+
                 $tipoEvents = $events->where('requisition_type_id', $tipoId);
-                
+
                 if ($tipoEvents->isEmpty()) {
                     Log::warning('Tentativa de criar requerimento de tipo que requer evento, mas não há eventos disponíveis hoje', [
-                        'tipo_id' => $tipoId, 
+                        'tipo_id' => $tipoId,
                         'user_id' => Auth::id()
                     ]);
-                    
+
                     return redirect()->back()
                         ->withInput()
                         ->withErrors(['error' => 'Este tipo de requerimento só pode ser criado durante o período do evento associado. Por favor, verifique o calendário de eventos.']);
                 }
-                
+
                 Log::info('Evento disponível para criação de requerimento', [
                     'tipo_id' => $tipoId,
                     'eventos_disponíveis' => $tipoEvents->count()
@@ -286,7 +284,18 @@ class ApplicationController extends Controller
             event(new ApplicationRequestCreated($applicationRequest));
             Log::info('Evento disparado com sucesso');
 
-            return redirect()->route('application.success')->with('success', 'Requerimento enviado com sucesso!');
+            Notification::create([
+                'user_id' => Auth::id(),
+                'title' => 'Requerimento Criado',
+                'message' => 'Seu requerimento foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
+                'is_read' => false
+            ]);
+
+            return redirect()->route('dashboard')
+                ->with('notification', [
+                    'message' => 'Requerimento enviado com sucesso!',
+                    'type' => 'success'
+                ]);
         } catch (\Exception $e) {
             Log::error('Erro ao processar requerimento', [
                 'message' => $e->getMessage(),
@@ -345,7 +354,7 @@ class ApplicationController extends Controller
 
         $cursos = $this->cursos;
         $tiposRequisicao = $this->tiposRequisicao;
-        $tiposComEventos = $this->tiposComEventos;
+        $tiposComEventos = $this->getTiposComEventos();
 
         // Processar anexos existentes
         $anexosAtuais = [];
@@ -371,7 +380,7 @@ class ApplicationController extends Controller
     public function update(Request $request, $id)
     {
         $requerimento = ApplicationRequest::findOrFail($id);
-    
+
         // Validação dos campos principais e de dadosExtra
         $validatedData = $request->validate([
             'orgaoExpedidor'   => 'required|string|max:50',
@@ -392,10 +401,10 @@ class ApplicationController extends Controller
             'dadosExtra.unidade' => 'required_if:tipoRequisicao,30,31,32|in:1ª unidade,2ª unidade,3ª unidade,4ª unidade,Exame Final',
             'dadosExtra.ano_semestre' => 'required_if:tipoRequisicao,30,31,32|string|max:50',
         ]);
-    
+
         // Carregar anexos existentes
         $attachmentPaths = $requerimento->anexarArquivos ? json_decode($requerimento->anexarArquivos, true) : [];
-    
+
         if ($request->hasFile('anexarArquivos')) {
             $counter = 1;
             foreach ($request->file('anexarArquivos') as $key => $file) {
@@ -404,7 +413,7 @@ class ApplicationController extends Controller
                     if (isset($attachmentPaths[$key])) {
                         Storage::disk('public')->delete($attachmentPaths[$key]);
                     }
-    
+
                     // Salvar o novo arquivo
                     $extension = $file->getClientOriginalExtension();
                     $fileName = "Doc_{$counter}_" . time() . ".{$extension}";
@@ -415,11 +424,11 @@ class ApplicationController extends Controller
             }
             $validatedData['anexarArquivos'] = json_encode($attachmentPaths);
         }
-    
+
         // Processar dadosExtra
         $dadosExtraExistentes = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : [];
         $dadosExtraNovos = $request->input('dadosExtra', []);
-        
+
         // Definir estrutura padrão para dadosExtra
         $defaultDadosExtra = [
             'ano' => null,
@@ -431,11 +440,11 @@ class ApplicationController extends Controller
             'unidade' => null,
             'ano_semestre' => null,
         ];
-    
+
         // Mesclar dados existentes com os novos, mantendo a estrutura padrão
         $dadosExtra = array_merge($defaultDadosExtra, $dadosExtraExistentes, $dadosExtraNovos);
         $validatedData['dadosExtra'] = json_encode($dadosExtra);
-    
+
         // Gerar observações dinâmicas com base nos dadosExtra atuais, excluindo tipos 30, 31 e 32
         $tipoId = array_search($requerimento->tipoRequisicao, $this->tiposRequisicao);
         $observacoesDinamicas = '';
@@ -444,7 +453,7 @@ class ApplicationController extends Controller
             $semestre = $dadosExtra['semestre'] ?? 'Não informado';
             $via = $dadosExtra['via'] ?? 'Não informado';
             $opcaoReintegracao = $dadosExtra['opcao_reintegracao'] ?? 'Não informado';
-    
+
             switch ($tipoId) {
                 case 6: // Certificado de Conclusão
                     $observacoesDinamicas = "Certificado de Conclusão - Ano: $ano, Semestre: $semestre";
@@ -463,20 +472,20 @@ class ApplicationController extends Controller
                     break;
             }
         }
-    
+
         // Usar apenas as novas observações do usuário do formulário
         $observacoesUsuario = $validatedData['observacoes'] ?? '';
         $validatedData['observacoes'] = $observacoesDinamicas . ($observacoesUsuario ? "\n\n" . $observacoesUsuario : '');
-    
+
         // Atualizar os campos principais
         $validatedData['situacao'] = $this->situacoes[$validatedData['situacao']];
-    
+
         // Atualizar o requerimento
         $requerimento->update($validatedData);
         $requerimento->status = 'em_andamento';
         $requerimento->motivo = null;
         $requerimento->save();
-    
+
         return redirect()->route('dashboard')
             ->with('success', 'Requerimento atualizado com sucesso!');
     }
@@ -504,6 +513,7 @@ class ApplicationController extends Controller
     {
         $requerimento = ApplicationRequest::findOrFail($id);
         $oldStatus = $requerimento->status;
+        $olderStatus = $requerimento->status;
 
         $requerimento->status = $request->status;
 
@@ -541,13 +551,44 @@ class ApplicationController extends Controller
             }
         }
 
+        $newStatus = $requerimento->status;
+
         $requerimento->save();
+
+        if ($olderStatus !== $newStatus) {
+            $statusText = $this->getStatusText($newStatus);
+
+            $user = \App\Models\User::where('email', $requerimento->email)->first();
+
+            if ($user) {
+                Notification::create([
+                    'user_id' => $user->id,
+                    'email' => $requerimento->email,
+                    'requerimento_id' => $requerimento->id,
+                    'title' => 'Status Atualizado',
+                    'message' => "Seu requerimento teve o status atualizado para: {$statusText}!",
+                    'is_read' => false
+                ]);
+            }
+        }
 
         // Evento de atualização de status do requerimento - envio de email para o aluno - passível de ser modificado
         event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');
+    }
+
+    private function getStatusText($status)
+    {
+        $statusMap = [
+            'pendente' => 'Pendente',
+            'em_andamento' => 'Em Análise',
+            'finalizado' => 'Aprovado',
+            'indeferido' => 'Indeferido'
+        ];
+
+        return $statusMap[$status] ?? $status;
     }
 
     public function getTiposRequisicao()
@@ -557,7 +598,16 @@ class ApplicationController extends Controller
 
     public function getTiposComEventos()
     {
-        return $this->tiposComEventos;
+        $tiposComEventos = Cache::remember('requisition_types_with_events', 60, function () {
+            $requiredTypes = RequisitionTypeEvent::where('requires_event', true)
+                ->pluck('requisition_type_id')
+                ->toArray();
+
+
+            return $requiredTypes;
+        });
+
+        return $tiposComEventos;
     }
 
     public function getAvailableRequisitionTypes()
@@ -587,12 +637,12 @@ class ApplicationController extends Controller
 
         // Agora filtrar apenas os que estão na data atual
         $today = \Carbon\Carbon::today();
-        $currentDateEvents = $allActiveEvents->filter(function($event) use ($today) {
+        $currentDateEvents = $allActiveEvents->filter(function ($event) use ($today) {
             $eventStartDate = \Carbon\Carbon::parse($event->start_date)->startOfDay();
             $eventEndDate = \Carbon\Carbon::parse($event->end_date)->endOfDay();
             return $today->betweenIncluded($eventStartDate, $eventEndDate);
         });
-        
+
         $eventDependentTypes = $currentDateEvents
             ->pluck('requisition_type_id')
             ->unique()
@@ -606,9 +656,8 @@ class ApplicationController extends Controller
 
     public function getTiposRequisicaoSemEvento()
     {
-
         $todosOsTipos = array_keys($this->getTiposRequisicao());
-        $tiposComEventos = $this->tiposComEventos;
+        $tiposComEventos = $this->getTiposComEventos();
 
         return array_diff($todosOsTipos, $tiposComEventos);
     }

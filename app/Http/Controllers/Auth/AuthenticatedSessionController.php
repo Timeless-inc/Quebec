@@ -28,7 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false))
+        ->with('notification', [
+            'message' => 'Bem-vindo(a), ' . Auth::user()->name . '!',
+            'type' => 'success'
+        ]);
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Http\Controllers\JustificativaAlunoController;
 use App\Http\Controllers\JustificativaController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -34,10 +35,16 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Rotas para gerenciamento de perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update-photo'); //**
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Rotas para gerenciamento de notificações
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])
+    ->middleware(['auth']);
 });
 
 //Alunos
@@ -84,5 +91,8 @@ Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByC
 
 Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
 Route::post('/cradt/register', [CradtController::class, 'register']);
+
+Route::post('/events/configure-required-types', [App\Http\Controllers\EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
+
 
 require __DIR__ . '/auth.php';

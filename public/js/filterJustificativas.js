@@ -20,7 +20,6 @@ function filterJustificativas(status) {
     
     justificativas.forEach(item => {
         if (status === 'em_aberto') {
-            // Mostrar apenas itens com status 'em_andamento' ou 'pendente'
             if (item.dataset.status === 'em_andamento' || item.dataset.status === 'pendente') {
                 item.style.display = 'block';
                 visibleCount++;
@@ -28,7 +27,6 @@ function filterJustificativas(status) {
                 item.style.display = 'none';
             }
         } else {
-            // Para outros status, comparar diretamente com o status selecionado
             if (item.dataset.status === status) {
                 item.style.display = 'block';
                 visibleCount++;
@@ -60,7 +58,7 @@ function filterJustificativas(status) {
                 break;
             default:
                 messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
-                titulo.textContent = 'Processos em aberto:';
+                titulo.textContent = 'Processos em Aberto:';
         }
     } else {
         messageContainer.style.display = 'none';
@@ -78,7 +76,7 @@ function filterJustificativas(status) {
                 titulo.textContent = 'Processos em Andamento:';
                 break;
             default:
-                titulo.textContent = 'Processos em aberto:';
+                titulo.textContent = 'Processos em Aberto:';
         }
     }
     
