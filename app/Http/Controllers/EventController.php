@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EventCreated;
 use App\Models\Event;
 use App\Models\Notification;
 use App\Models\User;
@@ -48,6 +49,8 @@ class EventController extends Controller
 
             Log::info('Evento criado com sucesso', ['event_id' => $event->id]);
 
+            event(new EventCreated($event));
+
             $this->updateAvailableRequisitionTypes();
 
             $alunos = User::where('role', 'Aluno')->get();
@@ -93,6 +96,8 @@ class EventController extends Controller
             $event->update($validated);
 
             Log::info('Evento atualizado com sucesso', ['event_id' => $event->id]);
+
+            event(new EventCreated($event));
 
             $this->updateAvailableRequisitionTypes();
 
@@ -215,6 +220,7 @@ class EventController extends Controller
             $event = Event::create($validated);
 
             Log::info('Evento de exceção criado com sucesso', ['event_id' => $event->id]);
+
 
             $this->updateAvailableRequisitionTypes();
 
