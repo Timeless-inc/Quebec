@@ -17,7 +17,12 @@
         "vite": "^6.2"
     },
     "dependencies": {
-        "chart.js": "^4.4.7",
-        "tailwind": "^4.0.0"
+        "chart.js": "^4.4.7"
+    },
+    "overrides": {
+        "lodash": "^4.17.21",
+        "glob-parent": "^6.0.2",
+        "minimist": "^1.2.6",
+        "json5": "^2.2.3"
     }
 }
