@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Events\UserRegistered; // Adicione esta linha
+use App\Events\UserRegistered;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,14 +24,20 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'matricula' => ['required', 'string', 'max:255'],
-            'rg' => ['required', 'string', 'unique:users', 'max:255'],
-            'cpf' => ['required', 'string', 'max:255'],
+            'matricula' => ['required', 'string', 'max:255', 'unique:users'],
+            'rg' => ['required', 'string', 'max:12', 'unique:users'],
+            'cpf' => ['required', 'string', 'max:14', 'unique:users'],
+        ], [
+            'username.unique' => 'Este nome de usuário já está em uso.',
+            'email.unique' => 'Este e-mail já está em uso.',
+            'matricula.unique' => 'Esta matrícula já está cadastrada.',
+            'rg.unique' => 'Este RG já está cadastrado em nosso sistema.',
+            'cpf.unique' => 'Este CPF já está cadastrado em nosso sistema.',
         ]);
 
-        
         $cradtPending = User::where('cpf', $request->cpf)
             ->where('matricula', $request->matricula)
             ->where('role', 'Cradt')
@@ -61,10 +67,9 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        
         event(new Registered($user));   
 
-        //Evento de registro de usuário para envio de e-mail - passível de ser modificado
+        //Evento de registro de usuário para envio de e-mail - passível de ser modificado
         event(new UserRegistered($user));
         
         Auth::login($user);
