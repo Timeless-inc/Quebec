@@ -26,7 +26,7 @@ class User extends Authenticatable
         'rg',
         'password',
         'role',
-        'profile_photo_path', // Adicionado para permitir atualização
+        'profile_photo_path', 
     ];
 
     /**
