@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('cradt-report')" :active="request()->routeIs('cradt-report')">
                         {{ __('Relatórios') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Usuários') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -27,43 +30,6 @@
                 <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm">
                     Olá, @<strong>{{ Auth::user()->username }}</strong>
                 </a>
-
-                <!-- Botão circular verde com ícone -->
-                <button type="button" class="ml-4 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-md transition-colors flex items-center justify-center" data-bs-toggle="modal" data-bs-target="#newCradtModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
-                </button>
-
-
-                <!-- Modal -->
-                <div class="modal fade" id="newCradtModal" tabindex="-1" aria-labelledby="newCradtModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="newCradtModalLabel">Pré-cadastro CRADT</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="cradtRegisterForm" method="POST" action="{{ route('cradt.register') }}">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label for="cpf" class="form-label">CPF</label>
-                                        <input type="text" class="form-control" id="cpf" name="cpf" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="matricula" class="form-label">Matrícula</label>
-                                        <input type="text" class="form-control" id="matricula" name="matricula" required>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                                <button type="submit" form="cradtRegisterForm" class="btn btn-primary">Pré-cadastrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Botão "Sair" -->
                 <form method="POST" action="{{ route('logout') }}" class="ml-4" style="margin-top: 8.5%; margin-left: 55px">
