@@ -34,14 +34,14 @@
         <!-- RG -->
         <div class="mt-4">
             <x-input-label for="rg" :value="__('RG')" />
-            <x-text-input id="rg" class="block mt-1 w-full" type="text" name="rg" :value="old('rg')" required />
+            <x-text-input id="rg" class="block mt-1 w-full" type="text" name="rg" :value="old('rg')" required placeholder="00.000-00" />
             <x-input-error :messages="$errors->get('rg')" class="mt-2" />
         </div>
 
         <!-- CPF -->
         <div class="mt-4">
             <x-input-label for="cpf" :value="__('CPF')" />
-            <x-text-input id="cpf" class="block mt-1 w-full" type="text" name="cpf" :value="old('cpf')" required />
+            <x-text-input id="cpf" class="block mt-1 w-full" type="text" name="cpf" :value="old('cpf')" required placeholder="000.000.000-00" />
             <x-input-error :messages="$errors->get('cpf')" class="mt-2" />
         </div>
 
@@ -74,4 +74,19 @@
             </x-primary-button>
         </div>
     </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (jQuery) {
+                jQuery(document).ready(function($) {
+                        $("#rg").mask('00.000.000-0');
+                    $("#cpf").mask('000.000.000-00', {reverse: true});
+                });
+            } else {
+                console.error('jQuery não está carregado!');
+            }
+        });
+    </script>
 </x-guest-layout>

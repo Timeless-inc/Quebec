@@ -1,0 +1,51 @@
+.tempus-dominus-widget {
+    z-index: 9999 !important;
+}
+
+#datePicker {
+    min-width: 180px;
+    cursor: pointer;
+    background-color: white;
+    text-indent: 5px; 
+}
+
+.date-picker-container {
+    position: relative;
+    width: 100%;
+}
+
+.tempus-dominus-widget .calendar-days button {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+}
+
+.tempus-dominus-widget .calendar-days button.active {
+    background-color: #3b82f6 !important;
+}
+
+.tempus-dominus-widget .calendar-days button:hover {
+    background-color: #e5e7eb;
+}
+
+input[type="date"] {
+    min-width: 180px;
+    cursor: pointer;
+    padding-right: 10px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    opacity: 0.6;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}

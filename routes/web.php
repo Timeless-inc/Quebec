@@ -47,6 +47,13 @@ Route::middleware('auth')->group(function () {
     ->middleware(['auth']);
 });
 
+// Rotas para gerenciamento de usuários
+Route::get('/users', [App\Http\Controllers\UserManagementController::class, 'index'])->name('users.index');
+Route::get('/users/{user}/edit', [App\Http\Controllers\UserManagementController::class, 'edit'])->name('users.edit');
+Route::put('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'update'])->name('users.update');
+Route::delete('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
+
+
 //Alunos
 Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
 Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');

@@ -1,10 +1,13 @@
-let currentStatus = 'Em andamento';
+let currentStatus = 'todos'; 
 
 function filterJustificativas(status) {
+    if (status === currentStatus && !window.location.search.includes('page=')) {
+        return;
+    }
+    
     const justificativas = document.querySelectorAll('.justificativa-item');
     let visibleCount = 0;
     
-    // Create or get message container
     let messageContainer = document.getElementById('status-message');
     if (!messageContainer) {
         messageContainer = document.createElement('div');
@@ -13,13 +16,27 @@ function filterJustificativas(status) {
         messageContainer.style.borderRadius = '10px';
         messageContainer.style.maxWidth = '600px';
         messageContainer.style.margin = '20px auto';
-        document.querySelector('.justificativa-item').parentNode.appendChild(messageContainer);
+        const container = document.querySelector('.justificativa-item');
+        if (container) {
+            container.parentNode.appendChild(messageContainer);
+        }
     }
     
-    window.history.pushState({}, '', `#${status}`);
+    const urlParams = new URLSearchParams(window.location.search);
+    const oldStatus = urlParams.get('status');
+    urlParams.set('status', status);
+    
+    if (oldStatus !== status) {
+        urlParams.delete('page');
+    }
+    
+    window.history.pushState({}, '', `?${urlParams.toString()}`);
     
     justificativas.forEach(item => {
-        if (status === 'em_aberto') {
+        if (status === 'todos') {
+            item.style.display = 'block';
+            visibleCount++;
+        } else if (status === 'em_aberto') {
             if (item.dataset.status === 'em_andamento' || item.dataset.status === 'pendente') {
                 item.style.display = 'block';
                 visibleCount++;
@@ -37,91 +54,96 @@ function filterJustificativas(status) {
     });
 
     const titulo = document.getElementById('situacao-titulo');
+    if (titulo) {
+        switch(status) {
+            case 'pendente':
+                titulo.textContent = 'Processos em Atenção:';
+                break;
+            case 'indeferido':
+                titulo.textContent = 'Processos Indeferidos:';
+                break;
+            case 'finalizado':
+                titulo.textContent = 'Processos Resolvidos:';
+                break;
+            case 'em_andamento':
+                titulo.textContent = 'Processos em Andamento:';
+                break;
+            case 'em_aberto':
+                titulo.textContent = 'Processos em Aberto:';
+                break;
+            case 'todos':
+            default:
+                titulo.textContent = 'Todos os Processos:';
+        }
+    }
+
     if (visibleCount === 0) {
         messageContainer.style.display = 'block';
         switch(status) {
             case 'pendente':
                 messageContainer.innerHTML = '<i class="fas fa-exclamation-circle"></i> Não há requerimentos com pendências';
-                titulo.textContent = 'Processos em Atenção:';
                 break;
             case 'indeferido':
                 messageContainer.innerHTML = '<i class="fas fa-times-circle"></i> Não há requerimentos indeferidos';
-                titulo.textContent = 'Processos Indeferidos:';
                 break;
             case 'finalizado':
                 messageContainer.innerHTML = '<i class="fas fa-check-circle"></i> Não há requerimentos resolvidos';
-                titulo.textContent = 'Processos Resolvidos:';
                 break;
             case 'em_andamento':
                 messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em andamento';
-                titulo.textContent = 'Processos em Andamento:';
+                break;
+            case 'todos':
+                messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
                 break;
             default:
                 messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
-                titulo.textContent = 'Processos em Aberto:';
         }
     } else {
         messageContainer.style.display = 'none';
-        switch(status) {
-            case 'atencao':
-                titulo.textContent = 'Processos em Atenção:';
-                break;
-            case 'indeferido':
-                titulo.textContent = 'Processos Indeferidos:';
-                break;
-            case 'resolvido':
-                titulo.textContent = 'Processos Resolvidos:';
-                break;
-            case 'em_andamento':
-                titulo.textContent = 'Processos em Andamento:';
-                break;
-            default:
-                titulo.textContent = 'Processos em Aberto:';
-        }
     }
+    
+    updatePaginationLinks(status);
     
     currentStatus = status;
-}
-
-function updateStatusAndFilter(justificativaId, newStatus) {
-    currentStatus = newStatus;
     
-    const justificativa = document.querySelector(`#justificativa-${justificativaId}`);
-    justificativa.dataset.status = newStatus;
-    justificativa.setAttribute('andamento', newStatus);
+    highlightActiveButton(status);
     
-    const statusBadge = justificativa.querySelector('.badge');
-    statusBadge.className = `badge bg-${getBadgeClass(newStatus)}`;
-    statusBadge.textContent = getStatusText(newStatus);
-    
-    filterJustificativas(newStatus);
-}
-
-function getBadgeClass(status) {
-    switch(status) {
-        case 'atencao': return 'warning';
-        case 'resolvido': return 'success';
-        case 'indeferido': return 'danger';
-        case 'em_andamento': return 'info';
-        default: return 'secondary';
+    if (oldStatus !== status && !urlParams.has('page')) {
+        setTimeout(() => {
+            window.location.href = `?status=${status}`;
+        }, 50);
     }
 }
 
-function getStatusText(status) {
-    switch(status) {
-        case 'atencao': return 'Pendência';
-        case 'resolvido': return 'Resolvido';
-        case 'indeferido': return 'Indeferido';
-        case 'em_andamento': return 'Em andamento';
-        default: return 'Em aberto';
-    }
+function updatePaginationLinks(status) {
+    document.querySelectorAll('.pagination a').forEach(link => {
+        if (link.hasAttribute('href')) {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('status', status);
+            link.href = url.toString();
+        }
+    });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-        filterJustificativas(hash); // Aplica o filtro do hash, se existir
-    } else {
-        filterJustificativas('em_andamento'); // Filtro padrão: "Em andamento"
-    }
+function highlightActiveButton(status) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.status === status) {
+            btn.classList.add('font-bold');
+            btn.style.opacity = '1';
+        } else {
+            btn.classList.remove('font-bold');
+            btn.style.opacity = '0.8';
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status') || 'todos';
+    
+    currentStatus = status;
+    
+    highlightActiveButton(status);
+    
+    updatePaginationLinks(status);
 });

@@ -162,13 +162,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="observacoes" class="form-label">Observações</label>
-                                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                                    </div>
+                                    <div class="container">
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <label for="observacoes" class="form-label">Observações</label>
+                                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                            </div>
+                                        </div>
 
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-success">Enviar</button>
+                                        <div class="row">
+                                            <div class="col-12 text-end">
+                                                <button type="submit" class="btn btn-success">Enviar</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
