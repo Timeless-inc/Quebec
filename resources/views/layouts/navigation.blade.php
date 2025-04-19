@@ -51,8 +51,8 @@
                     Olá, @<strong>{{ Auth::user()->username }}</strong>
                 </a>
 
-            <!-- Botão "Sair" -->
-            <form method="POST" action="{{ route('logout') }}" class="ml-4" style=" margin-top: 8.5%; margin-left: 55px">
+                <!-- Botão "Sair" -->
+                <form method="POST" action="{{ route('logout') }}" class="ml-4" style=" margin-top: 8.5%; margin-left: 55px">
                     @csrf
                     <button type="submit" class="text-gray-700 hover:text-gray-900 font-medium text-sm">
                         <strong>{{ __('Sair') }}</strong>
