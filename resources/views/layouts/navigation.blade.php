@@ -52,10 +52,11 @@
                 </a>
 
                 <!-- Botão "Sair" -->
-                <form method="POST" action="{{ route('logout') }}" class="ml-4" style=" margin-top: 8.5%; margin-left: 55px">
+                <form method="POST" action="{{ route('logout') }}" class="ml-4" style="margin-top: 6%; margin-left: 16px">
                     @csrf
-                    <button type="submit" class="text-gray-700 hover:text-gray-900 font-medium text-sm">
-                        <strong>{{ __('Sair') }}</strong>
+                    <button type="submit" class="relative px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm font-medium text-sm transition duration-150 ease-in-out group">
+                        <span class="group-hover:text-white group-hover:bg-red-500 inline-block w-full h-full absolute left-0 top-0 rounded-md"></span>
+                        <span class="relative z-10 group-hover:text-white"><strong>{{ __('Sair') }}</strong></span>
                     </button>
                 </form>
             </div>
