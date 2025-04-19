@@ -17,11 +17,11 @@ class CradtController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
-            abort(403, 'Acesso negado.');
-        }
-
-        Gate::authorize('isCradt', $user);
+        //if (!$user) {
+        //    abort(403, 'Acesso negado.');
+        //}
+        //
+        //Gate::authorize('isCradt', $user);
 
         $query = ApplicationRequest::query();
         $request = request();

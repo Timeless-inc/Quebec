@@ -10,15 +10,15 @@ use App\Http\Controllers\JustificativaController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-//Geral
+//Geral - Rotas Públicas
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Verifica se o usuário é Cradt, se sim, redireciona para a dashboard específica.
+// Verifica se o usuário é Cradt e redireciona
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user();
 
@@ -29,77 +29,81 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     }
 
     // Caso não seja "Cradt", chama o controller do Dashboard
-    return (new DashboardController())->index();  // Chama o método index do DashboardController
+    return (new DashboardController())->index();
 })
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Rotas comuns a todos os usuários autenticados
 Route::middleware('auth')->group(function () {
     // Rotas para gerenciamento de perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update-photo'); //**
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update-photo');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
     // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])
-    ->middleware(['auth']);
+    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);
 });
 
-// Rotas para gerenciamento de usuários
-Route::get('/users', [App\Http\Controllers\UserManagementController::class, 'index'])->name('users.index');
-Route::get('/users/{user}/edit', [App\Http\Controllers\UserManagementController::class, 'edit'])->name('users.edit');
-Route::put('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'update'])->name('users.update');
-Route::delete('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
+// Rotas específicas para Alunos e CRADT (compartilhadas)
+Route::middleware(['auth', 'verified', 'role:Aluno,Cradt'])->group(function () {
+    Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
+    Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
+    Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
+    Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
+    Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
+});
 
+// Rotas específicas para Alunos
+Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
+    Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
+    Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
+    Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
+    Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
+    Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
+});
 
-//Alunos
-Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
-Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
-Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
+// Rotas específicas para CRADT
+Route::middleware(['auth', 'verified', 'role:Cradt'])->group(function () {
+    // Dashboard CRADT
+    Route::get('/cradt/dashboard', [CradtController::class, 'index'])->name('cradt');
+    Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
+    
+    // Relatórios
+    Route::get('/cradt/report/chart-data', [CradtReportController::class, 'getChartData'])->name('cradt.chart-data');
+    Route::get('/cradt/report', [CradtReportController::class, 'index'])->name('cradt-report');
+    Route::get('/getFilteredData', [CradtReportController::class, 'getFilteredData']);
+    Route::get('/getCrossReport', [CradtReportController::class, 'getCrossReport'])->name('reports.getCrossReport');
+    
+    // Gerenciamento de usuários
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+    
+    // Cadastro de CRADT
+    Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
+    Route::post('/cradt/register', [CradtController::class, 'register']);
+    
+    // Justificativas e atualização de status
+    Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
+    Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
+    Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
+    
+    // Eventos
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+    Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+    Route::get('/cleanup-events', [EventController::class, 'cleanupExpiredEvents']);
+    Route::post('/events/store-exception', [EventController::class, 'storeException'])->name('events.store-exception');
+    Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByCpf']);
+    Route::post('/events/configure-required-types', [EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
+});
 
-// Route::get('/requerimentos/create', [ApplicationController::class, 'create'])->name('application.create'); --> SEM USO
-
-Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
-Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
-Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
-Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
-
-//Cradt
-Route::get('/cradt/dashboard', [CradtController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt');
-Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
-Route::get('/cradt/report/chart-data', [CradtReportController::class, 'getChartData'])->name('cradt.chart-data');
-Route::get('/getFilteredData', [CradtReportController::class, 'getFilteredData']);
-
-//Justificativa
-Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
-Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
+// Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
-Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
-Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
-
-//PDF
-Route::get('/requerimentos1', [ApplicationController::class, 'index']);
-Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
-
-Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
-
-Route::get('/cradt/report', [CradtReportController::class, 'index'])->middleware(['auth', 'verified'])->name('cradt-report');
-Route::get('/getCrossReport', [App\Http\Controllers\CradtReportController::class, 'getCrossReport'])->name('reports.getCrossReport');
-
-//Eventos
-Route::post('/events', [EventController::class, 'store'])->name('events.store');
-Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
-Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-Route::get('/cleanup-events', [EventController::class, 'cleanupExpiredEvents']);
-Route::post('/events/store-exception', [EventController::class, 'storeException'])->name('events.store-exception');
-Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByCpf']);
-
-Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
-Route::post('/cradt/register', [CradtController::class, 'register']);
-
-Route::post('/events/configure-required-types', [App\Http\Controllers\EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
-
 
 require __DIR__ . '/auth.php';
