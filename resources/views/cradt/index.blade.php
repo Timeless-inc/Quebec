@@ -223,6 +223,8 @@
         });
     </script>
 
+    <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
+
 <style>
     input[type="date"] {
         min-width: 180px;
