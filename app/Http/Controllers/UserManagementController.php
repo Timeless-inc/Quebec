@@ -13,13 +13,13 @@ class UserManagementController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        //$user = Auth::user();
+        //
+        //if (!$user) {
+        //   abort(403, 'Acesso negado.');
+        //}
 
-        if (!$user) {
-            abort(403, 'Acesso negado.');
-        }
-
-        Gate::authorize('isCradt', $user);
+        //Gate::authorize('isCradt', $user);
 
         $query = User::query();
         request()->flash(); 

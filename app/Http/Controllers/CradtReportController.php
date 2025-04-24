@@ -30,11 +30,11 @@ class CradtReportController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        if (!$user) {
-            abort(403, 'Acesso negado.');
-        }
-        Gate::authorize('isCradt', $user);
+        //$user = Auth::user();
+        //if (!$user) {
+        //    abort(403, 'Acesso negado.');
+        //}
+        //Gate::authorize('isCradt', $user);
 
         $requerimentos = ApplicationRequest::select('situacao', DB::raw('count(*) as total'))
             ->groupBy('situacao')

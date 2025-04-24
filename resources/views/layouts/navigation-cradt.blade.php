@@ -26,25 +26,27 @@
 
             <!-- User Actions -->
             <div x-data="{ openModal: false }" class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Botão com o nome do usuário -->
-                <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm">
-                    Olá, @<strong>{{ Auth::user()->username }}</strong>
-                </a>
 
-                <!-- Botão circular verde com ícone (Trigger) -->
-                <button @click="openModal = true" type="button" class="ml-4 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-md transition-colors flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
+            <!-- Botão verde com ícone (Trigger) -->
+            <button @click="openModal = true" type="button" class="mr-4 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-md transition-colors flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+            </button>
+
+            <!-- Botão com o nome do usuário -->
+            <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm">
+                Olá, @<strong>{{ Auth::user()->username }}</strong>
+            </a>            
+
+            <!-- Botão "Sair" -->
+            <form method="POST" action="{{ route('logout') }}" class="ml-4" style="margin-top: 6%; margin-left: 16px">
+                @csrf
+                <button type="submit" class="relative px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm font-medium text-sm transition duration-150 ease-in-out group">
+                    <span class="group-hover:text-white group-hover:bg-red-500 inline-block w-full h-full absolute left-0 top-0 rounded-md"></span>
+                    <span class="relative z-10 group-hover:text-white"><strong>{{ __('Sair') }}</strong></span>
                 </button>
-
-                <!-- Botão "Sair" -->
-                <form method="POST" action="{{ route('logout') }}" class="ml-4 flex items-center">
-                    @csrf
-                    <button type="submit" class="text-gray-700 hover:text-gray-900 font-medium text-sm">
-                        <strong>{{ __('Sair') }}</strong>
-                    </button>
-                </form>
+            </form>
 
                 <!-- Modal Background -->
                 <div x-show="openModal"
