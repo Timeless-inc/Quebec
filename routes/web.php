@@ -13,6 +13,9 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
+// Rota pública para verificação de atualizações 
+
+
 //Geral - Rotas Públicas
 Route::get('/', function () {
     return view('welcome');
@@ -101,6 +104,19 @@ Route::middleware(['auth', 'verified', 'role:Cradt'])->group(function () {
     Route::post('/events/store-exception', [EventController::class, 'storeException'])->name('events.store-exception');
     Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByCpf']);
     Route::post('/events/configure-required-types', [EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
+    Route::get('/api/requerimentos/check-updates', function () {
+        $lastUpdate = \App\Models\ApplicationRequest::latest('updated_at')->value('updated_at');
+        
+        \Illuminate\Support\Facades\Log::info('Requisição de verificação recebida', [
+            'last_update' => $lastUpdate,
+            'request_ip' => request()->ip()
+        ]);
+        
+        return response()->json([
+            'lastUpdate' => $lastUpdate,
+            'serverTime' => now()->toIso8601String()
+        ]);
+    });
 });
 
 // Rota compartilhada para visualização de justificativa de aluno
