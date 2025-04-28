@@ -27,9 +27,11 @@
 
     <!-- Eventos Acadêmicos Section -->
     <div class="py-6">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
-            Eventos Acadêmicos:
-        </h2>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
+                    Eventos Acadêmicos:
+                </h2>
+            </div>
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if($events->isNotEmpty())
@@ -79,13 +81,16 @@
     
     <!-- Processos Section -->
     <div class="pb-6 pt-2">
-        <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
-            {{ $currentStatus === 'pendente' ? 'Processos em Atenção:' : 
-               ($currentStatus === 'finalizado' ? 'Processos Resolvidos:' : 
-               ($currentStatus === 'indeferido' ? 'Processos Indeferidos:' :
-               ($currentStatus === 'em_aberto' ? 'Processos em Aberto:' :
-               ($currentStatus === 'em_andamento' ? 'Processos em Andamento:' : 'Todos os Processos:')))) }}
-        </h2>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
+                {{ $currentStatus === 'pendente' ? 'Processos em Atenção:' : 
+                ($currentStatus === 'finalizado' ? 'Processos Resolvidos:' : 
+                ($currentStatus === 'indeferido' ? 'Processos Indeferidos:' :
+                ($currentStatus === 'em_aberto' ? 'Processos em Aberto:' :
+                ($currentStatus === 'em_andamento' ? 'Processos em Andamento:' : 'Todos os Processos:')))) }}
+            </h2>
+        </div>
+        
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)

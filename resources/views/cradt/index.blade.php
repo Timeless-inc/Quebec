@@ -77,9 +77,11 @@
 
     <!-- Eventos Acadêmicos Section -->
     <div class="py-6">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
-            Eventos Acadêmicos:
-        </h2>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
+                Eventos Acadêmicos:
+            </h2>
+        </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if($events->isNotEmpty())
@@ -154,21 +156,23 @@
 
     <!-- Processos Section -->
     <div class="py-6">
-        <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2 px-64">
-            @if($currentStatus == 'pendente')
-                Processos em Atenção:
-            @elseif($currentStatus == 'indeferido')
-                Processos Indeferidos:
-            @elseif($currentStatus == 'finalizado')
-                Processos Resolvidos:
-            @elseif($currentStatus == 'em_andamento')
-                Processos em Andamento:
-            @elseif($currentStatus == 'em_aberto')
-                Processos em Aberto:
-            @else
-                Todos os Processos:
-            @endif
-        </h2>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
+                @if($currentStatus == 'pendente')
+                    Processos em Atenção:
+                @elseif($currentStatus == 'indeferido')
+                    Processos Indeferidos:
+                @elseif($currentStatus == 'finalizado')
+                    Processos Resolvidos:
+                @elseif($currentStatus == 'em_andamento')
+                    Processos em Andamento:
+                @elseif($currentStatus == 'em_aberto')
+                    Processos em Aberto:
+                @else
+                    Todos os Processos:
+                @endif
+            </h2>
+        </div> 
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" id="requerimentos-container">
             @if($requerimentos->count() > 0)
