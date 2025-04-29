@@ -177,6 +177,9 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" id="requerimentos-container">
             @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)
+            @php
+                $dadosExtra = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : [];
+            @endphp
             <x-justificativa
                 id="{{ $requerimento->id }}"
                 nome="{{ $requerimento->nomeCompleto }}"
@@ -188,7 +191,12 @@
                 :anexos="[$requerimento->anexarArquivos]"
                 observacoes="{{ $requerimento->observacoes }}"
                 motivo="{{ $requerimento->motivo }}"
-                class="justificativa-item" />
+                tipoRequisicao="{{ $requerimento->tipoRequisicao }}"
+                key="{{ $requerimento->key }}"
+                finalizado_por="{{ $requerimento->finalizado_por }}"
+                :dadosExtra="$dadosExtra"
+                class="justificativa-item"
+            />
             @endforeach
 
             <div class="flex justify-center mt-8">

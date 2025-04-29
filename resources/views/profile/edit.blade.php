@@ -8,31 +8,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6 flex gap-8">
-
-                <!-- Sidebar - Foto de Perfil -->
-                <div class="w-1/3 text-center border-r pr-6">
-                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg' }}"
-                        alt="Profile Photo" class="w-32 h-32 rounded-full mx-auto">
-
-                    <form method="POST" action="{{ route('profile.update-photo') }}" enctype="multipart/form-data" class="mt-4">
-                        @csrf
-                        <label class="block">
-                            <span class="sr-only">+ Adicionar Foto</span>
-                            <input type="file" name="profile_photo" class="block w-full text-sm text-gray-500
-                                   file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm
-                                   file:font-semibold file:bg-blue-50 file:text-blue-700
-                                   hover:file:bg-blue-100">
-                        </label>
-                        <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">+ Adicionar Foto</button>
-                    </form>
-
-                    <p class="mt-4 text-gray-500 text-sm">O tamanho máximo de upload é <strong>5 MB</strong></p>
-                    <p class="text-gray-500 text-sm">Membro desde:<strong>{{ Auth::user()->created_at->format('d F Y') }}</strong></p>
-                </div>
-
+            <div class="bg-white shadow sm:rounded-lg p-6">
                 <!-- Formulário de Edição -->
-                <div class="w-2/3">
+                <div>
                     <h3 class="text-xl font-semibold">Editar Perfil</h3>
 
                     <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-4">
@@ -67,14 +45,16 @@
                                 <input id="rg" name="rg" type="text" class="block w-full border rounded-md px-3 py-2"
                                     value="{{ Auth::user()->rg }}">
                             </div>
+                        </div>
 
-                            <!-- Botão de Atualização -->
-                            <div class="mt-6">
-                                <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Atualizar Informações</button>
-                            </div>
+                        <!-- Botão de Atualização -->
+                        <div class="mt-6">
+                            <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Atualizar Informações</button>
+                        </div>
                     </form>
-                </div>
 
+                    <p class="mt-4 text-gray-500 text-sm">Membro desde: <strong>{{ Auth::user()->created_at->format('d F Y') }}</strong></p>
+                </div>
             </div>
         </div>
     </div>
