@@ -1,18 +1,20 @@
 @props([
-'id',
-'nome',
-'matricula',
-'email',
-'cpf',
-'datas',
-'andamento',
-'anexos',
-'observacoes',
-'status',
-'requerimento',
-'resposta',
-'motivo',
-'anexos_finalizacao',
+    'id',
+    'nome',
+    'matricula',
+    'email',
+    'cpf',
+    'datas',
+    'andamento',
+    'anexos',
+    'observacoes',
+    'status',
+    'requerimento',
+    'resposta',
+    'motivo',
+    'anexos_finalizacao',
+    'tipoRequisicao',
+    'dadosExtra' => [],
 ])
 
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
@@ -75,6 +77,41 @@
                 </div>
 
                 <div class="space-y-6 w-full max-w-md">
+                    <!-- Informações Adicionais (dadosExtra) -->
+                    @if(!empty($dadosExtra) && is_array($dadosExtra) && !empty(array_filter($dadosExtra)))
+                    <div class="relative min-h-[120px]">
+                        <h5 class="text-xl font-bold text-gray-800">Informações Adicionais:</h5>
+                        <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
+                        <ul class="space-y-2 mt-2">
+                            @if(!empty($dadosExtra['ano']))
+                            <li><span class="font-semibold text-gray-600">Ano:</span> {{ $dadosExtra['ano'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['semestre']))
+                            <li><span class="font-semibold text-gray-600">Semestre:</span> {{ $dadosExtra['semestre'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['via']))
+                            <li><span class="font-semibold text-gray-600">Via:</span> {{ $dadosExtra['via'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['opcao_reintegracao']))
+                            <li><span class="font-semibold text-gray-600">Opção de Reintegração:</span> {{ $dadosExtra['opcao_reintegracao'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['componente_curricular']))
+                            <li><span class="font-semibold text-gray-600">Componente Curricular:</span> {{ $dadosExtra['componente_curricular'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['nome_professor']))
+                            <li><span class="font-semibold text-gray-600">Nome do Professor:</span> {{ $dadosExtra['nome_professor'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['unidade']))
+                            <li><span class="font-semibold text-gray-600">Unidade:</span> {{ $dadosExtra['unidade'] }}</li>
+                            @endif
+                            @if(!empty($dadosExtra['ano_semestre']))
+                            <li><span class="font-semibold text-gray-600">Ano/Semestre:</span> {{ $dadosExtra['ano_semestre'] }}</li>
+                            @endif
+                        </ul>
+                    </div>
+                    @endif
+
+                    <!-- Anexos -->
                     <div class="relative min-h-[120px]">
                         <h5 class="text-xl font-bold text-gray-800">Anexos:</h5>
                         <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
@@ -124,16 +161,13 @@
                             @foreach($anexosFinalizacao as $anexo)
                             <li>
                                 @php
-                                // Extrair o caminho correto do anexo, independente do formato
                                 $anexoPath = $anexo;
                                 if (is_array($anexo)) {
-                                    $anexoPath = reset($anexo); // Pega o primeiro item do array
+                                    $anexoPath = reset($anexo);
                                 } elseif (strpos($anexo, '[') === 0) {
-                                    // Se for uma string que representa um array JSON
                                     $tempArray = json_decode($anexo, true);
                                     $anexoPath = is_array($tempArray) ? reset($tempArray) : $anexo;
                                 }
-                                // Remover barras duplas se existirem
                                 $anexoPath = str_replace('//', '/', $anexoPath);
                                 @endphp
                                 <a href="{{ asset('storage/'.$anexoPath) }}" class="inline-flex items-center px-3 py-1 text-sm text-green-600 border border-green-600 rounded-md hover:bg-green-50" target="_blank">
@@ -151,7 +185,7 @@
                     <div class="relative min-h-[120px]">
                         <h5 class="text-xl font-bold text-gray-800">Observações:</h5>
                         <div class="absolute -bottom-1 left-0 w-16 h-1 bg-blue-300 rounded"></div>
-                        <p class="text-gray-700 mt-2">{{ $observacoes }}</p>
+                        <p class="text-gray-700 mt-2">{{ $observacoes ?: 'Nenhuma observação fornecida' }}</p>
                     </div>
                 </div>
             </div>

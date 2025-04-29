@@ -94,19 +94,25 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)
+            @php
+                $dadosExtra = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : [];
+            @endphp
             <x-justificativa-aluno
-            id="{{ $requerimento->id }}"
-            nome="{{ $requerimento->nomeCompleto }}"
-            matricula="{{ $requerimento->matricula }}"
-            email="{{ $requerimento->email }}"
-            cpf="{{ $requerimento->cpf }}"
-            datas="{{ $requerimento->created_at->format('d/m/Y') }}"
-            status="{{ $requerimento->status }}"
-            :anexos="[$requerimento->anexarArquivos]"
-            observacoes="{{ $requerimento->observacoes }}"
-            resposta="{{ $requerimento->resposta }}"
-            :anexos_finalizacao="[$requerimento->anexos_finalizacao]"
-            class="justificativa-item" />
+                id="{{ $requerimento->id }}"
+                nome="{{ $requerimento->nomeCompleto }}"
+                matricula="{{ $requerimento->matricula }}"
+                email="{{ $requerimento->email }}"
+                cpf="{{ $requerimento->cpf }}"
+                datas="{{ $requerimento->created_at->format('d/m/Y') }}"
+                status="{{ $requerimento->status }}"
+                :anexos="[$requerimento->anexarArquivos]"
+                observacoes="{{ $requerimento->observacoes }}"
+                resposta="{{ $requerimento->resposta }}"
+                :anexos_finalizacao="[$requerimento->anexos_finalizacao]"
+                tipoRequisicao="{{ $requerimento->tipoRequisicao }}"
+                :dadosExtra="$dadosExtra"
+                class="justificativa-item"
+            />
             @endforeach
             @else
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
