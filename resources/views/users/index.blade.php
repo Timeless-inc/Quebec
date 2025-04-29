@@ -82,9 +82,14 @@
                                             {{ $user->role }}
                                         </span>
                                     </td>
+                                    
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
-                                        
+                                        @auth
+                                            @if(auth()->user()->role === 'Manager')
+                                                <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                            @endif
+                                         @endauth
+
                                         <!-- Botão de exclusão -->
                                         @if(auth()->id() !== $user->id)
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline ml-2">
