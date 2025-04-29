@@ -114,7 +114,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="turno" class="form-label">Turno <span id="turnoRequired" class="required-mark" style="color: #ff00    00;">*</span></label>
+                                                <label for="turno" class="form-label">Turno <span id="turnoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <select class="form-select" id="turno" name="turno">
                                                     <option value="">Escolha</option>
                                                     <option value="manhã">Manhã</option>

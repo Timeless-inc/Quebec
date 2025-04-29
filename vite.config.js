@@ -6,7 +6,7 @@ export default defineConfig({
         host: '0.0.0.0',    // Faz o Vite aceitar conexões externas
         port: 5173,         // (opcional) Define a porta se quiser garantir
         hmr: {
-            host: '192.168.0.182', // Substitua por seu IP local, tipo '192.168.1.100'
+            host: 'localhost', // Substitua por seu IP local, tipo '192.168.1.100'
         },
     },
     plugins: [
