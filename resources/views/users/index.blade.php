@@ -90,6 +90,8 @@
                                          @endauth
 
                                         <!-- Botão de exclusão -->
+                                        @auth
+                                        @if(auth()->user()->role === 'Manager')
                                         @if(auth()->id() !== $user->id)
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline ml-2">
                                                 @csrf
@@ -99,6 +101,8 @@
                                                 </button>
                                             </form>
                                         @endif
+                                        @endif
+                                        @endauth
                                     </td>
                                 </tr>
                             @endforeach

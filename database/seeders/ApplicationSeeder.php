@@ -52,7 +52,7 @@ class ApplicationSeeder extends Seeder
             'Desvinculado',
         ];
 
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             ApplicationRequest::create([
                 'key' => Str::uuid(),
                 'nomeCompleto' => $faker->name,

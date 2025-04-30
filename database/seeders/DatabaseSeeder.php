@@ -32,6 +32,14 @@ class DatabaseSeeder extends Seeder
             'role'=> 'Aluno',
         ]);
 
+        User::factory()->create([
+            'name' => 'Test Manager',
+            'username' => 'MANAGERuser',
+            'email' => 'manager@manager.com',
+            'password' => '12345678',
+            'role'=> 'Manager',
+        ]);
+
         $this->call([  
             ApplicationSeeder::class,
             //EventSeeder::class
