@@ -78,8 +78,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->matricula }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->cpf }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->role == 'Cradt' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
-                                            {{ $user->role }}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($user->role == 'Cradt') ? 'bg-green-100 text-green-800' : (($user->role == 'Manager') ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">                                            {{ $user->role }}
                                         </span>
                                     </td>
                                     
