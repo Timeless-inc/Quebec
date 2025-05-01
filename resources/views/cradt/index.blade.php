@@ -36,42 +36,40 @@
         </div>
     </x-slot>
 
-    <div class="container mt-4">
-        <div class="flex justify-center">
-            <div class="w-full md:w-2/3">
-                <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="flex-1">
-                            <input type="text"
-                                class="w-full border border-gray-400 rounded-md p-2"
-                                name="search"
-                                placeholder="Buscar por nome, CPF, matrícula..."
-                                value="{{ request('search') }}">
-                        </div>
-
-                        <div class="relative">
-                            <input
-                                type="date"
-                                class="form-control border border-gray-400 rounded-md p-2"
-                                id="datePicker"
-                                name="date_filter"
-                                value="{{ request('date_filter') ? (strpos(request('date_filter'), '/') !== false ? \Carbon\Carbon::createFromFormat('d/m/Y', request('date_filter'))->format('Y-m-d') : request('date_filter')) : '' }}">
-                            <label for="datePicker" class="text-xs text-gray-500 absolute -top-5 left-0">Filtrar por data</label>
-                        </div>
-
-                        @if(request('search') || request('date_filter'))
-                        <button onclick="clearFilters()" class="bg-gray-400 text-white px-3 py-2 rounded-md hover:bg-gray-500" type="button">
-                            <i class="fas fa-times"></i> Limpar filtros
-                        </button>
-                        @endif
-
-                        <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" type="submit">
-                            <i class="fas fa-search"></i> Buscar
-                        </button>
+    <div class="container mt-4 py-2">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex-1">
+                        <input type="text"
+                            class="w-full border border-gray-400 rounded-md p-2"
+                            name="search"
+                            placeholder="Buscar por nome, CPF, matrícula..."
+                            value="{{ request('search') }}">
                     </div>
-                    <input type="hidden" name="status" value="{{ $currentStatus ?? 'todos' }}">
-                </form>
-            </div>
+
+                    <div class="relative">
+                        <input
+                            type="date"
+                            class="form-control border border-gray-400 rounded-md p-2"
+                            id="datePicker"
+                            name="date_filter"
+                            value="{{ request('date_filter') ? (strpos(request('date_filter'), '/') !== false ? \Carbon\Carbon::createFromFormat('d/m/Y', request('date_filter'))->format('Y-m-d') : request('date_filter')) : '' }}">
+                        <label for="datePicker" class="text-xs text-gray-500 absolute -top-5 left-0">Filtrar por data</label>
+                    </div>
+
+                    @if(request('search') || request('date_filter'))
+                    <button onclick="clearFilters()" class="bg-gray-400 text-white px-3 py-2 rounded-md hover:bg-gray-500" type="button">
+                        <i class="fas fa-times"></i> Limpar filtros
+                    </button>
+                    @endif
+
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" type="submit">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+                <input type="hidden" name="status" value="{{ $currentStatus ?? 'todos' }}">
+            </form>
         </div>
     </div>
 
