@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class ProfileController extends Controller
@@ -23,39 +22,38 @@ class ProfileController extends Controller
         ]);
     }
 
-
     /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-{
-    $user = $request->user(); // Obtém o usuário autenticado
+    {
+        $user = $request->user(); // Obtém o usuário autenticado
 
-    // Valida os campos adicionais (CPF, RG e Matrícula)
-    $validatedData = $request->validated();
-    $validatedData += $request->validate([
-        'cpf' => 'required|string|size:11|unique:users,cpf,' . $user->id,
-        'rg' => 'required|string|max:15',
-        'matricula' => 'required|string|max:20|unique:users,matricula,' . $user->id,
-    ]);
-
-    // Atualiza apenas os campos permitidos
-    $user->fill($validatedData);
-
-    // Se o email foi alterado, resetar a verificação
-    if ($user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
-
-    // Salvar as mudanças no banco
-    $user->save();
-
-    return Redirect::route('profile.edit')
-        ->with('notification', [
-            'message' => 'Perfil atualizado com sucesso!',
-            'type' => 'success'
+        // Valida os campos adicionais (CPF, RG e Matrícula)
+        $validatedData = $request->validated();
+        $validatedData += $request->validate([
+            'cpf' => 'required|string|size:11|unique:users,cpf,' . $user->id,
+            'rg' => 'required|string|max:15',
+            'matricula' => 'required|string|max:20|unique:users,matricula,' . $user->id,
         ]);
-}
+
+        // Atualiza apenas os campos permitidos
+        $user->fill($validatedData);
+
+        // Se o email foi alterado, resetar a verificação
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        // Salvar as mudanças no banco
+        $user->save();
+
+        return Redirect::route('profile.edit')
+            ->with('notification', [
+                'message' => 'Perfil atualizado com sucesso!',
+                'type' => 'success'
+            ]);
+    }
 
     /**
      * Delete the user's account.
@@ -76,26 +74,5 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
-    }
-    public function updatePhoto(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB máx.
-        ]);
-
-        $user = Auth::user();
-
-        // Deletar a foto antiga (se existir)
-        if ($user->profile_photo_path) {
-            Storage::disk('public')->delete($user->profile_photo_path);
-        }
-
-        // Salvar a nova foto
-        $path = $request->file('profile_photo')->store('profile-photos', 'public');
-
-        // Atualizar o caminho da foto no banco de dados
-        $user->update(['profile_photo_path' => $path]);
-
-        return Redirect::route('profile.edit')->with('status', 'photo-updated');
     }
 }

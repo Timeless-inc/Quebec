@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="matricula" class="form-label">Número de Matrícula <span id="matriculaRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" required>
+                                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" readonly>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="situacao" class="form-label">Situação <span id="situacaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
@@ -478,7 +478,11 @@
                         } else if (field.type === 'file') {
                             fieldDiv.innerHTML = `
                             <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                            <input type="file" class="form-control form-control-sm file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
+                                <button type="button" class="custom-file-button" data-input-id="${uniqueId}">Escolher arquivo</button>
+                                <span class="file-name" style="margin-left: 0.5rem;">Nenhum arquivo selecionado</span>
+                            </div>
                         `;
                         }
                         containerDiv.appendChild(fieldDiv);
@@ -488,22 +492,35 @@
                 }
             }
 
-            function updateFileLabel(input) {
-                const uniqueId = input.id;
-                const label = document.querySelector(`label[for="${uniqueId}"]`);
-                if (input.files && input.files.length > 0) {
-                    label.textContent = `${input.files[0].name} (anexado)`;
-                } else {
-                    label.textContent = input.previousElementSibling.textContent; // Restaura o texto original
-                }
-            }
-
             function initializeFileInputs() {
                 const fileInputs = document.querySelectorAll('.file-input');
                 fileInputs.forEach(input => {
-                    input.addEventListener('change', function() {
-                        updateFileLabel(this);
+                    const uniqueId = input.id;
+                    const customButton = document.querySelector(`.custom-file-button[data-input-id="${uniqueId}"]`);
+                    const fileNameSpan = customButton.nextElementSibling;
+
+                    customButton.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Impede o dropdown de fechar
+                        input.click();
                     });
+
+                    input.addEventListener('change', (e) => {
+                        e.stopPropagation(); // Impede o dropdown de fechar
+                        if (input.files && input.files.length > 0) {
+                            fileNameSpan.textContent = input.files[0].name;
+                        } else {
+                            fileNameSpan.textContent = 'Nenhum arquivo selecionado';
+                        }
+                    });
+
+                    input.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Impede o dropdown de fechar
+                    });
+                });
+
+                // Impede o dropdown de fechar ao clicar dentro dele
+                anexoDropdownMenu.addEventListener('click', (e) => {
+                    e.stopPropagation();
                 });
             }
 
@@ -699,6 +716,38 @@
         #tipoRequisicao option:disabled {
             color: #dc3545 !important;
             background-color: #f8d7da;
+        }
+
+        /* Estilos para o botão personalizado de upload de arquivo */
+        .custom-file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .custom-file-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.2rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .custom-file-button:hover {
+            background-color: #0056b3;
+        }
+
+        .file-name {
+            margin-left: 0.5rem;
+            color: #000000;
         }
     </style>
 </body>
