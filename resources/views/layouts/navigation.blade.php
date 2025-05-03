@@ -5,9 +5,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ Auth::user()->role === 'Cradt' ? url('/cradt/dashboard') : url('/aluno/dashboard') }}">
-                        <x-application-logo />
-                    </a>
+                <a href="{{ in_array(Auth::user()->role, ['Cradt', 'Manager']) ? url('/cradt/dashboard') : url('/aluno/dashboard') }}">
+                <x-application-logo />
+                </a>
                 </div>
 
 

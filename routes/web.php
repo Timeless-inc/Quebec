@@ -21,17 +21,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Verifica se o usuário é Cradt e redireciona
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user();
 
-    // Verifica se o usuário tem a role "Cradt"
     if ($user->role === 'Cradt' ||$user->role === 'Manager' ) {
         // Redireciona usando o nome da rota
         return redirect()->route('cradt');
     }
 
-    // Caso não seja "Cradt", chama o controller do Dashboard
     return (new DashboardController())->index();
 })
     ->middleware(['auth', 'verified'])
