@@ -24,4 +24,12 @@ class UserPolicy
     {
         return $user->role === 'Cradt';
     }
+
+    /**
+     * Determine if the user is a Manager (novo).
+     */
+    public function isManager(User $user): bool
+    {
+        return $user->role === 'Manager';
+    }
 }

@@ -78,10 +78,17 @@
                         <!-- Cargo -->
                         <div>
                             <label for="role" class="block text-sm font-medium text-gray-700">Cargo</label>
-                            <select name="role" id="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="Aluno" {{ (old('role', $user->role) == 'Aluno') ? 'selected' : '' }}>Aluno</option>
-                                <option value="Cradt" {{ (old('role', $user->role) == 'Cradt') ? 'selected' : '' }}>CRADT</option>
-                            </select>
+
+                            @if(old('role', $user->role) === 'Manager')
+                                <input type="text" value="Manager" disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100">
+                                <input type="hidden" name="role" value="Manager">
+                            @else
+                                <select name="role" id="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    <option value="Aluno" {{ (old('role', $user->role) == 'Aluno') ? 'selected' : '' }}>Aluno</option>
+                                    <option value="Cradt" {{ (old('role', $user->role) == 'Cradt') ? 'selected' : '' }}>CRADT</option>
+                                </select>
+                            @endif
+
                             @error('role')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror

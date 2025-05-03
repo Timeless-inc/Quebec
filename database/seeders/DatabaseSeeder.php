@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
             'username' => 'CRADTuser',
             'email' => 'adm@adm.com',
             'password' => '12345678',
+            'cpf' => '123.456.789-00',
+            'rg' => '1234567',
+            'matricula' => 'CRADT002',
             'role'=> 'Cradt',
         ]);
 
@@ -29,7 +32,21 @@ class DatabaseSeeder extends Seeder
             'username' => 'ALUNOuser',
             'email' => 'aluno@aluno.com',
             'password' => '12345678',
+            'cpf' => '987.654.321-00',
+            'rg' => '17654321',
+            'matricula' => '20231INFOI0001',
             'role'=> 'Aluno',
+        ]);
+
+        User::factory()->create([
+            'name' => 'Test Manager',
+            'username' => 'MANAGERuser',
+            'email' => 'manager@manager.com',
+            'password' => '12345678',
+            'cpf' => '725.426.889-01',
+            'rg' => '9235527',
+            'matricula' => 'CRADT001',
+            'role'=> 'Manager',
         ]);
 
         $this->call([  

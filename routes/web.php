@@ -21,17 +21,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Verifica se o usuário é Cradt e redireciona
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user();
 
-    // Verifica se o usuário tem a role "Cradt"
-    if ($user->role === 'Cradt') {
+    if ($user->role === 'Cradt' ||$user->role === 'Manager' ) {
         // Redireciona usando o nome da rota
         return redirect()->route('cradt');
     }
 
-    // Caso não seja "Cradt", chama o controller do Dashboard
     return (new DashboardController())->index();
 })
     ->middleware(['auth', 'verified'])
@@ -51,7 +48,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rotas específicas para Alunos e CRADT (compartilhadas)
-Route::middleware(['auth', 'verified', 'role:Aluno,Cradt'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager'])->group(function () {
     Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
     Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
@@ -68,8 +65,8 @@ Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
 });
 
-// Rotas específicas para CRADT
-Route::middleware(['auth', 'verified', 'role:Cradt'])->group(function () {
+// Rotas específicas para CRADT e manager
+Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function () {
     // Dashboard CRADT
     Route::get('/cradt/dashboard', [CradtController::class, 'index'])->name('cradt');
     Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');

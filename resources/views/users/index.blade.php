@@ -66,7 +66,9 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matrícula</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPF</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                                @if(auth()->user()->role === 'Manager')
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -78,14 +80,20 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->matricula }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->cpf }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->role == 'Cradt' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
-                                            {{ $user->role }}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($user->role == 'Cradt') ? 'bg-green-100 text-green-800' : (($user->role == 'Manager') ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">                                            {{ $user->role }}
                                         </span>
                                     </td>
+                                    
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
-                                        
+                                        @auth
+                                            @if(auth()->user()->role === 'Manager')
+                                                <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                            @endif
+                                         @endauth
+
                                         <!-- Botão de exclusão -->
+                                        @auth
+                                        @if(auth()->user()->role === 'Manager')
                                         @if(auth()->id() !== $user->id)
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline ml-2">
                                                 @csrf
@@ -95,6 +103,8 @@
                                                 </button>
                                             </form>
                                         @endif
+                                        @endif
+                                        @endauth
                                     </td>
                                 </tr>
                             @endforeach
