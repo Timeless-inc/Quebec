@@ -141,7 +141,7 @@
         <h1>Relatório Personalizado de Atendimentos</h1>
         <div class="user-info">Servidor(a): {{ $user->name }}</div>
         <div class="user-info">Matrícula: {{ $user->matricula }}</div>
-        <div class="user-info">Período: {{ $periodoTexto }}</div>
+        <div class="user-info">{{ $periodoTexto }}</div>
         <div class="user-info">Gerado em: {{ $dataGeracao }}</div>
     </div>
     
@@ -152,13 +152,33 @@
         </div>
         
         <div class="highlight" style="width: 45%;">
-            <span class="highlight-value">{{ $data['tempoMedioDias'] }} dias</span>
+            <span class="highlight-value">
+                @if($data['tempoMedioDias'] < 1)
+                    Menos de 1 dia
+                @elseif($data['tempoMedioDias'] < 2)
+                    Menos de 2 dias
+                @elseif($data['tempoMedioDias'] < 5)
+                    Menos de 5 dias
+                @elseif($data['tempoMedioDias'] < 7)
+                    Menos de 7 dias
+                @else
+                    {{ round($data['tempoMedioDias']) }} dias
+                @endif
+            </span>
             <span class="highlight-label">Tempo Médio de Resolução</span>
         </div>
     </div>
     
     <h2>Últimos Atendimentos</h2>
-    @if(count($data['ultimosAtendimentos']) > 0)
+    @php
+        $atendimentosFiltrados = $data['ultimosAtendimentos']->filter(function($item) { 
+            return $item->status !== 'em_andamento'; 
+        });
+        
+        $atendimentosFiltrados = $atendimentosFiltrados->take(10);
+    @endphp
+
+    @if(count($atendimentosFiltrados) > 0)
     <table>
         <thead>
             <tr>
@@ -171,7 +191,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($data['ultimosAtendimentos'] as $atendimento)
+            @foreach($atendimentosFiltrados as $atendimento)
             <tr>
                 <td>#{{ $atendimento->id }}</td>
                 <td>{{ $atendimento->tipoRequisicao }}</td>
@@ -193,12 +213,19 @@
                         @php
                             $diffHours = $atendimento->created_at->diffInHours(\Carbon\Carbon::parse($atendimento->resolved_at));
                             $diffDays = $atendimento->created_at->diffInDays(\Carbon\Carbon::parse($atendimento->resolved_at));
+                            $diffDaysExact = $diffHours / 24;
                         @endphp
                         
-                        @if($diffHours < 24)
+                        @if($diffDaysExact < 1)
                             <span>Menos de 1 dia</span>
+                        @elseif($diffDaysExact < 2)
+                            <span>Menos de 2 dias</span>
+                        @elseif($diffDaysExact < 5)
+                            <span>Menos de 5 dias</span>
+                        @elseif($diffDaysExact < 7)
+                            <span>Menos de 7 dias</span>
                         @else
-                            <span>{{ $diffDays }} {{ $diffDays == 1 ? 'dia' : 'dias' }}</span>
+                            <span>{{ round($diffDays) }} dias</span>
                         @endif
                     @else
                         <span>N/A</span>
@@ -240,8 +267,13 @@
             </tr>
         </thead>
         <tbody>
-            @php $totalStatus = $data['situacoesFrequentes']->sum('total') @endphp
-            @foreach($data['situacoesFrequentes'] as $situacao)
+            @php 
+                $situacoesFiltered = $data['situacoesFrequentes']->filter(function($item) { 
+                    return $item->status !== 'em_andamento'; 
+                });
+                $totalStatus = $situacoesFiltered->sum('total') 
+            @endphp
+            @foreach($situacoesFiltered as $situacao)
             <tr>
                 <td>
                     @if($situacao->status == 'finalizado')
