@@ -5,6 +5,7 @@
 <script src="{{ asset('js/filterJustificativas.js') }}"></script>
 <script src="{{ asset('js/datepicker.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <x-appcradt>
     <x-slot name="header">

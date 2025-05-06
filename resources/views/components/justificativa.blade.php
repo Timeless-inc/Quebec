@@ -16,11 +16,12 @@
     'finalizado_por',
     'dadosExtra' => [],
 ])
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
 
-    @if(now()->diffInDays($requerimento->created_at) < 7)
-        <span class="absolute top-6 right-6 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full">Novo</span>
+    @if(now()->diffInDays($requerimento->created_at) < 1 && !($requerimento->visualizado ?? false))
+        <span class="absolute top-6 right-6 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full novo-badge" id="novo-badge-{{ $requerimento->id }}">Novo</span>
     @endif
 
     <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg mb-6">
@@ -91,7 +92,7 @@
 
             <div class="flex justify-end gap-3">
                 <!-- Botão Ver Detalhes - apenas ícone -->
-                <button type="button" class="h-8 px-3 flex items-center justify-center text-white bg-blue-600 rounded-md hover:bg-blue-700" data-bs-toggle="modal" data-bs-target="#detalhesModal-{{ $requerimento->id }}" title="Ver Detalhes">
+                <button type="button" class="h-8 px-3 flex items-center justify-center text-white bg-blue-600 rounded-md hover:bg-blue-700 ver-detalhes-btn" data-bs-toggle="modal" data-bs-target="#detalhesModal-{{ $requerimento->id }}" title="Ver Detalhes" data-requerimento-id="{{ $requerimento->id }}">
                     <i class="fas fa-info-circle mr-1 text-lg"></i> Ver Detalhes
                 </button>
                 
@@ -359,3 +360,40 @@
     <x-pendent-modal :requerimento="$requerimento" />
 
 </div>
+
+@stack('scripts')
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const verDetalhesButtons = document.querySelectorAll('.ver-detalhes-btn');
+        
+        verDetalhesButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const requerimentoId = this.getAttribute('data-requerimento-id');
+                const novoBadge = document.getElementById('novo-badge-' + requerimentoId);
+                
+                if (novoBadge) {
+                    novoBadge.remove();
+                    
+                    fetch('/requerimento/' + requerimentoId + '/marcar-como-visto', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Erro ao marcar requerimento como visto');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro na requisição:', error);
+                    });
+                }
+            });
+        });
+    });
+</script>
+@endpush

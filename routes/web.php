@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager'])->group(funct
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
     Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
     Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
-});
+    Route::post('/requerimento/{id}/marcar-como-visto', [ApplicationController::class, 'marcarComoVisto'])->name('requerimento.marcarComoVisto');});
 
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
