@@ -58,30 +58,61 @@
                 </a>
                 @endif
 
-                {{-- Pagination Elements --}}
-                @foreach ($elements as $element)
-                {{-- "Three Dots" Separator --}}
-                @if (is_string($element))
-                <span aria-disabled="true">
-                    <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">{{ $element }}</span>
-                </span>
+                @php
+                // Configuração para limitar o número de links de paginação
+                $visiblePages = 5; // Número total de páginas visíveis (sem contar próximo e anterior)
+                $currentPage = $paginator->currentPage();
+                $lastPage = $paginator->lastPage();
+                
+                // Calcular o range de páginas a serem exibidas
+                $halfVisible = floor($visiblePages / 2);
+                $startPage = max(1, $currentPage - $halfVisible);
+                $endPage = min($lastPage, $startPage + $visiblePages - 1);
+                
+                // Ajustar o startPage se estivermos perto do final
+                if ($endPage - $startPage + 1 < $visiblePages) {
+                    $startPage = max(1, $endPage - $visiblePages + 1);
+                }
+                @endphp
+
+                {{-- Primeira página e ellipsis --}}
+                @if($startPage > 1)
+                    <a href="{{ $paginator->url(1) }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-teal-400 bg-teal-50 border border-teal-500 leading-5 hover:text-teal-900 focus:z-10 focus:outline-none focus:ring ring-teal-300 focus:border-teal-600 active:bg-teal-500 active:text-white transition ease-in-out duration-150">
+                        1
+                    </a>
+                    
+                    @if($startPage > 2)
+                        <span aria-disabled="true">
+                            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">...</span>
+                        </span>
+                    @endif
                 @endif
 
-                {{-- Array Of Links --}}
-                @if (is_array($element))
-                @foreach ($element as $page => $url)
-                @if ($page == $paginator->currentPage())
-                <span aria-current="page">
-                    <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-white bg-teal-400 border border-teal-500 cursor-default leading-5">{{ $page }}</span>
-                </span>
-                @else
-                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-teal-400 bg-teal-50 border border-teal-500 leading-5 hover:text-teal-900 focus:z-10 focus:outline-none focus:ring ring-teal-300 focus:border-teal-600 active:bg-teal-500 active:text-white transition ease-in-out duration-150" aria-label="{{ __('Go to page :page', ['page' => $page]) }}">
-                    {{ $page }}
-                </a>
+                {{-- Páginas numeradas --}}
+                @for ($i = $startPage; $i <= $endPage; $i++)
+                    @if ($i == $currentPage)
+                        <span aria-current="page">
+                            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-white bg-teal-400 border border-teal-500 cursor-default leading-5">{{ $i }}</span>
+                        </span>
+                    @else
+                        <a href="{{ $paginator->url($i) }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-teal-400 bg-teal-50 border border-teal-500 leading-5 hover:text-teal-900 focus:z-10 focus:outline-none focus:ring ring-teal-300 focus:border-teal-600 active:bg-teal-500 active:text-white transition ease-in-out duration-150" aria-label="{{ __('Go to page :page', ['page' => $i]) }}">
+                            {{ $i }}
+                        </a>
+                    @endif
+                @endfor
+
+                {{-- Ellipsis e última página --}}
+                @if($endPage < $lastPage)
+                    @if($endPage < $lastPage - 1)
+                        <span aria-disabled="true">
+                            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">...</span>
+                        </span>
+                    @endif
+                    
+                    <a href="{{ $paginator->url($lastPage) }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-teal-400 bg-teal-50 border border-teal-500 leading-5 hover:text-teal-900 focus:z-10 focus:outline-none focus:ring ring-teal-300 focus:border-teal-600 active:bg-teal-500 active:text-white transition ease-in-out duration-150">
+                        {{ $lastPage }}
+                    </a>
                 @endif
-                @endforeach
-                @endif
-                @endforeach
 
                 {{-- Next Page Link --}}
                 @if ($paginator->hasMorePages())
