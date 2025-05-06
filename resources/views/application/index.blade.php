@@ -149,40 +149,40 @@
                                                     Nota: Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
                                                 </small>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="dropdown" id="anexoDropdown" style="display: none; margin-top: 2rem;">
-                                                <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
-                                                    Anexos/informações (clique para abrir)
-                                                </button>
-                                                <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
-                                                    <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
+                                            <div class="col-md-6">
+                                                <label class="form-label">&nbsp;</label>
+                                                <div class="dropdown" id="anexoDropdown" style="display: none;">
+                                                    <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
+                                                        Anexos/informações (clique para abrir)
+                                                    </button>
+                                                    <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
+                                                        <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="container">
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label for="observacoes" class="form-label">Observações</label>
-                                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                        <div class="container">
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <label for="observacoes" class="form-label">Observações</label>
+                                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12 text-end py-4">
+                                                    <button type="submit" class="btn btn-success">Enviar</button>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-12 text-end">
-                                                <button type="submit" class="btn btn-success">Enviar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </x-app-layout>
 
     <script>
