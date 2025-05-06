@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 class CradtReportController extends Controller
 {
@@ -397,5 +398,269 @@ class CradtReportController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao gerar relatório cruzado com tempo: ' . $e->getMessage()], 500);
         }
+    }
+    public function generatePdf(Request $request)
+    {
+        $mes = $request->input('mes');
+        $ano = $request->input('ano');
+        $filtro = $request->input('filtro');
+        $filtroExtra = $request->input('filtroExtra');
+        $valorFiltroExtra = $request->input('valorFiltroExtra');
+        
+        $query = ApplicationRequest::query();
+        
+        if ($mes === 'all') {
+            $startDate = Carbon::createFromDate($ano, 1, 1)->startOfYear();
+            $endDate = Carbon::createFromDate($ano, 12, 31)->endOfYear();
+            $periodoTexto = "Ano de $ano";
+        } else {
+            $startDate = Carbon::createFromDate($ano, $mes, 1)->startOfMonth();
+            $endDate = Carbon::createFromDate($ano, $mes, 1)->endOfMonth();
+            $periodoTexto = "Mês " . $startDate->format('m/Y');
+        }
+        
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+        
+        if ($filtroExtra && $valorFiltroExtra) {
+            $query = $this->aplicarFiltroSecundario($query, $filtroExtra, $valorFiltroExtra);
+            $filtroExtraTexto = $this->getFilterName($filtroExtra) . ": " . $valorFiltroExtra;
+        } else {
+            $filtroExtraTexto = "";
+        }
+        
+        if ($filtro === 'tempoResolucao') {
+            $data = $query->whereNotNull('resolved_at')
+                ->select(
+                    DB::raw('CASE 
+                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 24 THEN "Menos de 1 dia"
+                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 48 THEN "1 dia" 
+                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 72 THEN "2 dias"
+                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 168 THEN "3-7 dias"
+                        ELSE "Mais de 7 dias"
+                    END as label'),
+                    DB::raw('count(*) as total')
+                )
+                ->groupBy('label')
+                ->orderBy(DB::raw('CASE 
+                    WHEN label = "Menos de 1 dia" THEN 1
+                    WHEN label = "1 dia" THEN 2
+                    WHEN label = "2 dias" THEN 3
+                    WHEN label = "3-7 dias" THEN 4
+                    ELSE 5
+                END'))
+                ->get();
+            
+            $tituloRelatorio = "Relatório de Tempo de Resolução";
+        } else {
+            $filtroColuna = $this->mapearFiltroParaColuna($filtro);
+            
+            $data = $query->select($filtroColuna . ' as label', DB::raw('count(*) as total'))
+                ->whereNotNull($filtroColuna)
+                ->where($filtroColuna, '!=', '')
+                ->when($filtroColuna === 'finalizado_por', function($q) {
+                    return $q->where('finalizado_por', '!=', 'null')
+                            ->where('finalizado_por', '!=', 'N/A')
+                            ->where('finalizado_por', '!=', 'Não Atribuído');
+                })
+                ->groupBy($filtroColuna)
+                ->orderByDesc('total')
+                ->get();
+            
+            $tituloRelatorio = "Relatório por " . $this->getFilterName($filtro);
+        }
+        
+        $totalRequerimentos = $data->sum('total');
+        
+        $pdf = PDF::loadView('cradt-report.pdf', [
+            'titulo' => $tituloRelatorio,
+            'periodo' => $periodoTexto,
+            'filtroExtra' => $filtroExtraTexto,
+            'data' => $data,
+            'totalRequerimentos' => $totalRequerimentos,
+            'dataGeracao' => now()->format('d/m/Y H:i')
+        ]);
+        
+        $pdf->setPaper('a4', 'portrait');
+        
+        return $pdf->download('relatorio-sre-' . now()->format('dmY-His') . '.pdf');
+    }
+
+    public function generateUserPdf(Request $request)
+    {
+        $user = Auth::user();
+        
+        $period = $request->input('period', 'mes-atual');
+        
+        switch ($period) {
+            case 'mes-atual':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                $periodoTexto = 'Mês Atual: ' . $startDate->format('m/Y');
+                break;
+                
+            case 'mes-anterior':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                $periodoTexto = 'Mês Anterior: ' . $startDate->format('m/Y');
+                break;
+                
+            case 'ano-atual':
+                $startDate = Carbon::now()->startOfYear();
+                $endDate = Carbon::now()->endOfYear();
+                $periodoTexto = 'Ano Atual: ' . $startDate->format('Y');
+                break;
+                
+            case 'personalizado':
+                $startDate = Carbon::parse($request->input('startDate'))->startOfDay();
+                $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
+                $periodoTexto = 'Período: ' . $startDate->format('d/m/Y') . ' a ' . $endDate->format('d/m/Y');
+                break;
+                
+            default:
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                $periodoTexto = 'Mês Atual: ' . $startDate->format('m/Y');
+        }
+        
+        $userData = [];
+        
+        $userData['totalAtendimentos'] = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->count();
+        
+        $tempoMedioQuery = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereNotNull('resolved_at')
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->select(DB::raw('AVG(TIMESTAMPDIFF(HOUR, created_at, resolved_at)) as tempo_medio'))
+            ->first();
+        
+        $userData['tempoMedioHoras'] = round($tempoMedioQuery->tempo_medio ?? 0, 1);
+        $userData['tempoMedioDias'] = round(($tempoMedioQuery->tempo_medio ?? 0) / 24, 1);
+        
+        $userData['ultimosAtendimentos'] = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->orderBy('resolved_at', 'desc')
+            ->limit(5)
+            ->get(['id', 'tipoRequisicao', 'created_at', 'resolved_at', 'status']);
+        
+        $userData['tiposFrequentes'] = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->select('tipoRequisicao', DB::raw('count(*) as total'))
+            ->groupBy('tipoRequisicao')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+        
+        $userData['situacoesFrequentes'] = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->orderByDesc('total')
+            ->get();
+        
+        $userData['estatisticasPeriodicas'] = [];
+        
+        if ($period === 'ano-atual') {
+            for ($i = 1; $i <= 12; $i++) {
+                $mesInicio = Carbon::createFromDate($startDate->year, $i, 1)->startOfMonth();
+                $mesFim = Carbon::createFromDate($startDate->year, $i, 1)->endOfMonth();
+                
+                $total = ApplicationRequest::where('finalizado_por', $user->name)
+                    ->whereBetween('resolved_at', [$mesInicio, $mesFim])
+                    ->count();
+                
+                $userData['estatisticasPeriodicas'][] = [
+                    'label' => $mesInicio->format('M/Y'),
+                    'total' => $total
+                ];
+            }
+        } else if ($period === 'personalizado' && $startDate->diffInDays($endDate) > 31) {
+            $currentDate = Carbon::parse($startDate);
+            
+            while ($currentDate->lte($endDate)) {
+                $mesInicio = Carbon::parse($currentDate)->startOfMonth();
+                $mesFim = Carbon::parse($currentDate)->endOfMonth();
+                
+                if ($mesFim->gt($endDate)) {
+                    $mesFim = Carbon::parse($endDate);
+                }
+                
+                $total = ApplicationRequest::where('finalizado_por', $user->name)
+                    ->whereBetween('resolved_at', [$mesInicio, $mesFim])
+                    ->count();
+                
+                $userData['estatisticasPeriodicas'][] = [
+                    'label' => $mesInicio->format('M/Y'),
+                    'total' => $total
+                ];
+                
+                $currentDate->addMonth();
+            }
+        } else {
+            $currentDate = Carbon::parse($startDate);
+            
+            while ($currentDate->lte($endDate)) {
+                $total = ApplicationRequest::where('finalizado_por', $user->name)
+                    ->whereDate('resolved_at', $currentDate)
+                    ->count();
+                
+                $userData['estatisticasPeriodicas'][] = [
+                    'label' => $currentDate->format('d/m'),
+                    'total' => $total
+                ];
+                
+                $currentDate->addDay();
+            }
+        }
+        
+        $userData['resolucaoEficiente'] = ApplicationRequest::where('finalizado_por', $user->name)
+            ->whereNotNull('resolved_at')
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('CASE 
+                    WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 24 THEN "Menos de 1 dia"
+                    WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 48 THEN "1 dia" 
+                    WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 72 THEN "2 dias"
+                    WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 168 THEN "3-7 dias"
+                    ELSE "Mais de 7 dias"
+                END as faixa_tempo'),
+                DB::raw('count(*) as total')
+            )
+            ->groupBy('faixa_tempo')
+            ->orderBy(DB::raw('CASE 
+                WHEN faixa_tempo = "Menos de 1 dia" THEN 1
+                WHEN faixa_tempo = "1 dia" THEN 2
+                WHEN faixa_tempo = "2 dias" THEN 3
+                WHEN faixa_tempo = "3-7 dias" THEN 4
+                ELSE 5
+            END'))
+            ->get();
+        
+        $userData['estatisticasMensais'] = $userData['estatisticasPeriodicas'] ?? [];
+        
+        $pdf = PDF::loadView('cradt-report.user-pdf', [
+            'user' => $user,
+            'data' => $userData,
+            'periodoTexto' => $periodoTexto,
+            'dataGeracao' => now()->format('d/m/Y H:i')
+        ]);
+        
+        $pdf->setPaper('a4', 'portrait');
+        
+        return $pdf->download('meu-relatorio-' . now()->format('dmY-His') . '.pdf');
+    }
+
+    private function getFilterName($filtro)
+    {
+        $nomes = [
+            'tipo' => 'Tipo de Requisição',
+            'status' => 'Status',
+            'turno' => 'Turno',
+            'curso' => 'Curso',
+            'responsavel' => 'Responsável',
+            'tempoResolucao' => 'Tempo de Resolução'
+        ];
+        
+        return $nomes[$filtro] ?? ucfirst($filtro);
     }
 }

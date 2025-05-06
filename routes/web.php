@@ -76,7 +76,8 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     Route::get('/cradt/report', [CradtReportController::class, 'index'])->name('cradt-report');
     Route::get('/getFilteredData', [CradtReportController::class, 'getFilteredData']);
     Route::get('/getCrossReport', [CradtReportController::class, 'getCrossReport'])->name('reports.getCrossReport');
-    
+    Route::get('/cradt/reports/user-pdf', [CradtReportController::class, 'generateUserPdf'])->name('cradt-report.user-pdf');
+
     // Gerenciamento de usuários
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
