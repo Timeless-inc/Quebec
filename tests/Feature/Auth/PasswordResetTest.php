@@ -17,7 +17,7 @@ test('reset password link can be requested', function () {
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, \App\Notifications\ResetPasswordNotification::class);
 });
 
 test('reset password screen can be rendered', function () {

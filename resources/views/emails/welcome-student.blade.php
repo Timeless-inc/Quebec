@@ -130,18 +130,16 @@
     <div class="container">
         <div class="header">
             <div class="welcome-icon">🎉</div>
-            <h1>Bem-vindo(a) ao Sistema de Requerimentos Quebec!</h1>
+            <h1>Bem-vindo(a) ao Sistema de Requerimento do Estudante</h1>
         </div>
         <div class="content">
             <p class="welcome-message">Olá <span class="highlight">{{ $user->name }}</span>,</p>
             <p class="welcome-message">Estamos muito felizes em tê-lo(a) conosco!</p>
             <p class="welcome-message">A partir de agora, você pode enviar seus requerimentos de forma rápida e prática, diretamente pelo nosso sistema. Estamos aqui para facilitar sua vida acadêmica e garantir que tudo corra da melhor forma possível.</p>
             <p class="welcome-message">Se precisar de ajuda ou tiver alguma dúvida, nossa equipe de suporte está à disposição para ajudar. Não hesite em entrar em contato!</p>
-            <a href="#" class="cta-button">Acessar o Sistema</a>
-            <p class="welcome-message">Seja bem-vindo(a) e aproveite ao máximo todas as funcionalidades que preparamos para você!</p>
         </div>
         <div class="footer">
-            <p>© {{ date('Y') }} Sistema de Requerimentos Quebec - Todos os direitos reservados</p>
+            <p>© {{ date('Y') }} Sistema de Requerimento do Estudante - Todos os direitos reservados</p>
             <p>Este é um email automático, por favor não responda.</p>
         </div>
     </div>

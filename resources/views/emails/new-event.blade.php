@@ -175,7 +175,7 @@
         </div>
         
         <div class="footer">
-            <p>© {{ date('Y') }} Sistema de Requerimentos Quebec - Todos os direitos reservados</p>
+            <p>© {{ date('Y') }} Sistema de Requerimento do Estudante - Todos os direitos reservados</p>
             <p>Este é um email automático, por favor não responda.</p>
         </div>
     </div>
