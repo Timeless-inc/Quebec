@@ -616,4 +616,13 @@ class ApplicationController extends Controller
 
         return $query->get();
     }
+
+    public function marcarComoVisto($id)
+{
+    $requerimento = ApplicationRequest::findOrFail($id);
+    $requerimento->visualizado = true; 
+    $requerimento->save();
+    
+    return response()->json(['success' => true]);
+}
 }

@@ -55,7 +55,6 @@ Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager'])->group(funct
     Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
     Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
 });
-
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
@@ -92,7 +91,9 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
     Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
     Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
-    
+    Route::post('/requerimento/{id}/marcar-como-visto', [ApplicationController::class, 'marcarComoVisto'])->name('requerimento.marcarComoVisto');
+
+
     // Eventos
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
