@@ -128,56 +128,126 @@
                                 @elseif($event->daysUntilExpiration() > 1 && $event->daysUntilExpiration() <= 3)
                                     <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
                                     <i class="fas fa-clock"></i> Este evento vai encerrar em {{ $event->daysUntilExpiration() }} dias
-                                </div>
-                                @endif
-                                @if($event->is_exception && $event->exceptionUser)
-                                <p class="card-text small text-muted">
-                                    <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }} {{ $event->exceptionUser->cpf }}
-                                </p>
-                                @endif
                             </div>
+                            @endif
+                            @if($event->is_exception && $event->exceptionUser)
+                            <p class="card-text small text-muted">
+                                <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }} {{ $event->exceptionUser->cpf }}
+                            </p>
+                            @endif
                         </div>
                     </div>
-
-                    @if(!$event->is_exception)
-                    <x-event-edit :event="$event" />
-                    @endif
-                    @endforeach
                 </div>
+
+                @if(!$event->is_exception)
+                <x-event-edit :event="$event" />
+                @endif
+                @endforeach
             </div>
-            @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
-                <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
-            </div>
-            @endif
         </div>
+        @else
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+            <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
+        </div>
+        @endif
+    </div>
     </div>
 
     <!-- Processos Section -->
     <div class="py-6">
+        
+
+        @if(isset($profileRequests) && $profileRequests->isNotEmpty() && ($profileRequests->where('status', 'pending')->count() > 0 || $profileRequests->where('status', 'needs_review')->count() > 0))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-8">
+            <h3 class="text-lg font-semibold mb-4">Solicitações de Alteração de Perfil Pendentes</h3>
+
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aluno</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($profileRequests as $request)
+                            @if($request->status == 'pending' || $request->status == 'needs_review')
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($request->field == 'name') Nome
+                                    @elseif($request->field == 'matricula') Matrícula
+                                    @elseif($request->field == 'cpf') CPF
+                                    @elseif($request->field == 'rg') RG
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->current_value }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="{{ Storage::url($request->document_path) }}" target="_blank" class="text-blue-600 hover:underline">Ver documento</a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($request->status == 'pending')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
+                                    @elseif($request->status == 'needs_review')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Em Revisão</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <form method="POST" action="{{ route('profile-requests.approve', $request) }}">
+                                            @csrf
+                                            <button type="submit" class="text-green-600 hover:text-green-900">Deferir</button>
+                                        </form>
+                                        <form method="POST" action="{{ route('profile-requests.reject', $request) }}">
+                                            @csrf
+                                            <button type="submit" class="text-red-600 hover:text-red-900">Indeferir</button>
+                                        </form>
+                                    </div>
+                                    <div id="comments-form-{{ $request->id }}" class="hidden mt-2">
+                                        <form method="POST" action="{{ route('profile-requests.comment', $request) }}" class="flex">
+                                            @csrf
+                                            <input type="text" name="comment" class="border rounded-l-md px-2 py-1 text-sm w-full" placeholder="Adicionar comentário">
+                                            <button type="submit" class="bg-blue-500 text-white rounded-r-md px-2 py-1 text-sm">Enviar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
                 @if($currentStatus == 'pendente')
-                    Processos em Atenção:
+                Processos em Atenção:
                 @elseif($currentStatus == 'indeferido')
-                    Processos Indeferidos:
+                Processos Indeferidos:
                 @elseif($currentStatus == 'finalizado')
-                    Processos Resolvidos:
+                Processos Resolvidos:
                 @elseif($currentStatus == 'em_andamento')
-                    Processos em Andamento:
+                Processos em Andamento:
                 @elseif($currentStatus == 'em_aberto')
-                    Processos em Aberto:
+                Processos em Aberto:
                 @else
-                    Todos os Processos:
+                Todos os Processos:
                 @endif
             </h2>
-        </div> 
+        </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" id="requerimentos-container">
             @if($requerimentos->count() > 0)
             @foreach($requerimentos as $requerimento)
             @php
-                $dadosExtra = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : [];
+            $dadosExtra = $requerimento->dadosExtra ? json_decode($requerimento->dadosExtra, true) : [];
             @endphp
             <x-justificativa
                 id="{{ $requerimento->id }}"
@@ -194,8 +264,7 @@
                 key="{{ $requerimento->key }}"
                 finalizado_por="{{ $requerimento->finalizado_por }}"
                 :dadosExtra="$dadosExtra"
-                class="justificativa-item"
-            />
+                class="justificativa-item" />
             @endforeach
 
             <div class="flex justify-center mt-8">
@@ -225,34 +294,42 @@
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status') || 'todos';
-            
+
             currentStatus = status;
-            
+
             highlightActiveButton(status);
-            
+
             filterJustificativas(status);
+        });
+
+        document.querySelectorAll('.comments-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const requestId = button.getAttribute('data-request-id');
+                const commentsForm = document.getElementById(`comments-form-${requestId}`);
+                commentsForm.classList.toggle('hidden');
+            });
         });
     </script>
 
     <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
 
-<style>
-    input[type="date"] {
-        min-width: 180px;
-        cursor: pointer;
-        padding-right: 10px;
-    }
-    
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        cursor: pointer;
-        padding: 5px;
-        position: absolute;
-        right: 0;
-        opacity: 0.6;
-    }
-    
-    input[type="date"]::-webkit-calendar-picker-indicator:hover {
-        opacity: 1;
-    }
-</style>
+    <style>
+        input[type="date"] {
+            min-width: 180px;
+            cursor: pointer;
+            padding-right: 10px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            padding: 5px;
+            position: absolute;
+            right: 0;
+            opacity: 0.6;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+    </style>
 </x-appcradt>

@@ -11,6 +11,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ProfileChangeRequestController;
 use Illuminate\Support\Facades\Route;
 
 // Rota pública para verificação de atualizações 
@@ -40,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Rota para solicitar atualização de perfil
+    Route::post('/profile/request-update', [ProfileChangeRequestController::class, 'store'])->name('profile.request-update');
     
     // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -116,6 +120,15 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
         ]);
     });
 });
+
+// Rotas para gerenciamento de solicitações de alteração de perfil
+Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.')->group(function () {
+    Route::post('/{profileRequest}/approve', [ProfileChangeRequestController::class, 'approve'])->name('approve');
+    Route::post('/{profileRequest}/reject', [ProfileChangeRequestController::class, 'reject'])->name('reject');
+    Route::post('/{profileRequest}/pendency', [ProfileChangeRequestController::class, 'pendency'])->name('pendency');
+    Route::post('/{profileRequest}/comment', [ProfileChangeRequestController::class, 'comment'])->name('comment');
+});
+
 
 // Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');

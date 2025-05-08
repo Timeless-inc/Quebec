@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;
+use App\Models\ProfileChangeRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use Illuminate\Http\Request;
@@ -33,15 +34,32 @@ class DashboardController extends Controller
         }
         
         $requerimentos = $query->latest()->paginate(10);
-        
         $requerimentos->appends(['status' => $status]);
         
         $events = Event::orderBy('start_date')->get();
         
-        return view('dashboard.index', [
-            'requerimentos' => $requerimentos,
-            'events' => $events,
-            'currentStatus' => $status
-        ]);
+        if ($user->role === 'Cradt' || $user->role === 'Manager') {
+            $profileRequests = ProfileChangeRequest::with('user')
+                ->orderBy('created_at', 'desc')
+                ->get();
+                
+            return view('dashboard.index', [
+                'requerimentos' => $requerimentos,
+                'events' => $events,
+                'currentStatus' => $status,
+                'profileRequests' => $profileRequests
+            ]);
+        } else {
+            $profileRequests = ProfileChangeRequest::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+                
+            return view('dashboard.index', [
+                'requerimentos' => $requerimentos,
+                'events' => $events,
+                'currentStatus' => $status,
+                'profileRequests' => $profileRequests
+            ]);
+        }
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
+use App\Models\ProfileChangeRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,17 +16,10 @@ class CradtController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        //if (!$user) {
-        //    abort(403, 'Acesso negado.');
-        //}
-        //
-        //Gate::authorize('isCradt', $user);
-
-        $query = ApplicationRequest::query();
-        $request = request();
         
-        $status = $request->input('status', 'todos'); 
+        $status = request()->input('status', 'todos');
+        
+        $query = ApplicationRequest::query();
         
         if ($status && $status !== 'todos') {
             if ($status === 'em_aberto') {
@@ -35,46 +28,21 @@ class CradtController extends Controller
                 $query->where('status', $status);
             }
         }
-
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nomeCompleto', 'like', "%{$search}%")
-                    ->orWhere('matricula', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('cpf', 'like', "%{$search}%")
-                    ->orWhere('tipoRequisicao', 'like', "%{$search}%")
-                    ->orWhere('key', 'like', "%{$search}%");
-            });
-        }
         
-        if ($request->has('date_filter') && $request->date_filter != '') {
-            try {
-                $dateInput = $request->date_filter;
-                
-                if (strpos($dateInput, '-') !== false) {
-                    $date = Carbon::createFromFormat('Y-m-d', $dateInput);
-                } else {
-                    $date = Carbon::createFromFormat('d/m/Y', $dateInput);
-                }
-                
-                $query->whereDate('created_at', $date->format('Y-m-d'));
-            } catch (\Exception $e) {
-            }
-        }
-
         $requerimentos = $query->latest()->paginate(10);
+        $requerimentos->appends(['status' => $status]);
         
-        $requerimentos->appends($request->query());
-
         $events = Event::orderBy('start_date')->get();
-        $datas = Carbon::now()->format('d/m/Y');
-
+        
+        $profileRequests = ProfileChangeRequest::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
         return view('cradt.index', [
             'requerimentos' => $requerimentos,
-            'datas' => $datas,
             'events' => $events,
-            'currentStatus' => $status
+            'currentStatus' => $status,
+            'profileRequests' => $profileRequests
         ]);
     }
 

@@ -2,60 +2,224 @@
 <x-app-layout>    
 <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Editar Perfil') }}
+            {{ __('Solicitar Alteração de Dados') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow sm:rounded-lg p-6">
-                <!-- Formulário de Edição -->
+                <!-- Formulário de Solicitação -->
                 <div>
-                    <h3 class="text-xl font-semibold">Editar Perfil</h3>
+                    <h3 class="text-xl font-semibold">Solicitar Alteração de Dados</h3>
+                    <p class="text-sm text-gray-600 mt-2">Para solicitar alteração de seus dados, selecione os campos que deseja alterar, preencha os novos valores e anexe os documentos comprobatórios.</p>
 
-                    <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-4">
+                    <form method="POST" action="{{ route('profile.request-update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                         @csrf
-                        @method('PATCH')
+                        
+                        <!-- Tabela de Dados Atuais e Solicitação de Alteração -->
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitar</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anexo Comprobatório</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- Nome -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" id="change_name" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="name">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Nome</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="name_fields">
+                                            <input id="name" name="name" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo nome">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="name_document_fields">
+                                            <input id="name_document" name="name_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Matrícula -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" id="change_matricula" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="matricula">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Matrícula</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->matricula }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="matricula_fields">
+                                            <input id="matricula" name="matricula" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Nova matrícula">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="matricula_document_fields">
+                                            <input id="matricula_document" name="matricula_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- CPF -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" id="change_cpf" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="cpf">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">CPF</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->cpf }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="cpf_fields">
+                                            <input id="cpf" name="cpf" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo CPF">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="cpf_document_fields">
+                                            <input id="cpf_document" name="cpf_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- RG -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" id="change_rg" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="rg">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">RG</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->rg }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="rg_fields">
+                                            <input id="rg" name="rg" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo RG">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="rg_document_fields">
+                                            <input id="rg_document" name="rg_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- Nome Completo -->
-                            <div>
-                                <label for="name" class="block font-medium text-sm text-gray-700">Nome Completo</label>
-                                <input id="name" name="name" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->name }}" required>
-                            </div>
-
-                            <!-- Matrícula -->
-                            <div>
-                                <label for="matricula" class="block font-medium text-sm text-gray-700">Matrícula</label>
-                                <input id="matricula" name="matricula" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->matricula }}">
-                            </div>
-
-                            <!-- CPF -->
-                            <div>
-                                <label for="cpf" class="block font-medium text-sm text-gray-700">CPF</label>
-                                <input id="cpf" name="cpf" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->cpf }}">
-                            </div>
-
-                            <!-- RG -->
-                            <div>
-                                <label for="rg" class="block font-medium text-sm text-gray-700">RG</label>
-                                <input id="rg" name="rg" type="text" class="block w-full border rounded-md px-3 py-2"
-                                    value="{{ Auth::user()->rg }}">
-                            </div>
+                        <!-- Informações e Avisos -->
+                        <div class="text-sm text-gray-600 mt-2 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                            <p class="font-semibold">⚠️ Importante:</p>
+                            <ul class="list-disc ml-5 mt-1">
+                                <li>Marque a caixa de seleção para cada dado que deseja alterar</li>
+                                <li>É obrigatório anexar documento comprobatório para cada alteração solicitada</li>
+                                <li>As alterações só serão efetivadas após análise e aprovação da CRADT</li>
+                            </ul>
                         </div>
 
-                        <!-- Botão de Atualização -->
-                        <div class="mt-6">
-                            <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-md">Atualizar Informações</button>
+                        <!-- Botão de Solicitação -->
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit" id="submitBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md transition" disabled>
+                                Enviar Solicitação
+                            </button>
                         </div>
                     </form>
-
-                    <p class="mt-4 text-gray-500 text-sm">Membro desde: <strong>{{ Auth::user()->created_at->format('d F Y') }}</strong></p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Histórico de Solicitações -->
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h3 class="text-lg font-semibold mb-4">Histórico de Solicitações</h3>
+
+            <div class="bg-white shadow sm:rounded-lg overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observação</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data da Solicitação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($profileRequests as $request)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($request->field == 'name') Nome
+                                @elseif($request->field == 'matricula') Matrícula
+                                @elseif($request->field == 'cpf') CPF
+                                @elseif($request->field == 'rg') RG
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $request->current_value }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($request->status == 'pending')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
+                                @elseif($request->status == 'approved')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aprovado</span>
+                                @elseif($request->status == 'rejected')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejeitado</span>
+                                @elseif($request->status == 'needs_review')
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Em Revisão</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $request->admin_comment ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $request->created_at->format('d/m/Y H:i') }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Nenhuma solicitação encontrada</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.toggle-change');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            toggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const field = this.getAttribute('data-field');
+                    const valueFields = document.getElementById(`${field}_fields`);
+                    const documentFields = document.getElementById(`${field}_document_fields`);
+                    
+                    if (this.checked) {
+                        valueFields.classList.remove('hidden');
+                        documentFields.classList.remove('hidden');
+                    } else {
+                        valueFields.classList.add('hidden');
+                        documentFields.classList.add('hidden');
+                    }
+                    
+                    updateSubmitButton();
+                });
+            });
+            
+            function updateSubmitButton() {
+                const anyChecked = Array.from(toggles).some(toggle => toggle.checked);
+                submitBtn.disabled = !anyChecked;
+                
+                if (anyChecked) {
+                    submitBtn.classList.remove('bg-gray-400');
+                    submitBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+                } else {
+                    submitBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+                    submitBtn.classList.add('bg-gray-400');
+                }
+            }
+            
+            updateSubmitButton();
+        });
+    </script>
 </x-app-layout>
