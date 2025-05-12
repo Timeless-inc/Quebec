@@ -189,7 +189,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $request->current_value }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ Storage::url($request->document_path) }}" target="_blank" class="text-blue-600 hover:underline">Ver documento</a>
+                                    <a href="{{ Storage::temporaryUrl($request->document_path, now()->addMinutes(30)) }}" target="_blank" class="text-blue-600 hover:underline">Ver documento</a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($request->status == 'pending')
