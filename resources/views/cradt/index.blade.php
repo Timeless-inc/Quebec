@@ -75,6 +75,7 @@
     </div>
 
     <!-- Eventos Acadêmicos Section -->
+    @if($events->isNotEmpty())
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
@@ -83,7 +84,6 @@
         </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($events->isNotEmpty())
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="row">
                     @foreach($events as $event)
@@ -128,30 +128,26 @@
                                 @elseif($event->daysUntilExpiration() > 1 && $event->daysUntilExpiration() <= 3)
                                     <div class="alert alert-warning py-1 px-2 mb-0 mt-2">
                                     <i class="fas fa-clock"></i> Este evento vai encerrar em {{ $event->daysUntilExpiration() }} dias
+                                </div>
+                                @endif
+                                @if($event->is_exception && $event->exceptionUser)
+                                <p class="card-text small text-muted">
+                                    <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }} {{ $event->exceptionUser->cpf }}
+                                </p>
+                                @endif
                             </div>
-                            @endif
-                            @if($event->is_exception && $event->exceptionUser)
-                            <p class="card-text small text-muted">
-                                <strong>Aluno da exceção e CPF:</strong> {{ $event->exceptionUser->name }} {{ $event->exceptionUser->cpf }}
-                            </p>
-                            @endif
                         </div>
                     </div>
-                </div>
 
-                @if(!$event->is_exception)
-                <x-event-edit :event="$event" />
-                @endif
-                @endforeach
+                    @if(!$event->is_exception)
+                    <x-event-edit :event="$event" />
+                    @endif
+                    @endforeach
+                </div>
             </div>
         </div>
-        @else
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
-            <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
-        </div>
-        @endif
     </div>
-    </div>
+    @endif
 
     <!-- Processos Section -->
     <div class="py-6">

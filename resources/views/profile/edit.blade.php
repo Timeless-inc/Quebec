@@ -1,29 +1,61 @@
 <title>SRE - Perfil</title>
-<x-app-layout>    
-<x-slot name="header">
+<x-app-layout>
+    <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Solicitar Alteração de Dados') }}
         </h2>
     </x-slot>
 
+    <style>
+        .validation-error {
+            border-color: #ef4444 !important;
+        }
+
+        .validation-success {
+            border-color: #10b981 !important;
+        }
+
+        .field-validated {
+            position: relative;
+        }
+
+        .field-validated::after {
+            content: '✓';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #10b981;
+        }
+
+        .field-error::after {
+            content: '✗';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ef4444;
+        }
+    </style>
+
     @if (session('status'))
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
-            <div class="p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
-                {{ session('status') }}
-            </div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+        <div class="p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
+            {{ session('status') }}
         </div>
+    </div>
     @endif
 
     @if ($errors->any())
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
-            <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+        <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    </div>
     @endif
 
     <div class="py-12">
@@ -36,7 +68,7 @@
 
                     <form method="POST" action="{{ route('profile.request-update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                         @csrf
-                        
+
                         <!-- Tabela de Dados Atuais e Solicitação de Alteração -->
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -68,7 +100,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                
+
                                 <!-- Matrícula -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -88,7 +120,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                
+
                                 <!-- CPF -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -108,7 +140,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                
+
                                 <!-- RG -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -211,13 +243,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             const toggles = document.querySelectorAll('.toggle-change');
             const submitBtn = document.getElementById('submitBtn');
-            
+
             toggles.forEach(toggle => {
                 toggle.addEventListener('change', function() {
                     const field = this.getAttribute('data-field');
                     const valueFields = document.getElementById(`${field}_fields`);
                     const documentFields = document.getElementById(`${field}_document_fields`);
-                    
+
                     if (this.checked) {
                         valueFields.classList.remove('hidden');
                         documentFields.classList.remove('hidden');
@@ -225,15 +257,15 @@
                         valueFields.classList.add('hidden');
                         documentFields.classList.add('hidden');
                     }
-                    
+
                     updateSubmitButton();
                 });
             });
-            
+
             function updateSubmitButton() {
                 const anyChecked = Array.from(toggles).some(toggle => toggle.checked);
                 submitBtn.disabled = !anyChecked;
-                
+
                 if (anyChecked) {
                     submitBtn.classList.remove('bg-gray-400');
                     submitBtn.classList.add('bg-red-500', 'hover:bg-red-600');
@@ -242,8 +274,115 @@
                     submitBtn.classList.add('bg-gray-400');
                 }
             }
-            
+
             updateSubmitButton();
+
+            const fieldsToValidate = ['cpf', 'matricula', 'rg'];
+
+            fieldsToValidate.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) {
+                    input.addEventListener('blur', function() {
+                        if (this.value.trim() === '') return;
+
+                        clearValidationMessage(field);
+
+                        fetch(`/profile/check-duplicate?field=${field}&value=${this.value}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.exists) {
+                                    showValidationMessage(field, `Este ${getFieldLabel(field)} já está registrado para outro usuário.`);
+                                }
+                            })
+                            .catch(error => console.error('Erro na verificação:', error));
+                    });
+                }
+            });
+
+            function clearValidationMessage(field) {
+                const existingMessage = document.getElementById(`${field}_validation_message`);
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+            }
+
+            function showValidationMessage(field, message) {
+                const input = document.getElementById(field);
+                const messageElement = document.createElement('div');
+                messageElement.id = `${field}_validation_message`;
+                messageElement.className = 'text-red-500 text-xs mt-1';
+                messageElement.textContent = message;
+
+                input.parentNode.appendChild(messageElement);
+            }
+
+            function getFieldLabel(field) {
+                const labels = {
+                    'cpf': 'CPF',
+                    'rg': 'RG',
+                    'matricula': 'Matrícula'
+                };
+                return labels[field] || field;
+            }
+
+            const cpfInput = document.getElementById('cpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+
+                    value = value.replace(/\D/g, '');
+
+                    if (value.length > 11) {
+                        value = value.slice(0, 11);
+                    }
+
+                    if (value.length > 0) {
+                        if (value.length <= 3) {} else if (value.length <= 6) {
+                            value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+                        } else if (value.length <= 9) {
+                            value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                        } else {
+                            value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+                        }
+                    }
+
+                    e.target.value = value;
+                });
+
+                cpfInput.addEventListener('paste', function(e) {
+                    setTimeout(function() {
+                        const event = new Event('input');
+                        cpfInput.dispatchEvent(event);
+                    }, 0);
+                });
+            }
+
+            const rgInput = document.getElementById('rg');
+
+            if (rgInput) {
+                rgInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, ''); 
+
+                    if (value.length > 9) {
+                        value = value.substring(0, 9); 
+                    }
+
+                    if (value.length > 2) {
+                        value = value.slice(0, 2) + '.' + value.slice(2);
+                    }
+                    if (value.length > 6) {
+                        value = value.slice(0, 6) + '.' + value.slice(6);
+                    }
+                    if (value.length > 10) {
+                        value = value.slice(0, 10) + '-' + value.slice(10);
+                    } else if (value.length > 9) {
+                        value = value.slice(0, 9) + '-' + value.slice(9);
+                    }
+
+                    e.target.value = value;
+                });
+            }
+
         });
     </script>
 </x-app-layout>

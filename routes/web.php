@@ -14,6 +14,8 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ProfileChangeRequestController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Rota pública para verificação de atualizações 
 
@@ -45,6 +47,23 @@ Route::middleware('auth')->group(function () {
 
     // Rota para solicitar atualização de perfil
     Route::post('/profile/request-update', [ProfileController::class, 'requestUpdate'])->name('profile.request-update');
+
+    // Rota para verificar duplicidade de perfil
+    Route::get('/profile/check-duplicate', function(Request $request) {
+        $field = $request->input('field');
+        $value = $request->input('value');
+        $userId = Auth::id();
+        
+        if (!in_array($field, ['cpf', 'rg', 'matricula'])) {
+            return response()->json(['error' => 'Campo inválido'], 400);
+        }
+        
+        $exists = \App\Models\User::where($field, $value)
+            ->where('id', '!=', $userId)
+            ->exists();
+        
+        return response()->json(['exists' => $exists]);
+    })->middleware('auth')->name('profile.check-duplicate');
 
     // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

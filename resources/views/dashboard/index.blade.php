@@ -26,15 +26,15 @@
     </x-slot>
 
     <!-- Eventos Acadêmicos Section -->
+    @if($events->isNotEmpty())
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
-                    Eventos Acadêmicos:
-                </h2>
-            </div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
+                Eventos Acadêmicos:
+            </h2>
+        </div>
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($events->isNotEmpty())
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="row">
                     @foreach($events as $event)
@@ -71,13 +71,9 @@
                     @endforeach
                 </div>
             </div>
-            @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
-                <p class="mb-0">Não há eventos acadêmicos para exibir no momento.</p>
-            </div>
-            @endif
         </div>
     </div>
+    @endif
     
     <!-- Processos Section -->
     <div class="pb-6 pt-2">

@@ -96,8 +96,35 @@ class ProfileController extends Controller
         $fields = $request->input('fields');
         $user = Auth::user();
         
-
-        $requestGroupId = Str::uuid()->toString(); 
+        foreach ($fields as $fieldName => $fieldData) {
+            if (!isset($fieldData['selected']) || $fieldData['selected'] != 'on') {
+                continue;
+            }
+            
+            if (!isset($fieldData['value']) || !$fieldData['value']) {
+                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
+            }
+            
+            if (in_array($fieldName, ['cpf', 'rg', 'matricula'])) {
+                $existingUser = User::where($fieldName, $fieldData['value'])
+                    ->where('id', '!=', $user->id)
+                    ->first();
+                    
+                if ($existingUser) {
+                    $fieldLabels = [
+                        'cpf' => 'CPF',
+                        'rg' => 'RG',
+                        'matricula' => 'Matrícula'
+                    ];
+                    
+                    return back()
+                        ->withInput()
+                        ->withErrors(["O {$fieldLabels[$fieldName]} '{$fieldData['value']}' já está registrado para outro usuário."]);
+                }
+            }
+        }
+        
+        $requestGroupId = Str::uuid()->toString();
         $hasSelectedField = false;
 
         foreach ($fields as $fieldName => $fieldData) {
