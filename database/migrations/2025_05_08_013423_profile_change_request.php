@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('document_path');
             $table->string('status')->default('pending');
             $table->text('admin_comment')->nullable();
+            $table->string('request_group_id')->nullable();
             $table->timestamps();
         });
     }

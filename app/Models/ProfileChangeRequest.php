@@ -17,6 +17,7 @@ class ProfileChangeRequest extends Model
         'document_path',
         'status',
         'admin_comment',
+        'request_group_id'
     ];
 
 

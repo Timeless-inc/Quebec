@@ -151,4 +151,62 @@ class ProfileChangeRequestController extends Controller
         
         return redirect()->back()->with('success', 'Comentário adicionado com sucesso!');
     }
+
+    public function approveGroup($groupId)
+    {
+        $requests = ProfileChangeRequest::where('request_group_id', $groupId)
+            ->whereIn('status', ['pending', 'needs_review'])
+            ->get();
+        
+        if ($requests->isEmpty()) {
+            return back()->with('error', 'Nenhuma solicitação pendente encontrada neste grupo.');
+        }
+        
+        $comment = request()->input('comment');
+        $user = Auth::user();
+        
+        foreach ($requests as $request) {
+            $request->status = 'approved';
+            $request->admin_comment = $comment;
+            $request->save();
+            
+            $requestUser = $request->user;
+            $field = $request->field;
+            $newValue = $request->new_value;
+            
+            $requestUser->$field = $newValue;
+            $requestUser->save();
+            
+        }
+        
+        return back()->with('status', 'Todas as solicitações do grupo foram aprovadas com sucesso.');
+    }
+
+    public function rejectGroup($groupId)
+    {
+        $requests = ProfileChangeRequest::where('request_group_id', $groupId)
+            ->whereIn('status', ['pending', 'needs_review'])
+            ->get();
+        
+        if ($requests->isEmpty()) {
+            return back()->with('error', 'Nenhuma solicitação pendente encontrada neste grupo.');
+        }
+        
+        $comment = request()->input('comment');
+        
+        if (empty($comment)) {
+            return back()->withErrors(['É necessário informar o motivo do indeferimento.']);
+        }
+        
+        $user = Auth::user();
+        
+        foreach ($requests as $request) {
+            $request->status = 'rejected';
+            $request->admin_comment = $comment;
+            $request->save();
+            
+        }
+        
+        return back()->with('status', 'Todas as solicitações do grupo foram indeferidas.');
+    }
 }

@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rota para solicitar atualização de perfil
-    Route::post('/profile/request-update', [ProfileChangeRequestController::class, 'store'])->name('profile.request-update');
+    Route::post('/profile/request-update', [ProfileController::class, 'requestUpdate'])->name('profile.request-update');
 
     // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -130,8 +130,8 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
 Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.')->group(function () {
     Route::post('/{profileRequest}/approve', [ProfileChangeRequestController::class, 'approve'])->name('approve');
     Route::post('/{profileRequest}/reject', [ProfileChangeRequestController::class, 'reject'])->name('reject');
-    Route::post('/{profileRequest}/pendency', [ProfileChangeRequestController::class, 'pendency'])->name('pendency');
-    Route::post('/{profileRequest}/comment', [ProfileChangeRequestController::class, 'comment'])->name('comment');
+    Route::post('/group/{groupId}/approve', [ProfileChangeRequestController::class, 'approveGroup'])->name('approve-group');
+    Route::post('/group/{groupId}/reject', [ProfileChangeRequestController::class, 'rejectGroup'])->name('reject-group');
 });
 
 

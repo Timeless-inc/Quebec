@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Models\User;
 
@@ -17,11 +18,11 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
-        
+
         $profileRequests = ProfileChangeRequest::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return view('profile.edit', [
             'user' => $user,
             'profileRequests' => $profileRequests
@@ -32,11 +33,11 @@ class ProfileController extends Controller
     public function cradtView(): View
     {
         $user = Auth::user();
-        
+
         $profileRequests = ProfileChangeRequest::with('user')
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return view('profile.cradt', [
             'profileRequests' => $profileRequests
         ]);
@@ -44,7 +45,7 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user(); 
+        $user = $request->user();
 
         $validatedData = $request->validated();
         $validatedData += $request->validate([
@@ -85,76 +86,61 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-    
+
     public function requestUpdate(Request $request): RedirectResponse
     {
+        $request->validate([
+            'fields' => 'required|array',
+        ]);
+
+        $fields = $request->input('fields');
         $user = Auth::user();
-        $fieldChanges = [];
+        
 
-        if ($request->filled('name') && $request->name !== $user->name) {
-            if ($request->hasFile('name_document')) {
-                $path = $request->file('name_document')->store('profile-documents');
-                $fieldChanges[] = [
+        $requestGroupId = Str::uuid()->toString(); 
+        $hasSelectedField = false;
+
+        foreach ($fields as $fieldName => $fieldData) {
+            if (!isset($fieldData['selected']) || $fieldData['selected'] != 'on') {
+                continue;
+            }
+
+            $hasSelectedField = true;
+
+            if (!isset($fieldData['value']) || !$fieldData['value']) {
+                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
+            }
+
+            if (!$request->hasFile("fields.{$fieldName}.document")) {
+                return back()->withErrors(["O documento comprobatório para o campo '{$fieldName}' é obrigatório."]);
+            }
+
+            try {
+                $document = $request->file("fields.{$fieldName}.document");
+                $path = $document->store('profile-change-docs', 'public');
+                
+                $changeRequest = ProfileChangeRequest::create([
                     'user_id' => $user->id,
-                    'field' => 'name',
-                    'current_value' => $user->name,
-                    'new_value' => $request->name,
+                    'field' => $fieldName,
+                    'current_value' => $fieldData['current'],
+                    'new_value' => $fieldData['value'],
                     'document_path' => $path,
                     'status' => 'pending',
-                ];
+                    'request_group_id' => $requestGroupId,
+                ]);
+                
+                
+                
+            } catch (\Exception $e) {
+                
+                return back()->withErrors(["Erro ao processar a solicitação para '{$fieldName}': " . $e->getMessage()]);
             }
         }
 
-        if ($request->filled('matricula') && $request->matricula !== $user->matricula) {
-            if ($request->hasFile('matricula_document')) {
-                $path = $request->file('matricula_document')->store('profile-documents');
-                $fieldChanges[] = [
-                    'user_id' => $user->id,
-                    'field' => 'matricula',
-                    'current_value' => $user->matricula,
-                    'new_value' => $request->matricula,
-                    'document_path' => $path,
-                    'status' => 'pending',
-                ];
-            }
+        if (!$hasSelectedField) {
+            return back()->withErrors(['Você precisa selecionar pelo menos um campo para alteração.']);
         }
 
-        if ($request->filled('cpf') && $request->cpf !== $user->cpf) {
-            if ($request->hasFile('cpf_document')) {
-                $path = $request->file('cpf_document')->store('profile-documents');
-                $fieldChanges[] = [
-                    'user_id' => $user->id,
-                    'field' => 'cpf',
-                    'current_value' => $user->cpf,
-                    'new_value' => $request->cpf,
-                    'document_path' => $path,
-                    'status' => 'pending',
-                ];
-            }
-        }
-
-        if ($request->filled('rg') && $request->rg !== $user->rg) {
-            if ($request->hasFile('rg_document')) {
-                $path = $request->file('rg_document')->store('profile-documents');
-                $fieldChanges[] = [
-                    'user_id' => $user->id,
-                    'field' => 'rg',
-                    'current_value' => $user->rg,
-                    'new_value' => $request->rg,
-                    'document_path' => $path,
-                    'status' => 'pending',
-                ];
-            }
-        }
-
-        foreach ($fieldChanges as $change) {
-            ProfileChangeRequest::create($change);
-        }
-
-        if (count($fieldChanges) > 0) {
-            return redirect()->route('dashboard')->with('success', 'Solicitação de alteração enviada com sucesso! Aguarde a análise pela CRADT.');
-        } else {
-            return redirect()->back()->with('error', 'Nenhuma alteração solicitada ou documentos comprobatórios ausentes.');
-        }
+        return back()->with('status', 'Solicitação de alteração enviada com sucesso!');
     }
 }

@@ -155,9 +155,16 @@
 
     <!-- Processos Section -->
     <div class="py-6">
-        
+        @if(isset($profileChangeGroups))
+            <div class="hidden">
+                <p>Grupos de solicitações: {{ $profileChangeGroups->count() }}</p>
+                @foreach($profileChangeGroups as $groupId => $requests)
+                    <p>Grupo {{ $groupId }}: {{ $requests->count() }} solicitações</p>
+                @endforeach
+            </div>
+        @endif
 
-        @if(isset($profileRequests) && $profileRequests->isNotEmpty() && ($profileRequests->where('status', 'pending')->count() > 0 || $profileRequests->where('status', 'needs_review')->count() > 0))
+        @if(isset($profileChangeGroups) && $profileChangeGroups->count() > 0)
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-8">
             <h3 class="text-lg font-semibold mb-4">Solicitações de Alteração de Perfil Pendentes</h3>
 
@@ -166,65 +173,103 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aluno</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitação</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alterações</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($profileRequests as $request)
-                            @if($request->status == 'pending' || $request->status == 'needs_review')
+                        @foreach($profileChangeGroups as $groupId => $requests)
+                            @php 
+                                $firstRequest = $requests->first();
+                                $status = $firstRequest->status;
+                            @endphp
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $firstRequest->user->name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($request->field == 'name') Nome
-                                    @elseif($request->field == 'matricula') Matrícula
-                                    @elseif($request->field == 'cpf') CPF
-                                    @elseif($request->field == 'rg') RG
-                                    @endif
+                                    Solicitação #{{ substr($groupId, 0, 8) }} <br>
+                                    <span class="text-xs text-gray-500">{{ $firstRequest->created_at->format('d/m/Y H:i') }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->current_value }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ Storage::temporaryUrl($request->document_path, now()->addMinutes(30)) }}" target="_blank" class="text-blue-600 hover:underline">Ver documento</a>
+                                <td class="px-6 py-4">
+                                    <div class="space-y-2">
+                                        @foreach($requests as $request)
+                                            <div class="flex flex-col mb-2 pb-2 border-b border-gray-100">
+                                                <span class="font-medium">
+                                                    @if($request->field == 'name') Nome
+                                                    @elseif($request->field == 'matricula') Matrícula
+                                                    @elseif($request->field == 'cpf') CPF
+                                                    @elseif($request->field == 'rg') RG
+                                                    @endif
+                                                </span>
+                                                <div class="flex text-sm">
+                                                    <span class="text-gray-500 mr-1">Atual:</span> {{ $request->current_value }}
+                                                </div>
+                                                <div class="flex text-sm">
+                                                    <span class="text-gray-500 mr-1">Novo:</span> {{ $request->new_value }}
+                                                </div>
+                                                <a href="{{ Storage::temporaryUrl($request->document_path, now()->addMinutes(30)) }}" target="_blank" class="text-blue-600 hover:underline text-xs mt-1">Ver documento</a>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($request->status == 'pending')
+                                    @if($status == 'pending')
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
-                                    @elseif($request->status == 'needs_review')
+                                    @elseif($status == 'needs_review')
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Em Revisão</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex space-x-2">
-                                        <form method="POST" action="{{ route('profile-requests.approve', $request) }}">
-                                            @csrf
-                                            <button type="submit" class="text-green-600 hover:text-green-900">Deferir</button>
-                                        </form>
-                                        <form method="POST" action="{{ route('profile-requests.reject', $request) }}">
-                                            @csrf
-                                            <button type="submit" class="text-red-600 hover:text-red-900">Indeferir</button>
-                                        </form>
+                                        <button type="button" onclick="openApprovalModal('{{ $groupId }}')" class="text-green-600 hover:text-green-900">Deferir</button>
+                                        <button type="button" onclick="openRejectionModal('{{ $groupId }}')" class="text-red-600 hover:text-red-900">Indeferir</button>
                                     </div>
-                                    <div id="comments-form-{{ $request->id }}" class="hidden mt-2">
-                                        <form method="POST" action="{{ route('profile-requests.comment', $request) }}" class="flex">
-                                            @csrf
-                                            <input type="text" name="comment" class="border rounded-l-md px-2 py-1 text-sm w-full" placeholder="Adicionar comentário">
-                                            <button type="submit" class="bg-blue-500 text-white rounded-r-md px-2 py-1 text-sm">Enviar</button>
-                                        </form>
+                                    
+                                    <!-- Approval Modal -->
+                                    <div id="approval-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                                        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto text-left">
+                                            <h3 class="text-lg font-medium text-gray-900 mb-4">Deferir Solicitação</h3>
+                                            <form method="POST" action="{{ route('profile-requests.approve-group', $groupId) }}">
+                                                @csrf
+                                                <div class="mb-4">
+                                                    <label for="approval-comment-{{ $groupId }}" class="block text-sm font-medium text-gray-700 mb-1">Comentário (opcional)</label>
+                                                    <textarea id="approval-comment-{{ $groupId }}" name="comment" rows="3" class="w-full border rounded-md px-3 py-2 text-sm"></textarea>
+                                                </div>
+                                                <div class="flex justify-end space-x-3">
+                                                    <button type="button" onclick="closeApprovalModal('{{ $groupId }}')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancelar</button>
+                                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Confirmar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Rejection Modal -->
+                                    <div id="rejection-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                                        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto text-left">
+                                            <h3 class="text-lg font-medium text-gray-900 mb-4">Indeferir Solicitação</h3>
+                                            <form method="POST" action="{{ route('profile-requests.reject-group', $groupId) }}" id="reject-form-{{ $groupId }}">
+                                                @csrf
+                                                <div class="mb-4">
+                                                    <label for="rejection-comment-{{ $groupId }}" class="block text-sm font-medium text-gray-700 mb-1">Motivo do indeferimento <span class="text-red-600">*</span></label>
+                                                    <textarea id="rejection-comment-{{ $groupId }}" name="comment" rows="3" class="w-full border rounded-md px-3 py-2 text-sm" required></textarea>
+                                                </div>
+                                                <div class="flex justify-end space-x-3">
+                                                    <button type="button" onclick="closeRejectionModal('{{ $groupId }}')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancelar</button>
+                                                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Confirmar</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                            @endif
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
         @endif
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
                 @if($currentStatus == 'pendente')
@@ -307,6 +352,54 @@
                 const requestId = button.getAttribute('data-request-id');
                 const commentsForm = document.getElementById(`comments-form-${requestId}`);
                 commentsForm.classList.toggle('hidden');
+            });
+        });
+
+        function openApprovalModal(requestId) {
+            document.getElementById(`approval-modal-${requestId}`).classList.remove('hidden');
+        }
+
+        function closeApprovalModal(requestId) {
+            document.getElementById(`approval-modal-${requestId}`).classList.add('hidden');
+        }
+
+        function openRejectionModal(requestId) {
+            document.getElementById(`rejection-modal-${requestId}`).classList.remove('hidden');
+        }
+
+        function closeRejectionModal(requestId) {
+            document.getElementById(`rejection-modal-${requestId}`).classList.add('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            const approvalModals = document.querySelectorAll('[id^="approval-modal-"]');
+            const rejectionModals = document.querySelectorAll('[id^="rejection-modal-"]');
+
+            approvalModals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
+            rejectionModals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        // Form validation for rejection
+        document.addEventListener('DOMContentLoaded', function() {
+            const rejectionForms = document.querySelectorAll('form[id^="reject-form-"]');
+
+            rejectionForms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    const commentField = form.querySelector('textarea[name="comment"]');
+                    if (!commentField.value.trim()) {
+                        event.preventDefault();
+                        alert('Por favor, informe o motivo do indeferimento.');
+                    }
+                });
             });
         });
     </script>

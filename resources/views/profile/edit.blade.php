@@ -6,6 +6,26 @@
         </h2>
     </x-slot>
 
+    @if (session('status'))
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
+                {{ session('status') }}
+            </div>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+            <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow sm:rounded-lg p-6">
@@ -32,18 +52,19 @@
                                 <!-- Nome -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <input type="checkbox" id="change_name" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="name">
+                                        <input type="checkbox" id="change_name" name="fields[name][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="name">
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap font-medium">Nome</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="name_fields">
-                                            <input id="name" name="name" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo nome">
+                                            <input id="name" name="fields[name][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo nome">
+                                            <input type="hidden" name="fields[name][current]" value="{{ Auth::user()->name }}">
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="name_document_fields">
-                                            <input id="name_document" name="name_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="name_document" name="fields[name][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
                                         </div>
                                     </td>
                                 </tr>
@@ -51,18 +72,19 @@
                                 <!-- Matrícula -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <input type="checkbox" id="change_matricula" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="matricula">
+                                        <input type="checkbox" id="change_matricula" name="fields[matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="matricula">
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap font-medium">Matrícula</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->matricula }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="matricula_fields">
-                                            <input id="matricula" name="matricula" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Nova matrícula">
+                                            <input id="matricula" name="fields[matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Nova matrícula">
+                                            <input type="hidden" name="fields[matricula][current]" value="{{ Auth::user()->matricula }}">
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="matricula_document_fields">
-                                            <input id="matricula_document" name="matricula_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
                                         </div>
                                     </td>
                                 </tr>
@@ -70,18 +92,19 @@
                                 <!-- CPF -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <input type="checkbox" id="change_cpf" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="cpf">
+                                        <input type="checkbox" id="change_cpf" name="fields[cpf][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="cpf">
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap font-medium">CPF</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->cpf }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="cpf_fields">
-                                            <input id="cpf" name="cpf" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo CPF">
+                                            <input id="cpf" name="fields[cpf][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo CPF">
+                                            <input type="hidden" name="fields[cpf][current]" value="{{ Auth::user()->cpf }}">
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="cpf_document_fields">
-                                            <input id="cpf_document" name="cpf_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="cpf_document" name="fields[cpf][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
                                         </div>
                                     </td>
                                 </tr>
@@ -89,18 +112,19 @@
                                 <!-- RG -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <input type="checkbox" id="change_rg" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="rg">
+                                        <input type="checkbox" id="change_rg" name="fields[rg][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="rg">
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap font-medium">RG</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->rg }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="rg_fields">
-                                            <input id="rg" name="rg" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo RG">
+                                            <input id="rg" name="fields[rg][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Novo RG">
+                                            <input type="hidden" name="fields[rg][current]" value="{{ Auth::user()->rg }}">
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="rg_document_fields">
-                                            <input id="rg_document" name="rg_document" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="rg_document" name="fields[rg][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
                                         </div>
                                     </td>
                                 </tr>
