@@ -5,6 +5,8 @@
 <script src="{{ asset('js/filterJustificativas.js') }}"></script>
 <script src="{{ asset('js/datepicker.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+<link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+<script src="{{ asset('js/form-loading.js') }}" defer></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <x-appcradt>

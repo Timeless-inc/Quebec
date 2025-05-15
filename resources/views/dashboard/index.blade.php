@@ -1,6 +1,9 @@
 <title>SRE</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+<script src="{{ asset('js/form-loading.js') }}" defer></script>
+<script src="{{ asset('js/filterJustificativas.js') }}"></script>
 
 <x-app-layout>
     <x-slot name="header">
@@ -9,12 +12,12 @@
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Prioridades:
                 </h2>
-                <div class="mt-2">
-                    <button onclick="window.location.href='?status=todos'" type="button" class="px-3 py-1 text-sm text-white bg-gray-600 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
-                    <button onclick="window.location.href='?status=pendente'" type="button" class="px-3 py-1 text-sm text-white bg-yellow-600 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Pendente</button>
-                    <button onclick="window.location.href='?status=finalizado'" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
-                    <button onclick="window.location.href='?status=indeferido'" type="button" class="px-3 py-1 text-sm text-white bg-red-600 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
-                    <button onclick="window.location.href='?status=em_aberto'" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
+                <div class="flex items-center mt-2 space-x-2">
+                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-600 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
+                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-600 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Pendente</button>
+                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
+                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-600 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
+                    <button onclick="filterJustificativas('em_aberto')" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
                 </div>
             </div>
             <div class="mt-8">

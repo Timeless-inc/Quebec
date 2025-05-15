@@ -10,6 +10,9 @@
         <!-- Favicon -->
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
+         <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -80,5 +83,10 @@
                 @endif
             });
         </script>
+        <!-- Loading Spinner -->
+        <x-loading-spinner />
+
+        <!-- Custom JavaScript -->
+        <script src="{{ asset('js/form-loading.js') }}"></script>
     </body>
 </html>

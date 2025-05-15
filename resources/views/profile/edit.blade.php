@@ -6,6 +6,8 @@
         </h2>
     </x-slot>
 
+    <x-loading-spinner />
+
     <style>
         .validation-error {
             border-color: #ef4444 !important;
@@ -37,6 +39,10 @@
             color: #ef4444;
         }
     </style>
+
+    <!-- Adicionar referências ao CSS e JS do loading spinner -->
+    <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+    <script src="{{ asset('js/form-loading.js') }}" defer></script>
 
     @if (session('status'))
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
@@ -243,6 +249,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             const toggles = document.querySelectorAll('.toggle-change');
             const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('global-loading-spinner');
+            const profileForm = document.querySelector('form[action="{{ route("profile.request-update") }}"]');
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    const anyChecked = Array.from(toggles).some(toggle => toggle.checked);
+                    if (!anyChecked) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    spinner.classList.remove('hidden');
+                    submitBtn.setAttribute('disabled', 'disabled');
+                    submitBtn.classList.add('opacity-75');
+                    submitBtn.classList.remove('hover:bg-red-600');
+                });
+            }
 
             toggles.forEach(toggle => {
                 toggle.addEventListener('change', function() {
@@ -274,8 +297,6 @@
                     submitBtn.classList.add('bg-gray-400');
                 }
             }
-
-            updateSubmitButton();
 
             const fieldsToValidate = ['cpf', 'matricula', 'rg'];
 
