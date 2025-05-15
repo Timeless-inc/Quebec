@@ -40,7 +40,6 @@
         }
     </style>
 
-    <!-- Adicionar referências ao CSS e JS do loading spinner -->
     <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
     <script src="{{ asset('js/form-loading.js') }}" defer></script>
 
@@ -107,22 +106,59 @@
                                     </td>
                                 </tr>
 
-                                <!-- Matrícula -->
+                                <!-- Matrícula Principal -->
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <input type="checkbox" id="change_matricula" name="fields[matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="matricula">
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Matrícula</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Matrícula Principal</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->matricula }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="matricula_fields">
-                                            <input id="matricula" name="fields[matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Nova matrícula">
+                                            <input id="matricula" name="fields[matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ Auth::user()->matricula }}" placeholder="Nova matrícula principal">
                                             <input type="hidden" name="fields[matricula][current]" value="{{ Auth::user()->matricula }}">
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="change-field hidden" id="matricula_document_fields">
                                             <input id="matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Segunda Matrícula -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" id="change_second_matricula" name="fields[second_matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="second_matricula">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Segunda Matrícula</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ Auth::user()->second_matricula ?? 'Não cadastrada' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="second_matricula_fields">
+                                            @if(Auth::user()->second_matricula)
+                                                <!-- Se já tem segunda matrícula, exibe campos normais de alteração -->
+                                                <input id="second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ Auth::user()->second_matricula }}" placeholder="Nova segunda matrícula">
+                                                <input type="hidden" name="fields[second_matricula][current]" value="{{ Auth::user()->second_matricula }}">
+                                                
+                                                <div class="mt-2">
+                                                    <label class="flex items-center">
+                                                        <input type="checkbox" id="remove_second_matricula" name="fields[second_matricula][remove]" class="w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
+                                                        <span class="text-sm text-red-600">Remover segunda matrícula</span>
+                                                    </label>
+                                                </div>
+                                            @else
+                                                <!-- Se não tem segunda matrícula, exibe apenas campo para adição -->
+                                                <input id="second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Adicionar segunda matrícula">
+                                                <input type="hidden" name="fields[second_matricula][current]" value="">
+                                                <p class="text-sm text-gray-500 mt-1">Você adicionará uma segunda matrícula.</p>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="change-field hidden" id="second_matricula_document_fields">
+                                            <input id="second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
                                         </div>
                                     </td>
                                 </tr>
@@ -404,6 +440,33 @@
                 });
             }
 
+            const addSecondMatriculaCheckbox = document.getElementById('add_second_matricula');
+            const addSecondMatriculaContainer = document.getElementById('add_second_matricula_container');
+            const removeSecondMatriculaCheckbox = document.getElementById('remove_second_matricula');
+            
+            if (addSecondMatriculaCheckbox && addSecondMatriculaContainer) {
+                addSecondMatriculaCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        addSecondMatriculaContainer.classList.remove('hidden');
+                    } else {
+                        addSecondMatriculaContainer.classList.add('hidden');
+                        document.getElementById('second_matricula').value = '';
+                    }
+                });
+            }
+            
+            if (removeSecondMatriculaCheckbox) {
+                removeSecondMatriculaCheckbox.addEventListener('change', function() {
+                    const secondMatriculaInput = document.getElementById('second_matricula');
+                    if (this.checked) {
+                        secondMatriculaInput.setAttribute('disabled', 'disabled');
+                        secondMatriculaInput.classList.add('bg-gray-100');
+                    } else {
+                        secondMatriculaInput.removeAttribute('disabled');
+                        secondMatriculaInput.classList.remove('bg-gray-100');
+                    }
+                });
+            }
         });
     </script>
 </x-app-layout>

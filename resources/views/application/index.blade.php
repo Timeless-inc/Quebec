@@ -75,7 +75,13 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="matricula" class="form-label">Número de Matrícula <span id="matriculaRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" readonly>
+                                                <select class="form-select" id="matricula" name="matricula">
+                                                    <option value="">Selecione uma matrícula</option>
+                                                    <option value="{{ Auth::user()->matricula }}" selected>{{ Auth::user()->matricula }}</option>
+                                                    @if(Auth::user()->second_matricula)
+                                                        <option value="{{ Auth::user()->second_matricula }}">{{ Auth::user()->second_matricula }}</option>
+                                                    @endif
+                                                </select>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="situacao" class="form-label">Situação <span id="situacaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>

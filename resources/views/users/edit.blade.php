@@ -57,11 +57,35 @@
                             @enderror
                         </div>
                         
-                        <!-- Matrícula -->
+                        <!-- Matrícula Principal -->
                         <div>
-                            <label for="matricula" class="block text-sm font-medium text-gray-700">Matrícula</label>
-                            <input type="text" name="matricula" id="matricula" value="{{ old('matricula', $user->matricula) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <label for="matricula" class="block text-sm font-medium text-gray-700">Matrícula Principal</label>
+                            <input type="text" name="matricula" id="matricula" value="{{ old('matricula', $user->matricula) }}" required 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             @error('matricula')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Segunda Matrícula -->
+                        <div>
+                            <label for="second_matricula" class="block text-sm font-medium text-gray-700">
+                                Segunda Matrícula 
+                                <span class="text-xs text-gray-500">(opcional)</span>
+                            </label>
+                            <div class="flex mt-1">
+                                <input type="text" name="second_matricula" id="second_matricula" 
+                                       value="{{ old('second_matricula', $user->second_matricula) }}"
+                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                
+                                @if($user->second_matricula)
+                                    <button type="button" id="clear_second_matricula" 
+                                            class="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Remover
+                                    </button>
+                                @endif
+                            </div>
+                            @error('second_matricula')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -108,3 +132,57 @@
         </div>
     </div>
 </x-appcradt>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const clearButton = document.getElementById('clear_second_matricula');
+        const secondMatriculaInput = document.getElementById('second_matricula');
+        
+        if (clearButton && secondMatriculaInput) {
+            clearButton.addEventListener('click', function() {
+                secondMatriculaInput.value = '';
+                alert('A segunda matrícula será removida quando você salvar as alterações.');
+            });
+        }
+        
+        const cpfInput = document.getElementById('cpf');
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+                
+                if (value.length > 9) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+                } else if (value.length > 6) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length > 3) {
+                    value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        const rgInput = document.getElementById('rg');
+        if (rgInput) {
+            rgInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 9) {
+                    value = value.substring(0, 9);
+                }
+                
+                if (value.length > 6) {
+                    value = value.slice(0, 2) + '.' + value.slice(2, 5) + '.' + value.slice(5);
+                } else if (value.length > 2) {
+                    value = value.slice(0, 2) + '.' + value.slice(2);
+                }
+                
+                e.target.value = value;
+            });
+        }
+    });
+</script>
