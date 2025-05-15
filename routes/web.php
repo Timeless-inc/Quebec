@@ -11,7 +11,11 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ProfileChangeRequestController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Rota pública para verificação de atualizações 
 
@@ -24,7 +28,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user();
 
-    if ($user->role === 'Cradt' ||$user->role === 'Manager' ) {
+    if ($user->role === 'Cradt' || $user->role === 'Manager') {
         // Redireciona usando o nome da rota
         return redirect()->route('cradt');
     }
@@ -40,7 +44,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
+    // Rota para solicitar atualização de perfil
+    Route::post('/profile/request-update', [ProfileController::class, 'requestUpdate'])->name('profile.request-update');
+
+    // Rota para verificar duplicidade de perfil
+    Route::get('/profile/check-duplicate', function(Request $request) {
+        $field = $request->input('field');
+        $value = $request->input('value');
+        $userId = Auth::id();
+        
+        if (!in_array($field, ['cpf', 'rg', 'matricula'])) {
+            return response()->json(['error' => 'Campo inválido'], 400);
+        }
+        
+        $exists = \App\Models\User::where($field, $value)
+            ->where('id', '!=', $userId)
+            ->exists();
+        
+        return response()->json(['exists' => $exists]);
+    })->middleware('auth')->name('profile.check-duplicate');
+
     // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
@@ -69,7 +93,7 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     // Dashboard CRADT
     Route::get('/cradt/dashboard', [CradtController::class, 'index'])->name('cradt');
     Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
-    
+
     // Relatórios
     Route::get('/cradt/report/chart-data', [CradtReportController::class, 'getChartData'])->name('cradt.chart-data');
     Route::get('/cradt/report', [CradtReportController::class, 'index'])->name('cradt-report');
@@ -82,11 +106,11 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
-    
+
     // Cadastro de CRADT
     Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
     Route::post('/cradt/register', [CradtController::class, 'register']);
-    
+
     // Justificativas e atualização de status
     Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
     Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
@@ -104,18 +128,31 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     Route::post('/events/configure-required-types', [EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
     Route::get('/api/requerimentos/check-updates', function () {
         $lastUpdate = \App\Models\ApplicationRequest::latest('updated_at')->value('updated_at');
-        
+
         \Illuminate\Support\Facades\Log::info('Requisição de verificação recebida', [
             'last_update' => $lastUpdate,
             'request_ip' => request()->ip()
         ]);
-        
+
         return response()->json([
             'lastUpdate' => $lastUpdate,
             'serverTime' => now()->toIso8601String()
         ]);
     });
+    Route::get('/document/{id}', function ($id) {
+        $request = App\Models\ProfileChangeRequest::findOrFail($id);
+            return Storage::response($request->document_path);
+    })->name('document.view')->middleware('auth');
 });
+
+// Rotas para gerenciamento de solicitações de alteração de perfil
+Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.')->group(function () {
+    Route::post('/{profileRequest}/approve', [ProfileChangeRequestController::class, 'approve'])->name('approve');
+    Route::post('/{profileRequest}/reject', [ProfileChangeRequestController::class, 'reject'])->name('reject');
+    Route::post('/group/{groupId}/approve', [ProfileChangeRequestController::class, 'approveGroup'])->name('approve-group');
+    Route::post('/group/{groupId}/reject', [ProfileChangeRequestController::class, 'rejectGroup'])->name('reject-group');
+});
+
 
 // Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');

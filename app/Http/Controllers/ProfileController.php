@@ -3,33 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\ProfileChangeRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Models\User;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
+        $profileRequests = ProfileChangeRequest::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'profileRequests' => $profileRequests
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+
+    public function cradtView(): View
+    {
+        $user = Auth::user();
+
+        $profileRequests = ProfileChangeRequest::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('profile.cradt', [
+            'profileRequests' => $profileRequests
+        ]);
+    }
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user(); // Obtém o usuário autenticado
+        $user = $request->user();
 
-        // Valida os campos adicionais (CPF, RG e Matrícula)
         $validatedData = $request->validated();
         $validatedData += $request->validate([
             'cpf' => 'required|string|size:11|unique:users,cpf,' . $user->id,
@@ -37,15 +54,12 @@ class ProfileController extends Controller
             'matricula' => 'required|string|max:20|unique:users,matricula,' . $user->id,
         ]);
 
-        // Atualiza apenas os campos permitidos
         $user->fill($validatedData);
 
-        // Se o email foi alterado, resetar a verificação
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        // Salvar as mudanças no banco
         $user->save();
 
         return Redirect::route('profile.edit')
@@ -55,9 +69,6 @@ class ProfileController extends Controller
             ]);
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -74,5 +85,89 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function requestUpdate(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'fields' => 'required|array',
+        ]);
+
+        $fields = $request->input('fields');
+        $user = Auth::user();
+        
+        foreach ($fields as $fieldName => $fieldData) {
+            if (!isset($fieldData['selected']) || $fieldData['selected'] != 'on') {
+                continue;
+            }
+            
+            if (!isset($fieldData['value']) || !$fieldData['value']) {
+                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
+            }
+            
+            if (in_array($fieldName, ['cpf', 'rg', 'matricula'])) {
+                $existingUser = User::where($fieldName, $fieldData['value'])
+                    ->where('id', '!=', $user->id)
+                    ->first();
+                    
+                if ($existingUser) {
+                    $fieldLabels = [
+                        'cpf' => 'CPF',
+                        'rg' => 'RG',
+                        'matricula' => 'Matrícula'
+                    ];
+                    
+                    return back()
+                        ->withInput()
+                        ->withErrors(["O {$fieldLabels[$fieldName]} '{$fieldData['value']}' já está registrado para outro usuário."]);
+                }
+            }
+        }
+        
+        $requestGroupId = Str::uuid()->toString();
+        $hasSelectedField = false;
+
+        foreach ($fields as $fieldName => $fieldData) {
+            if (!isset($fieldData['selected']) || $fieldData['selected'] != 'on') {
+                continue;
+            }
+
+            $hasSelectedField = true;
+
+            if (!isset($fieldData['value']) || !$fieldData['value']) {
+                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
+            }
+
+            if (!$request->hasFile("fields.{$fieldName}.document")) {
+                return back()->withErrors(["O documento comprobatório para o campo '{$fieldName}' é obrigatório."]);
+            }
+
+            try {
+                $document = $request->file("fields.{$fieldName}.document");
+                $path = $document->store('profile-change-docs', 'public');
+                
+                $changeRequest = ProfileChangeRequest::create([
+                    'user_id' => $user->id,
+                    'field' => $fieldName,
+                    'current_value' => $fieldData['current'],
+                    'new_value' => $fieldData['value'],
+                    'document_path' => $path,
+                    'status' => 'pending',
+                    'request_group_id' => $requestGroupId,
+                ]);
+                
+                
+                
+            } catch (\Exception $e) {
+                
+                return back()->withErrors(["Erro ao processar a solicitação para '{$fieldName}': " . $e->getMessage()]);
+            }
+        }
+
+        if (!$hasSelectedField) {
+            return back()->withErrors(['Você precisa selecionar pelo menos um campo para alteração.']);
+        }
+
+        return back()->with('status', 'Solicitação de alteração enviada com sucesso!');
     }
 }

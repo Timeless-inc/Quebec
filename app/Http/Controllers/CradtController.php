@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
+use App\Models\ProfileChangeRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,17 +17,10 @@ class CradtController extends Controller
     {
         $user = Auth::user();
 
-        //if (!$user) {
-        //    abort(403, 'Acesso negado.');
-        //}
-        //
-        //Gate::authorize('isCradt', $user);
+        $status = request()->input('status', 'todos');
 
         $query = ApplicationRequest::query();
-        $request = request();
-        
-        $status = $request->input('status', 'todos'); 
-        
+
         if ($status && $status !== 'todos') {
             if ($status === 'em_aberto') {
                 $query->whereIn('status', ['em_andamento', 'pendente']);
@@ -36,47 +29,40 @@ class CradtController extends Controller
             }
         }
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
+        if (request()->has('search')) {
+            $search = request()->input('search');
+            $query->where(function($q) use ($search) {
                 $q->where('nomeCompleto', 'like', "%{$search}%")
-                    ->orWhere('matricula', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('cpf', 'like', "%{$search}%")
-                    ->orWhere('tipoRequisicao', 'like', "%{$search}%")
-                    ->orWhere('key', 'like', "%{$search}%");
+                  ->orWhere('matricula', 'like', "%{$search}%")
+                  ->orWhere('cpf', 'like', "%{$search}%");
             });
-        }
-        
-        if ($request->has('date_filter') && $request->date_filter != '') {
-            try {
-                $dateInput = $request->date_filter;
-                
-                if (strpos($dateInput, '-') !== false) {
-                    $date = Carbon::createFromFormat('Y-m-d', $dateInput);
-                } else {
-                    $date = Carbon::createFromFormat('d/m/Y', $dateInput);
-                }
-                
-                $query->whereDate('created_at', $date->format('Y-m-d'));
-            } catch (\Exception $e) {
-            }
         }
 
         $requerimentos = $query->latest()->paginate(10);
-        
-        $requerimentos->appends($request->query());
+        $requerimentos->appends(['status' => $status]);
 
         $events = Event::orderBy('start_date')->get();
-        $datas = Carbon::now()->format('d/m/Y');
+
+        // Busque todas as solicitações pendentes ou em revisão
+        $profileRequests = ProfileChangeRequest::with('user')
+            ->whereIn('status', ['pending', 'needs_review'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        
+        // Agrupe por request_group_id
+        $profileChangeGroups = $profileRequests->groupBy('request_group_id');
+        
 
         return view('cradt.index', [
             'requerimentos' => $requerimentos,
-            'datas' => $datas,
             'events' => $events,
-            'currentStatus' => $status
+            'currentStatus' => $status,
+            'profileRequests' => $profileRequests,
+            'profileChangeGroups' => $profileChangeGroups,
         ]);
     }
+
 
     public function showRegistrationForm()
     {
@@ -89,7 +75,7 @@ class CradtController extends Controller
             'cpf' => 'required|string|max:14|unique:users',
             'matricula' => 'required|string|max:255|unique:users',
         ]);
-    
+
         $user = User::create([
             'cpf' => $validated['cpf'],
             'matricula' => $validated['matricula'],
