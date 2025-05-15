@@ -1,7 +1,7 @@
 <div class="modal fade" id="editEventModal{{ $event->id }}" tabindex="-1" aria-labelledby="editEventModalLabel{{ $event->id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow-lg rounded-lg overflow-hidden">
-            <form action="{{ route('events.update', $event->id) }}" method="POST">
+            <form action="{{ route('events.update', $event->id) }}" method="POST" class="event-edit-form">
                 @csrf
                 @method('PUT')
                 <div class="modal-header bg-{{ $event->is_exception ? 'yellow' : 'blue' }}-600 text-white">
@@ -118,7 +118,7 @@
                         <button type="button" class="btn btn-outline-secondary mr-2 hover:bg-gray-200 transition-colors" data-bs-dismiss="modal">
                             <i class="fas fa-times mr-1"></i> Cancelar
                         </button>
-                        <button type="submit" class="btn bg-{{ $event->is_exception ? 'yellow' : 'blue' }}-600 text-white hover:bg-{{ $event->is_exception ? 'yellow' : 'blue' }}-700 transition-colors">
+                        <button type="submit" class="btn bg-{{ $event->is_exception ? 'yellow' : 'blue' }}-600 text-white hover:bg-{{ $event->is_exception ? 'yellow' : 'blue' }}-700 transition-colors submit-btn">
                             <i class="fas fa-save mr-1"></i> Atualizar Evento
                         </button>
                     </div>

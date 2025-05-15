@@ -1,0 +1,35 @@
+#global-loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#global-loading-spinner.hidden {
+    display: none;
+}
+
+#global-loading-spinner div {
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+    border: 0.25rem solid transparent;
+    border-top-color: #10b981;
+    border-bottom-color: #10b981;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

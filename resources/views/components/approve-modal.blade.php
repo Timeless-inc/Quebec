@@ -41,9 +41,10 @@
                     <span class="text-2xl">×</span>
                 </button>
             </div>
-            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" name="status" value="finalizado">
                 <div class="modal-body p-4">
                     <div class="mb-4">
                         <label for="resposta" class="block text-sm font-medium text-gray-700 mb-1">Resposta (opcional):</label>
@@ -60,7 +61,7 @@
                     <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" data-bs-dismiss="modal" title="Cancelar">
                         <i class="fas fa-times text-lg"></i>
                     </button>
-                    <button type="submit" name="status" value="finalizado" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" title="Confirmar Finalização">
+                    <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700 submit-btn" title="Confirmar Finalização">
                         <i class="fas fa-check text-lg"></i>
                     </button>
                 </div>
