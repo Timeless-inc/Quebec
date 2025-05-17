@@ -22,11 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'matricula',
+        'second_matricula',
         'cpf',
         'rg',
         'password',
         'role',
-        'profile_photo_path', 
+        'profile_photo_path'       
     ];
 
     /**

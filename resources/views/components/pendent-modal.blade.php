@@ -10,9 +10,10 @@
                     <span class="text-2xl">×</span>
                 </button>
             </div>
-            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
+            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" class="pendent-form">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" name="status" value="pendente">
                 <div class="modal-body p-4">
                     <div class="mb-4">
                         <label for="resposta" class="block text-sm font-medium text-gray-700 mb-1">Motivo da pendência:</label>
@@ -23,7 +24,7 @@
                     <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" data-bs-dismiss="modal" title="Cancelar">
                         <i class="fas fa-times text-lg"></i>
                     </button>
-                    <button type="submit" name="status" value="pendente" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" title="Confirmar Pendência">
+                    <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700 submit-btn" title="Confirmar Pendência">
                         <i class="fas fa-check text-lg"></i>
                     </button>
                 </div>

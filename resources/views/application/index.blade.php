@@ -9,6 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/annexButton.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
 </head>
 
 <body>
@@ -74,7 +75,13 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="matricula" class="form-label">Número de Matrícula <span id="matriculaRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ Auth::user()->matricula }}" readonly>
+                                                <select class="form-select" id="matricula" name="matricula">
+                                                    <option value="">Selecione uma matrícula</option>
+                                                    <option value="{{ Auth::user()->matricula }}" selected>{{ Auth::user()->matricula }}</option>
+                                                    @if(Auth::user()->second_matricula)
+                                                        <option value="{{ Auth::user()->second_matricula }}">{{ Auth::user()->second_matricula }}</option>
+                                                    @endif
+                                                </select>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="situacao" class="form-label">Situação <span id="situacaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
@@ -172,7 +179,10 @@
 
                                             <div class="row">
                                                 <div class="col-12 text-end py-4">
-                                                    <button type="submit" class="btn btn-success">Enviar</button>
+                                                    <button type="submit" class="btn btn-success" id="submitBtn">
+                                                        <span class="button-text">Enviar</span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -635,6 +645,32 @@
                 if (hasEmpty) {
                     e.preventDefault();
                     alert('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.');
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                if (document.querySelectorAll('.is-invalid').length > 0) {
+                    return;
+                }
+                
+                const spinner = document.getElementById('global-loading-spinner');
+                if (spinner) {
+                    spinner.classList.remove('hidden');
+                }
+                
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.setAttribute('disabled', 'disabled');
+                    submitBtn.classList.add('opacity-75');
+                    submitBtn.classList.add('cursor-not-allowed');
+                    
+                    const buttonText = submitBtn.querySelector('.button-text');
+                    const buttonSpinner = submitBtn.querySelector('.spinner-border');
+                    
+                    if (buttonText && buttonSpinner) {
+                        buttonText.classList.add('d-none');
+                        buttonSpinner.classList.remove('d-none');
+                    }
                 }
             });
 

@@ -1,7 +1,7 @@
 <div class="modal fade" id="eventExceptionModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow-lg rounded-lg overflow-hidden">
-            <form action="{{ route('events.store-exception') }}" method="POST">
+            <form action="{{ route('events.store-exception') }}" method="POST" class="event-exception-form">
                 @csrf
                 <div class="modal-header bg-yellow-600 text-white">
                     <h5 class="modal-title flex items-center">

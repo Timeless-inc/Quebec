@@ -1,7 +1,7 @@
 <div class="modal fade" id="eventModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow-lg rounded-lg overflow-hidden">
-            <form action="{{ route('events.store') }}" method="POST">
+            <form action="{{ route('events.store') }}" method="POST" class="event-form">
                 @csrf
                 <div class="modal-header bg-blue-600 text-white">
                     <h5 class="modal-title flex items-center">
@@ -57,23 +57,7 @@
                         </div>
                     </div>
                     
-                    <div class="mt-4 mb-2">
-                        <div class="bg-white p-3 rounded-md border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer group" onclick="toggleEventActive()">
-                            <div class="flex items-center justify-between">
-                                <label class="inline-flex items-center cursor-pointer w-full" for="eventIsActive">
-                                    <div class="mr-3">
-                                        <i class="fas fa-toggle-on text-green-500 group-hover:text-blue-500 transition-colors text-xl toggle-icon"></i>
-                                    </div>
-                                    <div>
-                                        <span class="font-medium">Habilitar evento imediatamente</span>
-                                        <p class="text-xs text-gray-500 mt-1">O evento estará disponível para os alunos assim que for criado</p>
-                                    </div>
-                                </label>
-                                <input class="form-check-input sr-only" type="checkbox" name="is_active" id="eventIsActive" checked value="1">
-                                <div class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full toggle-status">Ativado</div>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="hidden" name="is_active" value="1">
                 </div>
                 <div class="modal-footer bg-gray-100 flex justify-between">
                     <span class="text-xs text-gray-500">
@@ -83,7 +67,7 @@
                         <button type="button" class="btn btn-outline-secondary mr-2 hover:bg-gray-200 transition-colors" data-bs-dismiss="modal">
                             <i class="fas fa-times mr-1"></i> Cancelar
                         </button>
-                        <button type="submit" class="btn bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        <button type="submit" class="btn bg-blue-600 text-white hover:bg-blue-700 transition-colors submit-btn" id="saveEventBtn">
                             <i class="fas fa-save mr-1"></i> Salvar Evento
                         </button>
                     </div>
@@ -108,29 +92,22 @@
         
         document.querySelector('input[name="start_date"]').value = formatDate(today);
         document.querySelector('input[name="end_date"]').value = formatDate(nextWeek);
-    });
-    
-    function toggleEventActive() {
-        const checkbox = document.getElementById('eventIsActive');
-        checkbox.checked = !checkbox.checked;
         
-        const toggleIcon = document.querySelector('.toggle-icon');
-        const toggleStatus = document.querySelector('.toggle-status');
-        
-        if (checkbox.checked) {
-            toggleIcon.classList.remove('fa-toggle-off', 'text-gray-500');
-            toggleIcon.classList.add('fa-toggle-on', 'text-green-500');
-            
-            toggleStatus.classList.remove('bg-gray-100', 'text-gray-800');
-            toggleStatus.classList.add('bg-green-100', 'text-green-800');
-            toggleStatus.textContent = 'Ativado';
-        } else {
-            toggleIcon.classList.remove('fa-toggle-on', 'text-green-500');
-            toggleIcon.classList.add('fa-toggle-off', 'text-gray-500');
-            
-            toggleStatus.classList.remove('bg-green-100', 'text-green-800');
-            toggleStatus.classList.add('bg-gray-100', 'text-gray-800');
-            toggleStatus.textContent = 'Desativado';
+        const eventForm = document.querySelector('.event-form');
+        if (eventForm) {
+            eventForm.addEventListener('submit', function(e) {
+                const spinner = document.getElementById('global-loading-spinner');
+                if (spinner) {
+                    spinner.classList.remove('hidden');
+                }
+                
+                const saveEventBtn = document.getElementById('saveEventBtn');
+                if (saveEventBtn) {
+                    saveEventBtn.disabled = true;
+                    saveEventBtn.classList.add('opacity-75');
+                    saveEventBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Salvando...';
+                }
+            });
         }
-    }
+    });
 </script>

@@ -1,6 +1,8 @@
 <title>SRE</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+
 
 <x-app-layout>
     <x-slot name="header">
@@ -67,7 +69,13 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label for="matricula" class="form-label">Número de Matrícula</label>
-                                            <input type="text" class="form-control" value="{{ $requerimento->matricula }}" readonly>
+                                            <select class="form-select" id="matricula_view" disabled>
+                                                <option value="{{ $requerimento->matricula }}" selected>{{ $requerimento->matricula }}</option>
+                                                @if(Auth::user()->second_matricula)
+                                                    <option value="{{ Auth::user()->second_matricula }}" {{ $requerimento->matricula === Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
+                                                @endif
+                                            </select>
+                                            <input type="hidden" name="matricula" value="{{ $requerimento->matricula }}">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="situacao" class="form-label">Situação <span id="situacaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
@@ -124,12 +132,15 @@
                                     </div>
 
                                     <div class="mb-3">
-    <label for="observacoes" class="form-label">Observações</label>
-    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-</div>
+                                        <label for="observacoes" class="form-label">Observações</label>
+                                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                    </div>
 
                                     <div class="text-end">
-                                        <button type="submit" class="btn btn-success">Atualizar</button>
+                                        <button type="submit" class="btn btn-success" id="submitEditBtn">
+                                            <span class="button-text">Atualizar</span>
+                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -503,6 +514,26 @@
                 if (hasEmpty) {
                     e.preventDefault();
                     alert('Por favor, preencha todos os campos obrigatórios.');
+                } else {
+                    const spinner = document.getElementById('global-loading-spinner');
+                    if (spinner) {
+                        spinner.classList.remove('hidden');
+                    }
+                    
+                    const submitBtn = document.getElementById('submitEditBtn');
+                    if (submitBtn) {
+                        submitBtn.setAttribute('disabled', 'disabled');
+                        submitBtn.classList.add('opacity-75');
+                        submitBtn.classList.add('cursor-not-allowed');
+                        
+                        const buttonText = submitBtn.querySelector('.button-text');
+                        const buttonSpinner = submitBtn.querySelector('.spinner-border');
+                        
+                        if (buttonText && buttonSpinner) {
+                            buttonText.classList.add('d-none');
+                            buttonSpinner.classList.remove('d-none');
+                        }
+                    }
                 }
             });
 

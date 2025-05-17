@@ -7,9 +7,10 @@
             <div class="modal-header p-4 border-b border-gray-200">
                 <h5 class="text-xl font-bold text-gray-800" id="indeferimentoModalLabel-{{ $requerimento->id }}">Motivo do Indeferimento - Requerimento #{{ $requerimento->id }}</h5>
             </div>
-            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST">
+            <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" class="deny-form">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" name="status" value="indeferido">
                 <div class="modal-body p-4">
                     <div class="mb-4">
                         <label for="resposta" class="block text-sm font-medium text-gray-700 mb-1">Motivo do indeferimento:</label>
@@ -20,7 +21,7 @@
                     <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" data-bs-dismiss="modal" title="Cancelar">
                         <i class="fas fa-times text-lg"></i>
                     </button>
-                    <button type="submit" name="status" value="indeferido" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" title="Confirmar Indeferimento">
+                    <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700 submit-btn" title="Confirmar Indeferimento">
                         <i class="fas fa-check text-lg"></i>
                     </button>
                 </div>

@@ -5,6 +5,18 @@ function filterJustificativas(status) {
         return;
     }
     
+    const spinner = document.getElementById('global-loading-spinner');
+    if (spinner) {
+        spinner.classList.remove('hidden');
+    }
+    
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.setAttribute('disabled', 'disabled');
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+    });
+    
     const justificativas = document.querySelectorAll('.justificativa-item');
     let visibleCount = 0;
     
@@ -112,6 +124,22 @@ function filterJustificativas(status) {
         setTimeout(() => {
             window.location.href = `?status=${status}`;
         }, 50);
+    } else {
+        // Esconder o spinner se não vamos redirecionar
+        if (spinner) {
+            spinner.classList.add('hidden');
+        }
+        
+        // Reabilitar os botões
+        filterButtons.forEach(btn => {
+            btn.removeAttribute('disabled');
+            btn.style.cursor = 'pointer';
+            if (btn.dataset.status !== status) {
+                btn.style.opacity = '0.8';
+            } else {
+                btn.style.opacity = '1';
+            }
+        });
     }
 }
 
@@ -146,4 +174,15 @@ document.addEventListener('DOMContentLoaded', function() {
     highlightActiveButton(status);
     
     updatePaginationLinks(status);
+    
+    const spinner = document.getElementById('global-loading-spinner');
+    if (spinner) {
+        spinner.classList.add('hidden');
+    }
+    
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.removeAttribute('disabled');
+        btn.style.cursor = 'pointer';
+    });
 });

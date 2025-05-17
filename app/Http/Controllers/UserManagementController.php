@@ -52,32 +52,24 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'cpf' => ['required', 'string', 'max:14', Rule::unique('users')->ignore($user->id)],
-            'matricula' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'rg' => ['required', 'string', 'max:12', Rule::unique('users')->ignore($user->id)],
-            'role' => ['required', 'string', 'in:Aluno,Cradt'],
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
+            'cpf' => 'required|string|max:14|unique:users,cpf,'.$user->id,
+            'matricula' => 'required|string|max:255|unique:users,matricula,'.$user->id,
+            'second_matricula' => 'nullable|string|max:255|unique:users,second_matricula,'.$user->id,
+            'rg' => 'required|string|max:12|unique:users,rg,'.$user->id,
+            'role' => 'required|string|in:Aluno,Cradt,Manager',
         ]);
-
-        // Se uma nova senha foi fornecida
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => ['string', 'confirmed', 'min:8'],
-            ]);
-            $validated['password'] = Hash::make($request->password);
-        }
-
-        $user->update($validated);
-
+        
+        $user->update($validatedData);
+        
         return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso!');
     }
 
     public function destroy(User $user)
     {
-        // Proteção contra exclusão da própria conta
         if ($user->id === Auth::id()) {
             return redirect()->route('users.index')->with('error', 'Você não pode excluir sua própria conta!');
         }
