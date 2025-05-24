@@ -5,87 +5,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SRE</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="{{ asset('js/annexButton.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
+    @vite('resources/css/app.css')
 </head>
 
-<body>
+<body class="bg-gray-100">
     <x-app-layout>
         <x-slot name="header">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Preencha o formulário:
             </h2>
         </x-slot>
-        <div class="py-12">
+        <div class="py-6 md:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <div class="bg-primary overflow-hidden shadow-sm sm:rounded-lg border border-primary bg-opacity-25">
-                            <div class="container mt-3 mt-md-5">
-                                <div class="card-body">
+                    <div class="p-4 md:p-6 text-gray-900">
+                        <div class="bg-blue-200 overflow-hidden shadow-sm sm:rounded-lg border border-blue-200">
+                            <div class="container mx-auto mt-3 md:mt-5">
+                                <div class="p-4 md:p-6">
                                     @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul class="mb-0">
+                                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+                                        <ul class="list-disc pl-5">
                                             @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
+                                            <li class="text-red-700">{{ $error }}</li>
                                             @endforeach
                                         </ul>
                                     </div>
                                     @endif
 
-                                    <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" novalidate>
+                                    <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" class="space-y-6" novalidate>
                                         @csrf
-                                        <div class="row mb-3">
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="nomeCompleto" class="form-label">Nome Completo <span id="nomeCompletoRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                                            <div>
+                                                <label for="nomeCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo <span id="nomeCompletoRequired" class="text-red-500 hidden">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
                                             </div>
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="cpf" class="form-label">CPF <span id="cpfRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
+                                            <div>
+                                                <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF <span id="cpfRequired" class="text-red-500 hidden">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="celular" class="form-label">Celular <span id="celularRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="celular" name="celular" value="{{ Auth::user()->celular }}" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="email" class="form-label">Email <span id="emailRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
-                                                <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
-                                            </div>
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="rg" class="form-label">RG <span id="rgRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="orgaoExpedidor" class="form-label">Órgão Expedidor <span id="orgaoExpedidorRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="orgaoExpedidor" name="orgaoExpedidor">
+                                            <div>
+                                                <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular <span id="celularRequired" class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="celular" name="celular" value="{{ Auth::user()->celular }}" required>
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="campus" class="form-label">Campus <span id="campusRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <input type="text" class="form-control" id="campus" name="campus">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                                            <div>
+                                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span id="emailRequired" class="text-red-500 hidden">*</span></label>
+                                                <input type="email" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
                                             </div>
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="matricula" class="form-label">Número de Matrícula <span id="matriculaRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="matricula" name="matricula">
+                                            <div>
+                                                <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">RG <span id="rgRequired" class="text-red-500 hidden">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
+                                            </div>
+                                            <div>
+                                                <label for="orgaoExpedidor" class="block text-sm font-medium text-gray-700 mb-1">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="orgaoExpedidor" name="orgaoExpedidor">
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                                            <div>
+                                                <label for="campus" class="block text-sm font-medium text-gray-700 mb-1">Campus <span id="campusRequired" class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="campus" name="campus">
+                                            </div>
+                                            <div>
+                                                <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula <span id="matriculaRequired" class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula" name="matricula">
                                                     <option value="">Selecione uma matrícula</option>
                                                     <option value="{{ Auth::user()->matricula }}" selected>{{ Auth::user()->matricula }}</option>
                                                     @if(Auth::user()->second_matricula)
-                                                        <option value="{{ Auth::user()->second_matricula }}">{{ Auth::user()->second_matricula }}</option>
+                                                    <option value="{{ Auth::user()->second_matricula }}">{{ Auth::user()->second_matricula }}</option>
                                                     @endif
                                                 </select>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="situacao" class="form-label">Situação <span id="situacaoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="situacao" name="situacao">
+                                            <div>
+                                                <label for="situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="situacao" name="situacao">
                                                     <option value="">Escolha</option>
                                                     <option value="1">Matriculado</option>
                                                     <option value="2">Graduado</option>
@@ -94,10 +93,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="curso" class="form-label">Curso <span id="cursoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="curso" name="curso">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                                            <div>
+                                                <label for="curso" class="block text-sm font-medium text-gray-700 mb-1">Curso <span id="cursoRequired" class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="curso" name="curso">
                                                     <option value="">Escolha</option>
                                                     <option value="1">Administração</option>
                                                     <option value="2">Sistemas para Internet</option>
@@ -106,9 +105,9 @@
                                                     <option value="5">Informática para Internet</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <label for="periodo" class="form-label">Período <span id="periodoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="periodo" name="periodo">
+                                            <div>
+                                                <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Período <span id="periodoRequired" class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="periodo" name="periodo">
                                                     <option value="">Escolha</option>
                                                     <option value="1">1º</option>
                                                     <option value="2">2º</option>
@@ -120,9 +119,9 @@
                                                     <option value="8">8º</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="turno" class="form-label">Turno <span id="turnoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
-                                                <select class="form-select" id="turno" name="turno">
+                                            <div>
+                                                <label for="turno" class="block text-sm font-medium text-gray-700 mb-1">Turno <span id="turnoRequired" class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="turno" name="turno">
                                                     <option value="">Escolha</option>
                                                     <option value="manhã">Manhã</option>
                                                     <option value="tarde">Tarde</option>
@@ -130,10 +129,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-6 mb-3 mb-md-0">
-                                                <label for="tipoRequisicao" class="form-label">Tipo de Requisição <span class="text-danger">*</span></label>
-                                                <select class="form-select" id="tipoRequisicao" name="tipoRequisicao" required>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                            <div>
+                                                <label for="tipoRequisicao" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Requisição <span class="text-red-500">*</span></label>
+                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="tipoRequisicao" name="tipoRequisicao" required>
                                                     <option value="">Selecione o tipo de requisição</option>
 
                                                     <!-- Tipos disponíveis -->
@@ -145,44 +144,42 @@
                                                     @if(isset($tiposIndisponiveis) && count($tiposIndisponiveis) > 0)
                                                     <optgroup label="Indisponíveis no momento">
                                                         @foreach($tiposIndisponiveis as $id => $tipo)
-                                                        <option value="{{ $id }}" class="text-danger" disabled style="color: #dc3545 !important; font-style: italic;">
+                                                        <option value="{{ $id }}" class="text-red-500 italic" disabled>
                                                             {{ $tipo }} (Indisponível)
                                                         </option>
                                                         @endforeach
                                                     </optgroup>
                                                     @endif
                                                 </select>
-                                                <small class="text-muted d-block mt-1">
+                                                <p class="text-gray-500 text-xs mt-1">
                                                     Nota: Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
-                                                </small>
+                                                </p>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label d-block">&nbsp;</label>
-                                                <div class="dropdown" id="anexoDropdown" style="display: none;">
-                                                    <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
+                                            <div class="relative">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
+                                                <div class="relative" id="anexoDropdown" style="display: none;">
+                                                    <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                                                         Anexos/informações (clique para abrir)
                                                     </button>
-                                                    <div class="dropdown-menu p-3" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                                        <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
+                                                    <div id="anexoDropdownMenu" class="hidden absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg p-4 max-h-80 overflow-y-auto border border-gray-200">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label for="observacoes" class="form-label">Observações</label>
-                                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                                            </div>
+                                        <div>
+                                            <label for="observacoes" class="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                                            <textarea class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="observacoes" name="observacoes" rows="3"></textarea>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-12 text-end py-3 py-md-4">
-                                                <button type="submit" class="btn btn-success" id="submitBtn">
-                                                    <span class="button-text">Enviar</span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                </button>
-                                            </div>
+                                        <div class="flex justify-end py-3 md:py-4">
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200" id="submitBtn">
+                                                <span class="button-text">Enviar</span>
+                                                <svg class="hidden ml-2 -mr-1 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -194,50 +191,134 @@
         </div>
     </x-app-layout>
 
-    <div class="dropdown-backdrop" style="display: none;"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="dropdown-backdrop"></div>
+
+    <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-md transform transition-transform duration-300 ease-in-out translate-x-full"></div>
 
     <script>
+        function showNotification(message, type = 'info', duration = 5000) {
+            const container = document.getElementById('notification-container');
+            
+            let config = {
+                info: {
+                    bg: 'bg-blue-50',
+                    border: 'border-blue-400',
+                    text: 'text-blue-800',
+                    ring: 'ring-blue-500',
+                    icon: '<svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+                },
+                success: {
+                    bg: 'bg-green-50',
+                    border: 'border-green-400',
+                    text: 'text-green-800',
+                    ring: 'ring-green-500',
+                    icon: '<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>'
+                },
+                warning: {
+                    bg: 'bg-yellow-50',
+                    border: 'border-yellow-400',
+                    text: 'text-yellow-800',
+                    ring: 'ring-yellow-500',
+                    icon: '<svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+                },
+                error: {
+                    bg: 'bg-red-50',
+                    border: 'border-red-400',
+                    text: 'text-red-800',
+                    ring: 'ring-red-500',
+                    icon: '<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>'
+                }
+            };
+            
+            const currentConfig = config[type] || config.info;
+            
+            const notification = document.createElement('div');
+            notification.className = `${currentConfig.bg} border-l-4 ${currentConfig.border} p-4 mb-3 shadow-md rounded-r opacity-0 transition-all duration-300 ease-in-out`;
+            
+            notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        ${currentConfig.icon}
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="${currentConfig.text} text-sm">${message}</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" class="inline-flex ${currentConfig.text} rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'info' ? 'blue' : type === 'success' ? 'green' : type === 'warning' ? 'yellow' : 'red'}-500">
+                                <span class="sr-only">Fechar</span>
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                container.classList.remove('translate-x-full');
+                notification.classList.remove('opacity-0');
+                notification.classList.add('opacity-100');
+            }, 10);
+            
+            const closeButton = notification.querySelector('button');
+            closeButton.addEventListener('click', () => {
+                fadeOutNotification(notification, container);
+            });
+            
+            setTimeout(() => {
+                fadeOutNotification(notification, container);
+            }, duration);
+        }
+        
+        function fadeOutNotification(notification, container) {
+            notification.classList.remove('opacity-100');
+            notification.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                notification.remove();
+                if (container.children.length === 0) {
+                    container.classList.add('translate-x-full');
+                }
+            }, 300);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const tipoRequisicao = document.getElementById('tipoRequisicao');
             const anexoDropdown = document.getElementById('anexoDropdown');
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
             const anexoButton = document.getElementById('anexoButton');
-            const dropdownBackdrop = document.querySelector('.dropdown-backdrop');
+            const dropdownBackdrop = document.getElementById('dropdown-backdrop');
             const form = document.getElementById('applicationForm');
             const selectElement = document.getElementById('tipoRequisicao');
             const options = selectElement.querySelectorAll('option');
             const isMobile = window.innerWidth <= 768;
 
-            options.forEach(option => {
-                if (option.classList.contains('indisponivel')) {
-                    option.style.color = '#dc3545';
-                    option.style.fontStyle = 'italic';
+            anexoButton.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                anexoDropdownMenu.classList.toggle('hidden');
+                
+                if (!anexoDropdownMenu.classList.contains('hidden') && isMobile) {
+                    dropdownBackdrop.classList.remove('hidden');
                 }
-            });
-
-            // Adicionar tooltip nas opções indisponíveis
-            selectElement.addEventListener('mouseover', function(e) {
-                if (e.target.classList && e.target.classList.contains('indisponivel')) {
-                    document.getElementById('tipoIndisponivelAlert').style.display = 'block';
+                
+                if (!anexoDropdownMenu.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        const firstInteractive = anexoDropdownMenu.querySelector('input, select, button:not([aria-hidden="true"])');
+                        if (firstInteractive) {
+                            firstInteractive.focus();
+                        }
+                    }, 100);
                 }
-            });
-
-            selectElement.addEventListener('mouseout', function() {
-                document.getElementById('tipoIndisponivelAlert').style.display = 'none';
-            });
-
-            selectElement.addEventListener('change', function() {
-                document.getElementById('tipoIndisponivelAlert').style.display = 'none';
             });
 
             if (isMobile) {
-                anexoButton.addEventListener('click', function() {
-                    dropdownBackdrop.style.display = 'block';
-                });
-                
                 dropdownBackdrop.addEventListener('click', function() {
-                    dropdownBackdrop.style.display = 'none';
-                    anexoDropdownMenu.classList.remove('show');
+                    anexoDropdownMenu.classList.add('hidden');
+                    dropdownBackdrop.classList.add('hidden');
                 });
             }
 
@@ -246,12 +327,31 @@
 
             // Mapeamento de tipos de requisição para campos adicionais ou anexos
             const anexosPorTipo = {
-                1: [
-                    { label: "Declaração de Transferência", name: "anexarArquivos[declaracao_transferencia]", type: "file" },
-                    { label: "Histórico Escolar do Ensino Fundamental (original)", name: "anexarArquivos[historico_fundamental]", type: "file" },
-                    { label: "Histórico Escolar do Ensino Médio (original)", name: "anexarArquivos[historico_medio]", type: "file" },
-                    { label: "Histórico Escolar do Ensino Superior (original)", name: "anexarArquivos[historico_superior]", type: "file" },
-                    { label: "Ementas das disciplinas cursadas com Aprovação", name: "anexarArquivos[ementas]", type: "file" }
+                1: [{
+                        label: "Declaração de Transferência",
+                        name: "anexarArquivos[declaracao_transferencia]",
+                        type: "file"
+                    },
+                    {
+                        label: "Histórico Escolar do Ensino Fundamental (original)",
+                        name: "anexarArquivos[historico_fundamental]",
+                        type: "file"
+                    },
+                    {
+                        label: "Histórico Escolar do Ensino Médio (original)",
+                        name: "anexarArquivos[historico_medio]",
+                        type: "file"
+                    },
+                    {
+                        label: "Histórico Escolar do Ensino Superior (original)",
+                        name: "anexarArquivos[historico_superior]",
+                        type: "file"
+                    },
+                    {
+                        label: "Ementas das disciplinas cursadas com Aprovação",
+                        name: "anexarArquivos[ementas]",
+                        type: "file"
+                    }
                 ],
                 10: [{
                         label: "Atestado Médico OU Cópia da CTPS (Identificação e Contrato)",
@@ -439,79 +539,75 @@
 
                 anexoDropdown.style.display = 'none';
                 anexoDropdownMenu.innerHTML = '';
+                anexoDropdownMenu.classList.add('hidden');
                 if (isMobile) {
-                    dropdownBackdrop.style.display = 'none';
+                    dropdownBackdrop.classList.add('hidden');
                 }
 
                 if (tiposComAnexos.includes(selectedType)) {
                     anexoDropdown.style.display = 'block';
 
-                    const titleDiv = document.createElement('div');
-                    titleDiv.className = 'dropdown-header text-muted';
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'text-gray-500 text-base font-medium pb-2 mb-3 border-b border-gray-200';
                     const tipoDescricao = tipoRequisicao.options[tipoRequisicao.selectedIndex].text;
-                    titleDiv.textContent = tipoDescricao || 'Informações Adicionais';
-                    titleDiv.style.fontSize = '1rem';
-                    anexoDropdownMenu.appendChild(titleDiv);
+                    headerDiv.textContent = tipoDescricao || 'Informações Adicionais';
+                    anexoDropdownMenu.appendChild(headerDiv);
 
-                    const containerDiv = document.createElement('div');
-                    containerDiv.className = 'mb-3';
-                    
+                    const fieldsContainer = document.createElement('div');
+                    fieldsContainer.className = 'space-y-4';
+
                     if (isMobile) {
                         const closeButton = document.createElement('button');
-                        closeButton.className = 'btn btn-sm btn-secondary w-100 mb-3';
+                        closeButton.className = 'w-full py-2 px-4 bg-gray-200 text-gray-700 rounded mb-4 text-sm font-medium';
                         closeButton.textContent = 'Fechar';
                         closeButton.addEventListener('click', function(e) {
                             e.preventDefault();
-                            anexoDropdownMenu.classList.remove('show');
-                            dropdownBackdrop.style.display = 'none';
+                            anexoDropdownMenu.classList.add('hidden');
+                            dropdownBackdrop.classList.add('hidden');
                         });
-                        containerDiv.appendChild(closeButton);
+                        fieldsContainer.appendChild(closeButton);
                     }
 
+                    // Adicionar campos
                     if (anexosPorTipo[selectedType]) {
                         anexosPorTipo[selectedType].forEach((field, index) => {
-                            const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`; 
+                            const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
                             const fieldDiv = document.createElement('div');
-                            fieldDiv.className = 'mb-3';
+                            fieldDiv.className = 'mb-4';
 
                             if (field.type === 'text') {
                                 fieldDiv.innerHTML = `
-                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                                <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" required>
-                            `;
+                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" required>
+                                `;
                             } else if (field.type === 'select') {
                                 let optionsHtml = '<option value="">Selecione</option>';
                                 field.options.forEach(option => {
                                     optionsHtml += `<option value="${option}">${option}</option>`;
                                 });
                                 fieldDiv.innerHTML = `
-                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                                <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
-                                    ${optionsHtml}
-                                </select>
-                            `;
-                            } else if (field.type === 'checkbox') {
-                                fieldDiv.innerHTML = `
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="${uniqueId}" name="${field.name}" value="1">
-                                    <label class="form-check-label" for="${uniqueId}" style="font-size: 0.9rem; color: #000000;">${field.label}</label>
-                                </div>
-                            `;
+                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
+                                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" required>
+                                        ${optionsHtml}
+                                    </select>
+                                `;
                             } else if (field.type === 'file') {
                                 fieldDiv.innerHTML = `
-                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
-                                    <button type="button" class="custom-file-button" data-input-id="${uniqueId}">Escolher arquivo</button>
-                                    <span class="file-name">Nenhum arquivo selecionado</span>
-                                </div>
-                            `;
+                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
+                                    <div class="flex flex-col sm:flex-row items-start">
+                                        <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
+                                        <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
+                                            Escolher arquivo
+                                        </button>
+                                        <span class="text-gray-500 text-sm mt-2 sm:mt-0 sm:ml-3 file-name">Nenhum arquivo selecionado</span>
+                                    </div>
+                                `;
                             }
-                            containerDiv.appendChild(fieldDiv);
+                            fieldsContainer.appendChild(fieldDiv);
                         });
                     }
-                    anexoDropdownMenu.appendChild(containerDiv);
-                    initializeFileInputs(); // Re-inicializa os eventos de arquivo
+                    anexoDropdownMenu.appendChild(fieldsContainer);
+                    initializeFileInputs();
                 }
             }
 
@@ -519,16 +615,16 @@
                 const fileInputs = document.querySelectorAll('.file-input');
                 fileInputs.forEach(input => {
                     const uniqueId = input.id;
-                    const customButton = document.querySelector(`.custom-file-button[data-input-id="${uniqueId}"]`);
-                    const fileNameSpan = customButton.nextElementSibling;
+                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
+                    const fileNameSpan = fileButton.nextElementSibling;
 
-                    customButton.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Impede o dropdown de fechar
+                    fileButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
                         input.click();
                     });
 
                     input.addEventListener('change', (e) => {
-                        e.stopPropagation(); // Impede o dropdown de fechar
+                        e.stopPropagation();
                         if (input.files && input.files.length > 0) {
                             fileNameSpan.textContent = input.files[0].name;
                         } else {
@@ -537,15 +633,33 @@
                     });
 
                     input.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Impede o dropdown de fechar
+                        e.stopPropagation();
                     });
                 });
 
-                // Impede o dropdown de fechar ao clicar dentro dele
                 anexoDropdownMenu.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
+                
+                const focusableElements = anexoDropdownMenu.querySelectorAll('button, input, select, textarea');
+                focusableElements.forEach(element => {
+                    element.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+                });
             }
+
+            document.addEventListener('click', function(e) {
+                if (!anexoDropdownMenu.classList.contains('hidden') && 
+                    !anexoDropdownMenu.contains(e.target) && 
+                    e.target !== anexoButton &&
+                    !anexoButton.contains(e.target)) {
+                    anexoDropdownMenu.classList.add('hidden');
+                    if (isMobile) {
+                        dropdownBackdrop.classList.add('hidden');
+                    }
+                }
+            });
 
             function checkRequiredFields() {
                 const requiredFields = [
@@ -556,13 +670,13 @@
                 requiredFields.forEach(field => {
                     const input = document.getElementById(field);
                     const requiredMark = document.getElementById(`${field}Required`);
-                    if (input) {
+                    if (input && requiredMark) {
                         if (input.tagName === 'SELECT') {
                             const isEmpty = !input.value || input.value === '';
-                            requiredMark.style.display = isEmpty ? 'inline' : 'none';
+                            requiredMark.classList.toggle('hidden', !isEmpty);
                         } else if (input.type === 'text' || input.type === 'email') {
                             const isEmpty = !input.value || input.value.trim() === '';
-                            requiredMark.style.display = isEmpty ? 'inline' : 'none';
+                            requiredMark.classList.toggle('hidden', !isEmpty);
                         }
                     }
                 });
@@ -605,16 +719,16 @@
                         if (input.tagName === 'SELECT') {
                             if (!input.value || input.value === '') {
                                 hasEmpty = true;
-                                input.classList.add('is-invalid');
+                                input.classList.add('border-red-500', 'ring-red-200');
                             } else {
-                                input.classList.remove('is-invalid');
+                                input.classList.remove('border-red-500', 'ring-red-200');
                             }
                         } else if (input.type === 'text' || input.type === 'email') {
                             if (!input.value || input.value.trim() === '') {
                                 hasEmpty = true;
-                                input.classList.add('is-invalid');
+                                input.classList.add('border-red-500', 'ring-red-200');
                             } else {
-                                input.classList.remove('is-invalid');
+                                input.classList.remove('border-red-500', 'ring-red-200');
                             }
                         }
                     }
@@ -630,16 +744,22 @@
                             if (field.type === 'text' || field.type === 'select') {
                                 if (!input.value || input.value.trim() === '') {
                                     hasEmpty = true;
-                                    input.classList.add('is-invalid');
+                                    input.classList.add('border-red-500', 'ring-red-200');
                                 } else {
-                                    input.classList.remove('is-invalid');
+                                    input.classList.remove('border-red-500', 'ring-red-200');
                                 }
                             } else if (field.type === 'file' && tiposComAnexosObrigatorios.includes(selectedType)) {
                                 if (!input.files || input.files.length === 0) {
                                     hasEmpty = true;
-                                    input.classList.add('is-invalid');
+                                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
+                                    if (fileButton) {
+                                        fileButton.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+                                    }
                                 } else {
-                                    input.classList.remove('is-invalid');
+                                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
+                                    if (fileButton) {
+                                        fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
+                                    }
                                 }
                             }
                         }
@@ -647,42 +767,36 @@
 
                     // Aplica ou remove o contorno vermelho no botão do dropdown
                     if (hasEmpty) {
-                        anexoButton.classList.add('is-invalid');
+                        anexoButton.classList.add('border-red-500', 'ring-red-200');
                     } else {
-                        anexoButton.classList.remove('is-invalid');
+                        anexoButton.classList.remove('border-red-500', 'ring-red-200');
                     }
                 } else {
-                    anexoButton.classList.remove('is-invalid');
+                    anexoButton.classList.remove('border-red-500', 'ring-red-200');
                 }
 
                 if (hasEmpty) {
                     e.preventDefault();
-                    alert('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.');
+                    showNotification('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.', 'error');
                 }
             });
 
             form.addEventListener('submit', function(event) {
-                if (document.querySelectorAll('.is-invalid').length > 0) {
+                if (document.querySelectorAll('.border-red-500').length > 0) {
                     return;
                 }
-                
-                const spinner = document.getElementById('global-loading-spinner');
-                if (spinner) {
-                    spinner.classList.remove('hidden');
-                }
-                
+
                 const submitBtn = document.getElementById('submitBtn');
                 if (submitBtn) {
                     submitBtn.setAttribute('disabled', 'disabled');
-                    submitBtn.classList.add('opacity-75');
-                    submitBtn.classList.add('cursor-not-allowed');
-                    
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
                     const buttonText = submitBtn.querySelector('.button-text');
-                    const buttonSpinner = submitBtn.querySelector('.spinner-border');
-                    
+                    const buttonSpinner = submitBtn.querySelector('svg');
+
                     if (buttonText && buttonSpinner) {
-                        buttonText.classList.add('d-none');
-                        buttonSpinner.classList.remove('d-none');
+                        buttonText.textContent = 'Enviando...';
+                        buttonSpinner.classList.remove('hidden');
                     }
                 }
             });
@@ -693,210 +807,5 @@
             checkRequiredFields();
         });
     </script>
-    <style>
-         .form-control-sm::-webkit-file-upload-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .form-control-sm::-webkit-file-upload-button:hover {
-            background-color: #0056b3;
-        }
-
-        .form-control-sm::-moz-file-upload-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .form-control-sm::-moz-file-upload-button:hover {
-            background-color: #0056b3;
-        }
-
-        #anexoDropdownMenu {
-            max-height: 300px;
-            overflow-y: auto;
-            overflow-x: visible;
-            word-wrap: break-word;
-            width: auto;
-            max-width: 600px;
-            min-width: 280px;
-        }
-
-        .is-invalid {
-            border-color: #ff0000 !important;
-            box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.25) !important;
-        }
-
-        .required-mark {
-            margin-left: 4px;
-        }
-
-        option.indisponivel {
-            color: #dc3545 !important;
-            font-style: italic;
-        }
-
-        #tipoIndisponivelAlert {
-            font-size: 0.9rem;
-            padding: 0.25rem 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        #tipoRequisicao option:disabled {
-            color: #dc3545 !important;
-            background-color: #f8d7da;
-        }
-
-        .custom-file-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-
-        .custom-file-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            display: inline-block;
-        }
-
-        .custom-file-button:hover {
-            background-color: #0056b3;
-        }
-
-        .file-name {
-            margin-left: 0.5rem;
-            color: #000000;
-            word-break: break-all;
-            display: inline-block;
-            max-width: calc(100% - 120px);
-            vertical-align: middle;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 768px) {
-            .row {
-                margin-left: -8px;
-                margin-right: -8px;
-            }
-            
-            .col-md-4, .col-md-6, .col-12 {
-                padding-left: 8px;
-                padding-right: 8px;
-            }
-            
-            .form-label {
-                font-size: 0.9rem;
-                margin-bottom: 0.25rem;
-            }
-            
-            .form-control, .form-select {
-                font-size: 0.95rem;
-                padding: 0.375rem 0.5rem;
-            }
-            
-            #anexoDropdownMenu {
-                max-width: 100%;
-                min-width: 260px;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                max-height: 80vh;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                z-index: 1050;
-            }
-            
-            .custom-file-button {
-                width: 100%;
-                margin-bottom: 0.5rem;
-                text-align: center;
-            }
-            
-            .file-name {
-                display: block;
-                max-width: 100%;
-                margin-left: 0;
-                text-align: center;
-                margin-bottom: 0.5rem;
-            }
-            
-            .dropdown-backdrop {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                background-color: rgba(0,0,0,0.5);
-                z-index: 1040;
-            }
-            
-            .mb-3 {
-                margin-bottom: 0.75rem !important;
-            }
-            
-            .py-12 {
-                padding-top: 1.5rem !important;
-                padding-bottom: 1.5rem !important;
-            }
-            
-            .p-6 {
-                padding: 1rem !important;
-            }
-            
-            .dropdown-header {
-                text-align: center;
-                padding: 0.75rem 0;
-                font-weight: 500;
-                border-bottom: 1px solid #dee2e6;
-                margin-bottom: 0.75rem;
-            }
-            
-            #submitBtn {
-                width: 100%;
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .mb-2 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .form-control, .form-select {
-                font-size: 16px; 
-            }
-            
-            #anexoDropdownMenu {
-                min-width: 90%;
-                max-height: 70vh;
-            }
-            
-            .custom-file-button, .file-name {
-                font-size: 0.85rem;
-            }
-        }
-    </style>
 </body>
-
 </html>
