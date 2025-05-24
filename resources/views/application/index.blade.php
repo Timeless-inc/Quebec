@@ -24,11 +24,11 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <div class="bg-primary overflow-hidden shadow-sm sm:rounded-lg border border-primary bg-opacity-25">
-                            <div class="container mt-5">
+                            <div class="container mt-3 mt-md-5">
                                 <div class="card-body">
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
-                                        <ul>
+                                        <ul class="mb-0">
                                             @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                             @endforeach
@@ -39,11 +39,11 @@
                                     <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" novalidate>
                                         @csrf
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="nomeCompleto" class="form-label">Nome Completo <span id="nomeCompletoRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
                                                 <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="cpf" class="form-label">CPF <span id="cpfRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
                                                 <input type="text" class="form-control" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
                                             </div>
@@ -54,11 +54,11 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="email" class="form-label">Email <span id="emailRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
                                                 <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="rg" class="form-label">RG <span id="rgRequired" class="required-mark" style="display: none; color: #ff0000;">*</span></label>
                                                 <input type="text" class="form-control" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
                                             </div>
@@ -69,11 +69,11 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="campus" class="form-label">Campus <span id="campusRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <input type="text" class="form-control" id="campus" name="campus">
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="matricula" class="form-label">Número de Matrícula <span id="matriculaRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <select class="form-select" id="matricula" name="matricula">
                                                     <option value="">Selecione uma matrícula</option>
@@ -95,7 +95,7 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="curso" class="form-label">Curso <span id="cursoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <select class="form-select" id="curso" name="curso">
                                                     <option value="">Escolha</option>
@@ -106,7 +106,7 @@
                                                     <option value="5">Informática para Internet</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3 mb-md-0">
                                                 <label for="periodo" class="form-label">Período <span id="periodoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                                 <select class="form-select" id="periodo" name="periodo">
                                                     <option value="">Escolha</option>
@@ -131,7 +131,7 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 mb-3 mb-md-0">
                                                 <label for="tipoRequisicao" class="form-label">Tipo de Requisição <span class="text-danger">*</span></label>
                                                 <select class="form-select" id="tipoRequisicao" name="tipoRequisicao" required>
                                                     <option value="">Selecione o tipo de requisição</option>
@@ -152,38 +152,36 @@
                                                     </optgroup>
                                                     @endif
                                                 </select>
-                                                <small class="text-muted">
+                                                <small class="text-muted d-block mt-1">
                                                     Nota: Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
                                                 </small>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">&nbsp;</label>
+                                                <label class="form-label d-block">&nbsp;</label>
                                                 <div class="dropdown" id="anexoDropdown" style="display: none;">
                                                     <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
                                                         Anexos/informações (clique para abrir)
                                                     </button>
-                                                    <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
+                                                    <div class="dropdown-menu p-3" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                                                         <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="container">
-                                            <div class="row mb-3">
-                                                <div class="col-12">
-                                                    <label for="observacoes" class="form-label">Observações</label>
-                                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                                                </div>
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <label for="observacoes" class="form-label">Observações</label>
+                                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
                                             </div>
+                                        </div>
 
-                                            <div class="row">
-                                                <div class="col-12 text-end py-4">
-                                                    <button type="submit" class="btn btn-success" id="submitBtn">
-                                                        <span class="button-text">Enviar</span>
-                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-12 text-end py-3 py-md-4">
+                                                <button type="submit" class="btn btn-success" id="submitBtn">
+                                                    <span class="button-text">Enviar</span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
@@ -193,7 +191,10 @@
                     </div>
                 </div>
             </div>
+        </div>
     </x-app-layout>
+
+    <div class="dropdown-backdrop" style="display: none;"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -201,9 +202,11 @@
             const anexoDropdown = document.getElementById('anexoDropdown');
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
             const anexoButton = document.getElementById('anexoButton');
+            const dropdownBackdrop = document.querySelector('.dropdown-backdrop');
             const form = document.getElementById('applicationForm');
             const selectElement = document.getElementById('tipoRequisicao');
             const options = selectElement.querySelectorAll('option');
+            const isMobile = window.innerWidth <= 768;
 
             options.forEach(option => {
                 if (option.classList.contains('indisponivel')) {
@@ -227,36 +230,28 @@
                 document.getElementById('tipoIndisponivelAlert').style.display = 'none';
             });
 
+            if (isMobile) {
+                anexoButton.addEventListener('click', function() {
+                    dropdownBackdrop.style.display = 'block';
+                });
+                
+                dropdownBackdrop.addEventListener('click', function() {
+                    dropdownBackdrop.style.display = 'none';
+                    anexoDropdownMenu.classList.remove('show');
+                });
+            }
+
             // Tipos de requerimento que precisam de informações adicionais ou anexos
             const tiposComAnexos = [1, 10, 15, 20, 21, 28, 30, 31, 32, 6, 13, 14, 19, 24];
 
             // Mapeamento de tipos de requisição para campos adicionais ou anexos
             const anexosPorTipo = {
-                1: [{
-                        label: "Declaração de Transferência",
-                        name: "anexarArquivos[declaracao_transferencia]",
-                        type: "file"
-                    },
-                    {
-                        label: "Histórico Escolar do Ensino Fundamental (original)",
-                        name: "anexarArquivos[historico_fundamental]",
-                        type: "file"
-                    },
-                    {
-                        label: "Histórico Escolar do Ensino Médio (original)",
-                        name: "anexarArquivos[historico_medio]",
-                        type: "file"
-                    },
-                    {
-                        label: "Histórico Escolar do Ensino Superior (original)",
-                        name: "anexarArquivos[historico_superior]",
-                        type: "file"
-                    },
-                    {
-                        label: "Ementas das disciplinas cursadas com Aprovação",
-                        name: "anexarArquivos[ementas]",
-                        type: "file"
-                    }
+                1: [
+                    { label: "Declaração de Transferência", name: "anexarArquivos[declaracao_transferencia]", type: "file" },
+                    { label: "Histórico Escolar do Ensino Fundamental (original)", name: "anexarArquivos[historico_fundamental]", type: "file" },
+                    { label: "Histórico Escolar do Ensino Médio (original)", name: "anexarArquivos[historico_medio]", type: "file" },
+                    { label: "Histórico Escolar do Ensino Superior (original)", name: "anexarArquivos[historico_superior]", type: "file" },
+                    { label: "Ementas das disciplinas cursadas com Aprovação", name: "anexarArquivos[ementas]", type: "file" }
                 ],
                 10: [{
                         label: "Atestado Médico OU Cópia da CTPS (Identificação e Contrato)",
@@ -444,6 +439,9 @@
 
                 anexoDropdown.style.display = 'none';
                 anexoDropdownMenu.innerHTML = '';
+                if (isMobile) {
+                    dropdownBackdrop.style.display = 'none';
+                }
 
                 if (tiposComAnexos.includes(selectedType)) {
                     anexoDropdown.style.display = 'block';
@@ -457,46 +455,61 @@
 
                     const containerDiv = document.createElement('div');
                     containerDiv.className = 'mb-3';
-                    anexosPorTipo[selectedType].forEach((field, index) => {
-                        const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`; // Nome único para evitar conflitos
-                        const fieldDiv = document.createElement('div');
-                        fieldDiv.className = 'mb-2';
+                    
+                    if (isMobile) {
+                        const closeButton = document.createElement('button');
+                        closeButton.className = 'btn btn-sm btn-secondary w-100 mb-3';
+                        closeButton.textContent = 'Fechar';
+                        closeButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            anexoDropdownMenu.classList.remove('show');
+                            dropdownBackdrop.style.display = 'none';
+                        });
+                        containerDiv.appendChild(closeButton);
+                    }
 
-                        if (field.type === 'text') {
-                            fieldDiv.innerHTML = `
-                            <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                            <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" required>
-                        `;
-                        } else if (field.type === 'select') {
-                            let optionsHtml = '<option value="">Selecione</option>';
-                            field.options.forEach(option => {
-                                optionsHtml += `<option value="${option}">${option}</option>`;
-                            });
-                            fieldDiv.innerHTML = `
-                            <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                            <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
-                                ${optionsHtml}
-                            </select>
-                        `;
-                        } else if (field.type === 'checkbox') {
-                            fieldDiv.innerHTML = `
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="${uniqueId}" name="${field.name}" value="1">
-                                <label class="form-check-label" for="${uniqueId}" style="font-size: 0.9rem; color: #000000;">${field.label}</label>
-                            </div>
-                        `;
-                        } else if (field.type === 'file') {
-                            fieldDiv.innerHTML = `
-                            <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
-                                <button type="button" class="custom-file-button" data-input-id="${uniqueId}">Escolher arquivo</button>
-                                <span class="file-name" style="margin-left: 0.5rem;">Nenhum arquivo selecionado</span>
-                            </div>
-                        `;
-                        }
-                        containerDiv.appendChild(fieldDiv);
-                    });
+                    if (anexosPorTipo[selectedType]) {
+                        anexosPorTipo[selectedType].forEach((field, index) => {
+                            const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`; 
+                            const fieldDiv = document.createElement('div');
+                            fieldDiv.className = 'mb-3';
+
+                            if (field.type === 'text') {
+                                fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="${uniqueId}" name="${field.name}" required>
+                            `;
+                            } else if (field.type === 'select') {
+                                let optionsHtml = '<option value="">Selecione</option>';
+                                field.options.forEach(option => {
+                                    optionsHtml += `<option value="${option}">${option}</option>`;
+                                });
+                                fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <select class="form-select form-select-sm" id="${uniqueId}" name="${field.name}" required>
+                                    ${optionsHtml}
+                                </select>
+                            `;
+                            } else if (field.type === 'checkbox') {
+                                fieldDiv.innerHTML = `
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="${uniqueId}" name="${field.name}" value="1">
+                                    <label class="form-check-label" for="${uniqueId}" style="font-size: 0.9rem; color: #000000;">${field.label}</label>
+                                </div>
+                            `;
+                            } else if (field.type === 'file') {
+                                fieldDiv.innerHTML = `
+                                <label for="${uniqueId}" class="form-label" style="font-size: 0.9rem; color: #000000;">${field.label} <span class="required-mark" style="color: #ff0000;">*</span></label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
+                                    <button type="button" class="custom-file-button" data-input-id="${uniqueId}">Escolher arquivo</button>
+                                    <span class="file-name">Nenhum arquivo selecionado</span>
+                                </div>
+                            `;
+                            }
+                            containerDiv.appendChild(fieldDiv);
+                        });
+                    }
                     anexoDropdownMenu.appendChild(containerDiv);
                     initializeFileInputs(); // Re-inicializa os eventos de arquivo
                 }
@@ -680,9 +693,8 @@
             checkRequiredFields();
         });
     </script>
-
     <style>
-        .form-control-sm::-webkit-file-upload-button {
+         .form-control-sm::-webkit-file-upload-button {
             background-color: #007bff;
             color: white;
             border: none;
@@ -712,21 +724,12 @@
 
         #anexoDropdownMenu {
             max-height: 300px;
-            /* Altura máxima do dropdown */
             overflow-y: auto;
-            /* Rolagem vertical quando ultrapassa a altura */
-            overflow-x: auto;
-            /* Mantém rolagem horizontal, se necessário */
+            overflow-x: visible;
             word-wrap: break-word;
             width: auto;
             max-width: 600px;
-            min-width: 0;
-        }
-
-        @media (max-width: 768px) {
-            #anexoDropdownMenu {
-                max-width: 100%;
-            }
+            min-width: 280px;
         }
 
         .is-invalid {
@@ -754,7 +757,6 @@
             background-color: #f8d7da;
         }
 
-        /* Estilos para o botão personalizado de upload de arquivo */
         .custom-file-input {
             position: absolute;
             width: 1px;
@@ -784,6 +786,115 @@
         .file-name {
             margin-left: 0.5rem;
             color: #000000;
+            word-break: break-all;
+            display: inline-block;
+            max-width: calc(100% - 120px);
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                margin-left: -8px;
+                margin-right: -8px;
+            }
+            
+            .col-md-4, .col-md-6, .col-12 {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .form-control, .form-select {
+                font-size: 0.95rem;
+                padding: 0.375rem 0.5rem;
+            }
+            
+            #anexoDropdownMenu {
+                max-width: 100%;
+                min-width: 260px;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-height: 80vh;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1050;
+            }
+            
+            .custom-file-button {
+                width: 100%;
+                margin-bottom: 0.5rem;
+                text-align: center;
+            }
+            
+            .file-name {
+                display: block;
+                max-width: 100%;
+                margin-left: 0;
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .dropdown-backdrop {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 1040;
+            }
+            
+            .mb-3 {
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .py-12 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            
+            .p-6 {
+                padding: 1rem !important;
+            }
+            
+            .dropdown-header {
+                text-align: center;
+                padding: 0.75rem 0;
+                font-weight: 500;
+                border-bottom: 1px solid #dee2e6;
+                margin-bottom: 0.75rem;
+            }
+            
+            #submitBtn {
+                width: 100%;
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .form-control, .form-select {
+                font-size: 16px; 
+            }
+            
+            #anexoDropdownMenu {
+                min-width: 90%;
+                max-height: 70vh;
+            }
+            
+            .custom-file-button, .file-name {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </body>

@@ -16,11 +16,11 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="bg-primary overflow-hidden shadow-sm sm:rounded-lg border border-primary bg-opacity-25">
-                        <div class="container mt-5">
+                        <div class="container mt-3 mt-md-5">
                             <div class="card-body">
                                 @if ($errors->any())
                                 <div class="alert alert-danger">
-                                    <ul>
+                                    <ul class="mb-0">
                                         @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                         @endforeach
@@ -33,11 +33,11 @@
                                     @method('PUT')
 
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="nomeCompleto" class="form-label">Nome Completo</label>
                                             <input type="text" class="form-control" value="{{ $requerimento->nomeCompleto }}" readonly>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="cpf" class="form-label">CPF</label>
                                             <input type="text" class="form-control" value="{{ $requerimento->cpf }}" readonly>
                                         </div>
@@ -48,11 +48,11 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email" class="form-control" value="{{ $requerimento->email }}" readonly>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="rg" class="form-label">RG</label>
                                             <input type="text" class="form-control" value="{{ $requerimento->rg }}" readonly>
                                         </div>
@@ -63,11 +63,11 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="campus" class="form-label">Campus <span id="campusRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                             <input type="text" class="form-control" id="campus" name="campus" value="{{ $requerimento->campus }}" required>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="matricula" class="form-label">Número de Matrícula</label>
                                             <select class="form-select" id="matricula_view" disabled>
                                                 <option value="{{ $requerimento->matricula }}" selected>{{ $requerimento->matricula }}</option>
@@ -88,7 +88,7 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="curso" class="form-label">Curso <span id="cursoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                             <select class="form-select" id="curso" name="curso" required>
                                                 @foreach($cursos as $id => $nome)
@@ -96,7 +96,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3 mb-md-0">
                                             <label for="periodo" class="form-label">Período <span id="periodoRequired" class="required-mark" style="color: #ff0000;">*</span></label>
                                             <select class="form-select" id="periodo" name="periodo" required>
                                                 @for($i = 1; $i <= 8; $i++)
@@ -114,7 +114,7 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3 mb-md-0">
                                             <label for="tipoRequisicao" class="form-label">Tipo de Requisição</label>
                                             <input type="text" class="form-control" value="{{ $requerimento->tipoRequisicao }}" readonly>
                                             <input type="hidden" id="tipoRequisicao" name="tipoRequisicao" value="{{ array_search($requerimento->tipoRequisicao, $tiposRequisicao) }}">
@@ -124,7 +124,7 @@
                                                 <button class="form-select" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="anexoButton" style="text-align: left;">
                                                     Anexos/informações (clique para abrir)
                                                 </button>
-                                                <div class="dropdown-menu p-2" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 0; overflow-x: auto;">
+                                                <div class="dropdown-menu p-3" id="anexoDropdownMenu" style="background-color: #f8f9fa; border-radius: 0.375rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: auto; max-width: 600px; min-width: 280px; overflow-x: auto;">
                                                     <!-- Campos de anexo serão gerados dinamicamente aqui pelo JavaScript -->
                                                 </div>
                                             </div>
@@ -133,7 +133,7 @@
 
                                     <div class="mb-3">
                                         <label for="observacoes" class="form-label">Observações</label>
-                                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ $requerimento->observacoes }}</textarea>
                                     </div>
 
                                     <div class="text-end">
@@ -155,6 +155,8 @@
     <div id="dadosExtra" style="display: none;">{{ json_encode($dadosExtra ?? []) }}</div>
     <div id="anexosAtuais" style="display: none;">{{ json_encode($anexosAtuais ?? []) }}</div>
 
+    <div class="dropdown-backdrop" style="display: none;"></div>
+
     <script>
         // Carregar os dados dos elementos ocultos
         const dadosExtraElement = document.getElementById('dadosExtra');
@@ -175,6 +177,8 @@
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
             const anexoButton = document.getElementById('anexoButton');
             const form = document.getElementById('applicationEditForm');
+            const dropdownBackdrop = document.querySelector('.dropdown-backdrop');
+            const isMobile = window.innerWidth <= 768;
 
             // Tipos de requerimento que precisam de informações adicionais ou anexos
             const tiposComAnexos = [1, 10, 15, 20, 21, 28, 30, 31, 32, 6, 13, 14, 19, 24];
@@ -383,6 +387,17 @@
                 }]
             };
 
+            if (isMobile) {
+                anexoButton.addEventListener('click', function() {
+                    dropdownBackdrop.style.display = 'block';
+                });
+                
+                dropdownBackdrop.addEventListener('click', function() {
+                    dropdownBackdrop.style.display = 'none';
+                    anexoDropdownMenu.classList.remove('show');
+                });
+            }
+
             // Carregar dados existentes
             const dadosExtra = window.dadosExtra;
             const anexosAtuais = window.anexosAtuais;
@@ -391,6 +406,9 @@
                 const selectedType = Number(tipoRequisicao.value);
                 anexoDropdown.style.display = 'none';
                 anexoDropdownMenu.innerHTML = '';
+                if (isMobile) {
+                    dropdownBackdrop.style.display = 'none';
+                }
 
                 if (tiposComAnexos.includes(selectedType)) {
                     anexoDropdown.style.display = 'block';
@@ -403,10 +421,23 @@
 
                     const containerDiv = document.createElement('div');
                     containerDiv.className = 'mb-3';
+                    
+                    if (isMobile) {
+                        const closeButton = document.createElement('button');
+                        closeButton.className = 'btn btn-sm btn-secondary w-100 mb-3';
+                        closeButton.textContent = 'Fechar';
+                        closeButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            anexoDropdownMenu.classList.remove('show');
+                            dropdownBackdrop.style.display = 'none';
+                        });
+                        containerDiv.appendChild(closeButton);
+                    }
+                    
                     anexosPorTipo[selectedType].forEach((field, index) => {
                         const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
                         const fieldDiv = document.createElement('div');
-                        fieldDiv.className = 'mb-2';
+                        fieldDiv.className = 'mb-3';
 
                         if (field.type === 'text') {
                             const existingValue = dadosExtra && dadosExtra[field.name.split('[')[1].replace(']', '')] || '';
@@ -439,7 +470,7 @@
                                     <div class="mt-1">
                                         <input type="file" class="form-control form-control-sm file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png">
                                         <span id="file-name-${uniqueId}" style="font-size: 0.85rem; color: #555; display: block; margin-top: 0.25rem;">
-                                            ${anexoAtual ? '' : 'Nenhum arquivo selecionado'}
+                                            ${anexoAtual ? 'Manter anexo atual' : 'Nenhum arquivo selecionado'}
                                         </span>
                                     </div>
                                 </div>
@@ -464,6 +495,14 @@
                             fileNameSpan.textContent = 'Nenhum arquivo selecionado';
                         }
                     });
+                    
+                    input.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+
+                anexoDropdownMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
                 });
             }
 
@@ -574,13 +613,7 @@
             word-wrap: break-word;
             width: auto;
             max-width: 600px;
-            min-width: 0;
-        }
-
-        @media (max-width: 768px) {
-            #anexoDropdownMenu {
-                max-width: 100%;
-            }
+            min-width: 280px;
         }
 
         .is-invalid {
@@ -590,6 +623,98 @@
 
         .required-mark {
             margin-left: 4px;
+        }
+        
+        .dropdown-backdrop {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1040;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .row {
+                margin-left: -8px;
+                margin-right: -8px;
+            }
+            
+            .col-md-4, .col-md-6, .col-12 {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .form-control, .form-select {
+                font-size: 0.95rem;
+                padding: 0.375rem 0.5rem;
+            }
+            
+            #anexoDropdownMenu {
+                max-width: 100%;
+                min-width: 260px;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-height: 80vh;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1050;
+            }
+            
+            .mb-3 {
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .py-12 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            
+            .p-6 {
+                padding: 1rem !important;
+            }
+            
+            .dropdown-header {
+                text-align: center;
+                padding: 0.75rem 0;
+                font-weight: 500;
+                border-bottom: 1px solid #dee2e6;
+                margin-bottom: 0.75rem;
+            }
+            
+            #submitEditBtn {
+                width: 100%;
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .text-end {
+                text-align: center !important;
+                margin-top: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .form-control, .form-select {
+                font-size: 16px;
+            }
+            
+            #anexoDropdownMenu {
+                min-width: 90%;
+                max-height: 70vh;
+            }
         }
     </style>
 </x-app-layout>
