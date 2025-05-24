@@ -7,12 +7,12 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex justify-between items-center header-container">
+            <div class="w-full">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-2">
                     Prioridades:
                 </h2>
-                <div class="flex items-center mt-2 space-x-2">
+                <div class="flex flex-wrap items-center space-x-2 filter-container">
                     <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-600 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
                     <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-600 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Pendente</button>
                     <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
@@ -20,9 +20,9 @@
                     <button onclick="filterJustificativas('em_aberto')" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
                 </div>
             </div>
-            <div class="mt-8">
-                <a href="{{ route('application') }}">
-                    <button type="button" class="px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-800">+ Novo requerimento</button>
+            <div class="mt-8 new-req-btn">
+                <a href="{{ route('application') }}" class="w-full block">
+                    <button type="button" class="px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-800 w-full sm:w-auto">+ Novo requerimento</button>
                 </a>
             </div>
         </div>
@@ -39,10 +39,10 @@
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <div class="row">
+                <div class="row g-3">
                     @foreach($events as $event)
-                    <div class="col-md-4 mb-3">
-                        <div class="card {{ $event->isEndingToday() ? 'border-danger' : ($event->isExpiringSoon() ? 'border-warning' : '') }}">
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="card h-100 {{ $event->isEndingToday() ? 'border-danger' : ($event->isExpiringSoon() ? 'border-warning' : '') }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="card-title mb-0">{{ $event->title }}</h5>
@@ -110,7 +110,7 @@
                 :anexos_finalizacao="[$requerimento->anexos_finalizacao]"
                 tipoRequisicao="{{ $requerimento->tipoRequisicao }}"
                 :dadosExtra="$dadosExtra"
-                class="justificativa-item"
+                class="justificativa-item mb-4"
             />
             @endforeach
             @else
@@ -122,8 +122,8 @@
         </div>
         
         @if($requerimentos->hasPages())
-        <div class="flex justify-center mt-8">
-            <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+        <div class="flex justify-center mt-6">
+            <div class="bg-white p-3 rounded-lg shadow-md w-full max-w-2xl">
                 {{ $requerimentos->appends(['status' => $currentStatus ?? 'todos'])->links('pagination::tailwind') }}
             </div>
         </div>
@@ -156,3 +156,101 @@
         });
     });
 </script>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        height: 100%;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .filter-btn {
+        transition: all 0.2s;
+    }
+    
+    .filter-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .filter-container {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 0;
+        }
+        
+        .filter-btn {
+            margin: 3px !important;
+            font-size: 0.7rem !important;
+            padding: 4px 6px !important;
+            white-space: nowrap;
+        }
+        
+        .header-container {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .new-req-btn {
+            margin-top: 15px !important;
+            width: 100%;
+        }
+        
+        .new-req-btn button {
+            width: 100%;
+            padding: 8px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+        }
+        
+        .alert {
+            font-size: 0.8rem;
+        }
+        
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .pagination .page-item {
+            margin: 2px;
+        }
+        
+        .max-w-7xl {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        
+        .py-6 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;  
+        }
+        
+        .p-6 {
+            padding: 1rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .filter-btn {
+            font-size: 0.65rem !important;
+            padding: 3px 5px !important;
+        }
+        
+        h2.text-xl {
+            font-size: 1.1rem !important;
+            margin-bottom: 10px !important;
+        }
+    }
+</style>

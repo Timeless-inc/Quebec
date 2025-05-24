@@ -20,7 +20,6 @@
 
         
         <style>
-        // Estilos para a barra de rolagem verde
         #notifications::-webkit-scrollbar {
             width: 12px;
         }
@@ -37,6 +36,24 @@
   
         #notifications::-webkit-scrollbar-thumb:hover {
             background: #166534 !important; 
+        }
+        @media (max-width: 768px) {
+            #popup-notification {
+                width: 90% !important;
+                max-width: 90% !important;
+                white-space: normal !important;
+                padding: 12px 16px !important;
+            }
+            
+            .max-w-7xl {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            header .max-w-7xl {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
         }
         </style>
 
@@ -63,7 +80,7 @@
         </div>
         <!-- base de pop-up -->
         
-        <div id="popup-notification" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; color: #333; padding: 16px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; font-weight: 500; overflow: hidden;">
+        <div id="popup-notification" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; color: #333; padding: 16px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 500; overflow: hidden; max-width: 90%; width: auto;">
             <span id="popup-message"></span>
             <div id="notification-timer" style="position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background-color: #4CAF50;"></div>
         </div>
