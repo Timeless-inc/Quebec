@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SRE</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
     @vite('resources/css/app.css')
 </head>
 
@@ -714,5 +715,28 @@
                 }
             }, 300);
         }
+
+        function showLoading() {
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.id = 'loading-overlay';
+                loadingOverlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+                loadingOverlay.innerHTML = `
+                    <div class="loading-spinner"></div>
+                `;
+                document.body.appendChild(loadingOverlay);
+            }
+
+            function hideLoading() {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.remove();
+                }
+            }
+
+            document.getElementById('applicationForm').addEventListener('submit', function(e) {
+                showLoading();
+                
+                hideLoading();
+            });
     </script>
 </x-app-layout>
