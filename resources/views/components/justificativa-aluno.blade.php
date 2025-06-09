@@ -24,10 +24,11 @@
 
     <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg mb-6">
         <div class="w-12 flex items-center justify-center">
-            <div class="rounded w-2 h-4/5 {{ $status === 'em_andamento' ? 'bg-blue-500' : 
-            ($status === 'finalizado' ? 'bg-green-500' : 
-            ($status === 'indeferido' ? 'bg-red-500' : 
-            ($status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
+            <div class="rounded w-2 h-4/5 {{ 
+                $status === 'em_andamento' || $status === 'encaminhado' ? 'bg-blue-500' : 
+                ($status === 'finalizado' ? 'bg-green-500' : 
+                ($status === 'indeferido' ? 'bg-red-500' : 
+                ($status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
         </div>
 
         <div class="flex-1 p-6">
@@ -42,6 +43,9 @@
                         <span class="font-semibold text-gray-600">Status:</span>
                         @switch($status ?? 'em_andamento')
                         @case('em_andamento')
+                        <span class="inline-block px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">Em Andamento</span>
+                        @break
+                        @case('encaminhado')
                         <span class="inline-block px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">Em Andamento</span>
                         @break
                         @case('finalizado')
@@ -136,15 +140,15 @@
                             </div>
                             <div>
                                 <span class="inline-block px-3 py-2 text-sm font-medium rounded-lg 
-                                {{ $status === 'em_andamento' ? 'text-blue-700 bg-blue-100' : 
+                                {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'text-blue-700 bg-blue-100' : 
                                 ($status === 'finalizado' ? 'text-green-700 bg-green-100' : 
                                 ($status === 'indeferido' ? 'text-red-700 bg-red-100' : 
                                 ($status === 'pendente' ? 'text-yellow-700 bg-yellow-100' : 'text-gray-700 bg-gray-100'))) }}">
-                                    <i class="fas {{ $status === 'em_andamento' ? 'fa-clock' : 
+                                    <i class="fas {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'fa-clock' : 
                                     ($status === 'finalizado' ? 'fa-check-circle' : 
                                     ($status === 'indeferido' ? 'fa-times-circle' : 
                                     ($status === 'pendente' ? 'fa-exclamation-circle' : 'fa-question-circle'))) }} mr-1"></i>
-                                    {{ $status === 'em_andamento' ? 'Em Andamento' : 
+                                    {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'Em Andamento' : 
                                     ($status === 'finalizado' ? 'Finalizado' : 
                                     ($status === 'indeferido' ? 'Indeferido' : 
                                     ($status === 'pendente' ? 'Pendente' : 'Desconhecido'))) }}

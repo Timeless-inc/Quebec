@@ -49,6 +49,28 @@ class DatabaseSeeder extends Seeder
             'role'=> 'Manager',
         ]);
 
+        User::factory()->create([
+            'name' => 'Professoruser',
+            'username' => 'PROFuser',
+            'email' => 'prof@prof.com',
+            'password' => '12345678',
+            'cpf' => '725.426.889-02',
+            'rg' => '9235528',
+            'matricula' => 'PROF001',
+            'role'=> 'Professor',
+        ]);
+
+        User::factory()->create([
+            'name' => 'Coordenadoruser',
+            'username' => 'COORDuser',
+            'email' => 'coord@coord.com',
+            'password' => '12345678',
+            'cpf' => '725.426.889-03',
+            'rg' => '9235529',
+            'matricula' => 'COORD001',
+            'role'=> 'Coordenador',
+        ]);
+
         $this->call([  
             ApplicationSeeder::class,
             //EventSeeder::class

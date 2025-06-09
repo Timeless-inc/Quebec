@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('requerimentos', function (Blueprint $table) {
-            $table->enum('status', ['em_andamento', 'finalizado', 'indeferido', 'pendente'])->default('em_andamento');
+            $table->enum('status', ['em_andamento', 'finalizado', 'indeferido', 'pendente', 'encaminhado', 'devolvido'])->default('em_andamento');
         });
     }
 

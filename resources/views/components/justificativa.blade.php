@@ -47,7 +47,8 @@
                     <div class="rounded w-2 h-4/5 {{ $requerimento->status === 'em_andamento' ? 'bg-blue-500' : 
             ($requerimento->status === 'finalizado' ? 'bg-green-500' : 
             ($requerimento->status === 'indeferido' ? 'bg-red-500' : 
-            ($requerimento->status === 'pendente' ? 'bg-yellow-500' : 'bg-gray-500'))) }}"></div>
+            ($requerimento->status === 'pendente' ? 'bg-yellow-500' : 
+            ($requerimento->status === 'encaminhado' ? 'bg-purple-500' : 'bg-gray-500')))) }}"></div>
                 </div>
 
                 <div class="flex-1 p-6">
@@ -72,6 +73,9 @@
                                 @break
                                 @case('pendente')
                                 <span class="inline-block px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full">Pendente</span>
+                                @break
+                                @case('encaminhado')
+                                <span class="inline-block px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Encaminhado</span>
                                 @break
                                 @endswitch
                             </div>
@@ -120,13 +124,10 @@
                         </a>
 
                         <!-- Separador vertical -->
-                        @if($requerimento->status !== 'finalizado' && $requerimento->status !== 'indeferido')
+                        @if($requerimento->status !== 'finalizado' && $requerimento->status !== 'indeferido' && $requerimento->status !== 'encaminhado')
                         <div class="h-8 border-l border-gray-300 mx-1"></div>
 
-                        <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" class="flex gap-3">
-                            @csrf
-                            @method('PATCH')
-
+                        <div class="flex gap-3">
                             <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" data-bs-toggle="modal" data-bs-target="#finalizacaoModal-{{ $requerimento->id }}" title="Finalizar">
                                 <i class="fas fa-check text-lg"></i>
                             </button>
@@ -136,7 +137,11 @@
                             <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $requerimento->id }}" title="Pendência">
                                 <i class="fas fa-exclamation text-lg"></i>
                             </button>
-                        </form>
+                            
+                            <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-purple-600 rounded-md hover:bg-purple-700" data-bs-toggle="modal" data-bs-target="#encaminharModal-{{ $requerimento->id }}" title="Encaminhar">
+                                <i class="fas fa-share text-lg"></i>
+                            </button>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -166,15 +171,18 @@
                                 {{ $requerimento->status === 'em_andamento' ? 'text-blue-700 bg-blue-100' : 
                                 ($requerimento->status === 'finalizado' ? 'text-green-700 bg-green-100' : 
                                 ($requerimento->status === 'indeferido' ? 'text-red-700 bg-red-100' : 
-                                ($requerimento->status === 'pendente' ? 'text-yellow-700 bg-yellow-100' : 'text-gray-700 bg-gray-100'))) }}">
+                                ($requerimento->status === 'pendente' ? 'text-yellow-700 bg-yellow-100' :
+                                ($requerimento->status === 'encaminhado' ? 'text-purple-700 bg-purple-100' : 'text-gray-700 bg-gray-100')))) }}">
                                             <i class="fas {{ $requerimento->status === 'em_andamento' ? 'fa-clock' : 
                                     ($requerimento->status === 'finalizado' ? 'fa-check-circle' : 
                                     ($requerimento->status === 'indeferido' ? 'fa-times-circle' : 
-                                    ($requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 'fa-question-circle'))) }} mr-1"></i>
+                                    ($requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 
+                                    ($requerimento->status === 'encaminhado' ? 'fa-share' : 'fa-question-circle')))) }} mr-1"></i>
                                             {{ $requerimento->status === 'em_andamento' ? 'Em Andamento' : 
                                     ($requerimento->status === 'finalizado' ? 'Finalizado' : 
                                     ($requerimento->status === 'indeferido' ? 'Indeferido' : 
-                                    ($requerimento->status === 'pendente' ? 'Pendente' : 'Desconhecido'))) }}
+                                    ($requerimento->status === 'pendente' ? 'Pendente' :
+                                    ($requerimento->status === 'encaminhado' ? 'Encaminhado' : 'Desconhecido')))) }}
                                         </span>
                                     </div>
                                 </div>
@@ -358,6 +366,30 @@
                                             </div>
                                         </div>
                                         @endif
+
+                                        @if($requerimento->status === 'encaminhado' && isset($requerimento->encaminhamento))
+                                        <div class="bg-white rounded-lg border border-purple-200 shadow-sm p-5">
+                                            <h6 class="text-lg font-semibold text-purple-800 border-b border-purple-100 pb-2 flex items-center">
+                                                <i class="fas fa-share mr-2 text-purple-600"></i>Informações de Encaminhamento
+                                            </h6>
+                                            <div class="mt-3 bg-purple-50 p-3 rounded">
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Encaminhado para:</span> 
+                                                    {{ $requerimento->encaminhamento->receiver->name ?? 'Não especificado' }}
+                                                </p>
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Data de encaminhamento:</span> 
+                                                    {{ isset($requerimento->encaminhamento->created_at) ? date('d/m/Y H:i', strtotime($requerimento->encaminhamento->created_at)) : 'Não especificado' }}
+                                                </p>
+                                                @if(!empty($requerimento->encaminhamento->internal_message))
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Mensagem interna:</span> 
+                                                    {{ $requerimento->encaminhamento->internal_message }}
+                                                </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -377,5 +409,4 @@
 
             <x-pendent-modal :requerimento="$requerimento" />
 
-</div>
-
+            <x-forward-modal :requerimento="$requerimento" />

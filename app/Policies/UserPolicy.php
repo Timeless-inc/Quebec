@@ -32,4 +32,14 @@ class UserPolicy
     {
         return $user->role === 'Manager';
     }
+
+    public function isProfessor(User $user): bool
+    {
+        return $user->role === 'Professor';
+    }
+
+    public function isCoordenador(User $user): bool
+    {
+        return $user->role === 'Coordenador';
+    }
 }
