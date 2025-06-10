@@ -12,6 +12,9 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ProfileChangeRequestController;
+use App\Http\Controllers\CoordinatorController;
+use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\ForwardingController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +34,12 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     if ($user->role === 'Cradt' || $user->role === 'Manager') {
         // Redireciona usando o nome da rota
         return redirect()->route('cradt');
+    } else if ($user->role === 'Coordenador') {
+        return redirect()->route('coordinator.dashboard');
+    } else if ($user->role === 'Professor') {
+        return redirect()->route('professor.dashboard');
     }
+
 
     return (new DashboardController())->index();
 })
@@ -72,7 +80,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rotas específicas para Alunos e CRADT (compartilhadas)
-Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager,Coordenador,Professor'])->group(function () {
     Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
     Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
@@ -86,6 +94,14 @@ Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
     Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
     Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'role:Cradt,Manager,Coordenador,Professor'])->group(function () {
+    // Justificativas e atualização de status
+    Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
+    Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
+    Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
+    Route::post('/requerimento/{id}/marcar-como-visto', [ApplicationController::class, 'marcarComoVisto'])->name('requerimento.marcarComoVisto');
 });
 
 // Rotas específicas para CRADT e manager
@@ -110,13 +126,6 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     // Cadastro de CRADT
     Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
     Route::post('/cradt/register', [CradtController::class, 'register']);
-
-    // Justificativas e atualização de status
-    Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
-    Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
-    Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
-    Route::post('/requerimento/{id}/marcar-como-visto', [ApplicationController::class, 'marcarComoVisto'])->name('requerimento.marcarComoVisto');
-
 
     // Eventos
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
@@ -156,5 +165,32 @@ Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.
 
 // Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
+
+// Rotas para Coordenador
+Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(function () {
+    Route::get('/dashboard', [CoordinatorController::class, 'dashboard'])->name('coordinator.dashboard');
+    Route::post('/process/{forwarding}', [CoordinatorController::class, 'processRequest'])->name('coordinator.process');
+    Route::post('/return/{forwarding}', [CoordinatorController::class, 'returnRequest'])->name('coordinator.return');
+});
+
+// Rotas para Professor
+Route::middleware(['auth', 'role:Professor'])->prefix('professor')->group(function () {
+    Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
+    Route::post('/process/{forwarding}', [ProfessorController::class, 'processRequest'])->name('professor.process');
+    Route::post('/return/{forwarding}', [ProfessorController::class, 'returnRequest'])->name('professor.return');
+});
+
+// Rotas para Encaminhamentos (CRADT)
+Route::middleware(['auth', 'role:Cradt,Manager'])->prefix('encaminhamentos')->group(function () {
+    Route::get('/create/{requerimento}', [ForwardingController::class, 'showForwardForm'])->name('forwardings.create');
+    Route::post('/store/{requerimento}', [ForwardingController::class, 'forward'])->name('forwardings.store');
+    Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
+});
+
+
+Route::middleware(['auth', 'role:Professor,Coordenador'])->group(function () {
+    Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');
+    Route::post('/requerimentos/return/{forwarding}', [ForwardingController::class, 'returnRequest'])->name('requerimentos.return');
+});
 
 require __DIR__ . '/auth.php';
