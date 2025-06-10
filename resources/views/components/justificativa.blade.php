@@ -27,10 +27,10 @@
     $status = $requerimento->status;
     @endphp
 
-        <!-- Tag Novo - com visualização -->
-        @if($diasDiferenca < 2 && !($requerimento->visualizado))
-            <span class="absolute top-6 right-6 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full novo-badge" id="novo-badge-{{ $requerimento->id }}">Novo</span>
-            @endif
+    <!-- Tag Novo - com visualização -->
+    @if($diasDiferenca < 2 && !($requerimento->visualizado))
+        <span class="absolute top-6 right-6 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full novo-badge" id="novo-badge-{{ $requerimento->id }}">Novo</span>
+        @endif
 
         <!-- Tag Antigo -->
         @if($diasDiferenca >= 2 && $diasDiferenca <= 5 && ($status=='em_andamento' || $status=='pendente' ))
@@ -46,9 +46,10 @@
                 <div class="w-12 flex items-center justify-center">
                     <div class="rounded w-2 h-4/5 {{ $requerimento->status === 'em_andamento' ? 'bg-blue-500' : 
             ($requerimento->status === 'finalizado' ? 'bg-green-500' : 
-            ($requerimento->status === 'indeferido' ? 'bg-red-500' : 
-            ($requerimento->status === 'pendente' ? 'bg-yellow-500' : 
-            ($requerimento->status === 'encaminhado' ? 'bg-purple-500' : 'bg-gray-500')))) }}"></div>
+       ($requerimento->status === 'indeferido' ? 'bg-red-500' : 
+       ($requerimento->status === 'pendente' ? 'bg-yellow-500' : 
+       ($requerimento->status === 'encaminhado' ? 'bg-purple-500' : 
+       ($requerimento->status === 'devolvido' ? 'bg-pink-500' : 'bg-gray-500'))))) }}"></div>
                 </div>
 
                 <div class="flex-1 p-6">
@@ -76,6 +77,9 @@
                                 @break
                                 @case('encaminhado')
                                 <span class="inline-block px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Encaminhado</span>
+                                @break
+                                @case('devolvido')
+                                <span class="inline-block px-2 py-1 text-xs font-medium text-pink-800 bg-pink-100 rounded-full">Devolvido</span>
                                 @break
                                 @endswitch
                             </div>
@@ -107,6 +111,26 @@
                                 <p class="text-sm text-gray-700">{{ $requerimento->resposta }}</p>
                             </div>
                             @endif
+
+                            @if($requerimento->status === 'devolvido')
+                            <div class="mt-3 p-3 bg-pink-50 border border-pink-200 rounded-md">
+                                <h6 class="text-sm font-semibold text-pink-800 mb-1">
+                                    <i class="fas fa-reply mr-1"></i> Motivo da devolução:
+                                </h6>
+                                <p class="text-sm text-gray-700">
+                                    @if($requerimento->forwarding && !empty($requerimento->forwarding->internal_message))
+                                        {{ $requerimento->forwarding->internal_message }}
+                                    @else
+                                        <span class="text-gray-500 italic">Nenhuma mensagem informada</span>
+                                    @endif
+                                </p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    <span class="font-medium">Devolvido por:</span>
+                                    {{ $requerimento->forwarding && $requerimento->forwarding->receiver ? $requerimento->forwarding->receiver->name : 'Não informado' }}
+                                    em {{ $requerimento->forwarding && $requerimento->forwarding->updated_at ? $requerimento->forwarding->updated_at->format('d/m/Y H:i') : 'Data não registrada' }}
+                                </p>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -124,7 +148,7 @@
                         </a>
 
                         <!-- Separador vertical -->
-                        @if($requerimento->status !== 'finalizado' && $requerimento->status !== 'indeferido' && $requerimento->status !== 'encaminhado')
+                        @if($requerimento->status == 'em_andamento' || $requerimento->status == 'devolvido')
                         <div class="h-8 border-l border-gray-300 mx-1"></div>
 
                         <div class="flex gap-3">
@@ -137,7 +161,7 @@
                             <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" data-bs-toggle="modal" data-bs-target="#pendenciaModal-{{ $requerimento->id }}" title="Pendência">
                                 <i class="fas fa-exclamation text-lg"></i>
                             </button>
-                            
+
                             <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-purple-600 rounded-md hover:bg-purple-700" data-bs-toggle="modal" data-bs-target="#encaminharModal-{{ $requerimento->id }}" title="Encaminhar">
                                 <i class="fas fa-share text-lg"></i>
                             </button>
@@ -168,21 +192,24 @@
                                     </div>
                                     <div>
                                         <span class="inline-block px-3 py-2 text-sm font-medium rounded-lg 
-                                {{ $requerimento->status === 'em_andamento' ? 'text-blue-700 bg-blue-100' : 
-                                ($requerimento->status === 'finalizado' ? 'text-green-700 bg-green-100' : 
-                                ($requerimento->status === 'indeferido' ? 'text-red-700 bg-red-100' : 
-                                ($requerimento->status === 'pendente' ? 'text-yellow-700 bg-yellow-100' :
-                                ($requerimento->status === 'encaminhado' ? 'text-purple-700 bg-purple-100' : 'text-gray-700 bg-gray-100')))) }}">
+    {{ $requerimento->status === 'em_andamento' ? 'text-blue-700 bg-blue-100' : 
+    ($requerimento->status === 'finalizado' ? 'text-green-700 bg-green-100' : 
+    ($requerimento->status === 'indeferido' ? 'text-red-700 bg-red-100' : 
+    ($requerimento->status === 'pendente' ? 'text-yellow-700 bg-yellow-100' :
+    ($requerimento->status === 'encaminhado' ? 'text-purple-700 bg-purple-100' :
+    ($requerimento->status === 'devolvido' ? 'text-pink-800 bg-pink-100' : 'text-gray-700 bg-gray-100'))))) }}">
                                             <i class="fas {{ $requerimento->status === 'em_andamento' ? 'fa-clock' : 
-                                    ($requerimento->status === 'finalizado' ? 'fa-check-circle' : 
-                                    ($requerimento->status === 'indeferido' ? 'fa-times-circle' : 
-                                    ($requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 
-                                    ($requerimento->status === 'encaminhado' ? 'fa-share' : 'fa-question-circle')))) }} mr-1"></i>
+            ($requerimento->status === 'finalizado' ? 'fa-check-circle' : 
+            ($requerimento->status === 'indeferido' ? 'fa-times-circle' : 
+            ($requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 
+            ($requerimento->status === 'encaminhado' ? 'fa-share' :
+            ($requerimento->status === 'devolvido' ? 'fa-reply' : 'fa-question-circle'))))) }} mr-1"></i>
                                             {{ $requerimento->status === 'em_andamento' ? 'Em Andamento' : 
-                                    ($requerimento->status === 'finalizado' ? 'Finalizado' : 
-                                    ($requerimento->status === 'indeferido' ? 'Indeferido' : 
-                                    ($requerimento->status === 'pendente' ? 'Pendente' :
-                                    ($requerimento->status === 'encaminhado' ? 'Encaminhado' : 'Desconhecido')))) }}
+            ($requerimento->status === 'finalizado' ? 'Finalizado' : 
+            ($requerimento->status === 'indeferido' ? 'Indeferido' : 
+            ($requerimento->status === 'pendente' ? 'Pendente' :
+            ($requerimento->status === 'encaminhado' ? 'Encaminhado' : 
+            ($requerimento->status === 'devolvido' ? 'Devolvido' : 'Desconhecido'))))) }}
                                         </span>
                                     </div>
                                 </div>
@@ -374,17 +401,42 @@
                                             </h6>
                                             <div class="mt-3 bg-purple-50 p-3 rounded">
                                                 <p class="text-gray-700">
-                                                    <span class="font-semibold">Encaminhado para:</span> 
+                                                    <span class="font-semibold">Encaminhado para:</span>
                                                     {{ $requerimento->encaminhamento->receiver->name ?? 'Não especificado' }}
                                                 </p>
                                                 <p class="text-gray-700">
-                                                    <span class="font-semibold">Data de encaminhamento:</span> 
+                                                    <span class="font-semibold">Data de encaminhamento:</span>
                                                     {{ isset($requerimento->encaminhamento->created_at) ? date('d/m/Y H:i', strtotime($requerimento->encaminhamento->created_at)) : 'Não especificado' }}
                                                 </p>
                                                 @if(!empty($requerimento->encaminhamento->internal_message))
                                                 <p class="text-gray-700">
-                                                    <span class="font-semibold">Mensagem interna:</span> 
+                                                    <span class="font-semibold">Mensagem interna:</span>
                                                     {{ $requerimento->encaminhamento->internal_message }}
+                                                </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endif
+
+                                        <!-- Informações da Devolução -->
+                                        @if($requerimento->status === 'devolvido' && isset($requerimento->forwarding))
+                                        <div class="bg-white rounded-lg border border-pink-200 shadow-sm p-5">
+                                            <h6 class="text-lg font-semibold text-pink-800 border-b border-pink-100 pb-2 flex items-center">
+                                                <i class="fas fa-reply mr-2 text-pink-600"></i>Informações da Devolução
+                                            </h6>
+                                            <div class="mt-3 bg-pink-50 p-3 rounded">
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Devolvido por:</span>
+                                                    {{ $requerimento->forwarding->receiver->name ?? 'Não especificado' }}
+                                                </p>
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Data de devolução:</span>
+                                                    {{ isset($requerimento->forwarding->updated_at) ? date('d/m/Y H:i', strtotime($requerimento->forwarding->updated_at)) : 'Não especificado' }}
+                                                </p>
+                                                @if(!empty($requerimento->forwarding->internal_message))
+                                                <p class="text-gray-700">
+                                                    <span class="font-semibold">Mensagem interna:</span>
+                                                    {{ $requerimento->forwarding->internal_message }}
                                                 </p>
                                                 @endif
                                             </div>

@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rotas específicas para Alunos e CRADT (compartilhadas)
-Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager,Coordenador,Professor'])->group(function () {
     Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
     Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
@@ -185,6 +185,12 @@ Route::middleware(['auth', 'role:Cradt,Manager'])->prefix('encaminhamentos')->gr
     Route::get('/create/{requerimento}', [ForwardingController::class, 'showForwardForm'])->name('forwardings.create');
     Route::post('/store/{requerimento}', [ForwardingController::class, 'forward'])->name('forwardings.store');
     Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
+});
+
+
+Route::middleware(['auth', 'role:Professor,Coordenador'])->group(function () {
+    Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');
+    Route::post('/requerimentos/return/{forwarding}', [ForwardingController::class, 'returnRequest'])->name('requerimentos.return');
 });
 
 require __DIR__ . '/auth.php';

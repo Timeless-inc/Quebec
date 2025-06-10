@@ -13,7 +13,7 @@ class CreateRequestForwardings extends Migration
             $table->foreignId('requerimento_id')->constrained('requerimentos');
             $table->foreignId('sender_id')->constrained('users');
             $table->foreignId('receiver_id')->constrained('users');
-            $table->enum('status', ['encaminhado', 'deferido', 'indeferido', 'pendente', 'devolvido'])->default('encaminhado');
+            $table->enum('status', ['encaminhado', 'finalizado', 'indeferido', 'pendente', 'devolvido'])->default('encaminhado');
             $table->text('internal_message')->nullable();
             $table->boolean('is_returned')->default(false);
             $table->timestamps();

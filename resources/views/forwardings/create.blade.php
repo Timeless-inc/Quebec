@@ -57,6 +57,67 @@
             </form>
         </div>
     </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">Histórico de Encaminhamentos</div>
+        
+        <div class="card-body">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requerimento</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aluno</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Encaminhado por</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Encaminhado para</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($forwardings as $forwarding)
+                    <tr class="{{ $forwarding->status == 'deferido' ? 'bg-green-50' : ($forwarding->status == 'indeferido' ? 'bg-red-50' : '') }}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $forwarding->id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $forwarding->requerimento->id }} - {{ $forwarding->requerimento->tipoRequisicao }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $forwarding->requerimento->nomeCompleto }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $forwarding->sender->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $forwarding->receiver->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @switch($forwarding->status)
+                                @case('encaminhado')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Encaminhado</span>
+                                    @break
+                                @case('deferido')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Deferido</span>
+                                    @break
+                                @case('indeferido')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Indeferido</span>
+                                    @break
+                                @case('pendente')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
+                                    @break
+                                @case('devolvido')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Devolvido</span>
+                                    @break
+                                @default
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($forwarding->status) }}</span>
+                            @endswitch
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $forwarding->created_at->format('d/m/Y H:i') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="#" class="text-blue-600 hover:text-blue-900 mr-2" data-bs-toggle="modal" data-bs-target="#detalhesModal-{{ $forwarding->id }}">Ver Detalhes</a>
+                            
+                            @if($forwarding->status == 'devolvido')
+                            <a href="{{ route('forwardings.create', $forwarding->requerimento->id) }}" class="text-indigo-600 hover:text-indigo-900">Encaminhar Novamente</a>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>

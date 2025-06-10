@@ -48,11 +48,10 @@ class ForwardingController extends Controller
 
     public function viewForwarded()
     {
-        $forwardings = RequestForwarding::where('sender_id', Auth::user()->id)
-            ->with(['requerimento', 'receiver'])
+        $forwardings = RequestForwarding::with(['requerimento', 'sender', 'receiver'])
             ->orderBy('created_at', 'desc')
             ->get();
-
+        
         return view('forwardings.index', compact('forwardings'));
     }
 }

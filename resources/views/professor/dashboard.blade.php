@@ -4,6 +4,36 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<style>
+    .form-control-sm::-webkit-file-upload-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.2rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .form-control-sm::-webkit-file-upload-button:hover {
+        background-color: #0056b3;
+    }
+
+    .form-control-sm::-moz-file-upload-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.2rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .form-control-sm::-moz-file-upload-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -82,8 +112,8 @@
                                     <div class="flex gap-3">
                                         <form action="{{ route('professor.process', $forwarding->id) }}" method="POST">
                                             @csrf
-                                            <input type="hidden" name="action" value="deferido">
-                                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" title="Deferir">
+                                            <input type="hidden" name="action" value="finalizado">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" data-bs-toggle="modal" data-bs-target="#deferirModal-{{ $forwarding->id }}" title="Deferir">
                                                 <i class="fas fa-check text-lg"></i>
                                             </button>
                                         </form>
@@ -91,16 +121,8 @@
                                         <form action="{{ route('professor.process', $forwarding->id) }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="action" value="indeferido">
-                                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" title="Indeferir">
+                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" data-bs-toggle="modal" data-bs-target="#indeferirModal-{{ $forwarding->id }}" title="Indeferir">
                                                 <i class="fas fa-times text-lg"></i>
-                                            </button>
-                                        </form>
-
-                                        <form action="{{ route('professor.process', $forwarding->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="action" value="pendente">
-                                            <button type="submit" class="w-8 h-8 flex items-center justify-center text-white bg-yellow-600 rounded-md hover:bg-yellow-700" title="Pendência">
-                                                <i class="fas fa-exclamation text-lg"></i>
                                             </button>
                                         </form>
 
@@ -113,6 +135,76 @@
                             </div>
                         </div>
 
+                        <!-- Modal para Deferir -->
+                        <div class="modal fade" id="deferirModal-{{ $forwarding->id }}" tabindex="-1" aria-labelledby="deferirModalLabel-{{ $forwarding->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content rounded-lg shadow-lg">
+                                    <div class="modal-header p-4 border-b border-gray-200">
+                                        <h5 class="text-xl font-bold text-gray-800" id="deferirModalLabel-{{ $forwarding->id }}">Deferir Requerimento #{{ $forwarding->requerimento->id }}</h5>
+                                        <button type="button" class="text-gray-400 hover:text-gray-600" data-bs-dismiss="modal" aria-label="Close">
+                                            <span class="text-2xl">×</span>
+                                        </button>
+                                    </div>
+                                    <form action="{{ route('professor.process', $forwarding->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
+                                        @csrf
+                                        <input type="hidden" name="action" value="deferido">
+                                        <div class="modal-body p-4">
+                                            <div class="mb-4">
+                                                <label for="resposta_{{ $forwarding->id }}" class="block text-sm font-medium text-gray-700 mb-1">Resposta (opcional):</label>
+                                                <textarea class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500" id="resposta_{{ $forwarding->id }}" name="resposta" rows="4"></textarea>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label for="anexos_{{ $forwarding->id }}" class="block text-sm font-medium text-gray-700 mb-1">Anexar arquivos (opcional):</label>
+                                                <input type="file" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 form-control-sm" id="anexos_{{ $forwarding->id }}" name="anexos[]" multiple>
+                                                <p class="text-xs text-gray-500 mt-1">Formatos aceitos: PDF, JPG, PNG (máx. 2MB por arquivo)</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer p-4 border-t border-gray-200 flex justify-between">
+                                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500" data-bs-dismiss="modal">
+                                                <i class="fas fa-times mr-2"></i>Cancelar
+                                            </button>
+                                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                                <i class="fas fa-check mr-2"></i>Confirmar Deferimento
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal para Indeferir -->
+                        <div class="modal fade" id="indeferirModal-{{ $forwarding->id }}" tabindex="-1" aria-labelledby="indeferirModalLabel-{{ $forwarding->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content rounded-lg shadow-lg">
+                                    <div class="modal-header p-4 border-b border-gray-200">
+                                        <h5 class="text-xl font-bold text-gray-800" id="indeferirModalLabel-{{ $forwarding->id }}">Indeferir Requerimento #{{ $forwarding->requerimento->id }}</h5>
+                                        <button type="button" class="text-gray-400 hover:text-gray-600" data-bs-dismiss="modal" aria-label="Close">
+                                            <span class="text-2xl">×</span>
+                                        </button>
+                                    </div>
+                                    <form action="{{ route('professor.process', $forwarding->id) }}" method="POST" class="deny-form">
+                                        @csrf
+                                        <input type="hidden" name="action" value="indeferido">
+                                        <div class="modal-body p-4">
+                                            <div class="mb-4">
+                                                <label for="resposta_indf_{{ $forwarding->id }}" class="block text-sm font-medium text-gray-700 mb-1">Motivo do indeferimento:</label>
+                                                <textarea class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500" id="resposta_indf_{{ $forwarding->id }}" name="resposta" rows="4" required></textarea>
+                                                <p class="text-xs text-gray-500 mt-1">É necessário informar o motivo do indeferimento.</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer p-4 border-t border-gray-200 flex justify-between">
+                                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500" data-bs-dismiss="modal">
+                                                <i class="fas fa-times mr-2"></i>Cancelar
+                                            </button>
+                                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                                <i class="fas fa-times mr-2"></i>Confirmar Indeferimento
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Modal para devolução -->
                         <div class="modal fade" id="returnModal{{ $forwarding->id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog">
@@ -221,10 +313,10 @@
                                 // Verificar se há dados extras realmente válidos
                                 $temDadosExtra = false;
                                 if(!empty($forwarding->requerimento->dadosExtra)) {
-                                    $dadosExtra = json_decode($forwarding->requerimento->dadosExtra, true);
-                                    $temDadosExtra = is_array($dadosExtra) && count($dadosExtra) > 0;
+                                $dadosExtra = json_decode($forwarding->requerimento->dadosExtra, true);
+                                $temDadosExtra = is_array($dadosExtra) && count($dadosExtra) > 0;
                                 }
-                                
+
                                 // Verificar se há anexos realmente válidos com o mesmo tratamento
                                 $temAnexos = false;
                                 $anexosStr = $forwarding->requerimento->anexarArquivos;
@@ -232,15 +324,15 @@
                                 $anexosArray = is_array($anexosArray) ? array_filter($anexosArray) : [];
                                 $temAnexos = count($anexosArray) > 0;
                                 @endphp
-                                
+
                                 @if($temDadosExtra)
                                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
                                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Informações Adicionais</h3>
                                     <ul class="space-y-3">
                                         @foreach($dadosExtra as $campo => $valor)
-                                            @if(!empty($valor) || $valor === 0 || $valor === '0')
-                                            <li><span class="font-medium text-gray-600">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</span> {{ is_array($valor) ? implode(', ', $valor) : $valor }}</li>
-                                            @endif
+                                        @if(!empty($valor) || $valor === 0 || $valor === '0')
+                                        <li><span class="font-medium text-gray-600">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</span> {{ is_array($valor) ? implode(', ', $valor) : $valor }}</li>
+                                        @endif
                                         @endforeach
                                     </ul>
                                 </div>
@@ -257,27 +349,27 @@
                                         @endphp
 
                                         @if(count($anexosArray) > 0)
-                                            @foreach($anexosArray as $anexoItem)
-                                                @if(is_array($anexoItem))
-                                                    @foreach($anexoItem as $path)
-                                                        @if(!empty($path))
-                                                        <li>
-                                                            <a href="{{ asset('storage/'.$path) }}" class="flex items-center px-3 py-2 text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors" target="_blank">
-                                                                <i class="fas fa-file-download mr-2"></i>
-                                                                <span class="text-sm">{{ basename($path) }}</span>
-                                                            </a>
-                                                        </li>
-                                                        @endif
-                                                    @endforeach
-                                                @elseif(!empty($anexoItem))
-                                                <li>
-                                                    <a href="{{ asset('storage/'.$anexoItem) }}" class="flex items-center px-3 py-2 text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors" target="_blank">
-                                                        <i class="fas fa-file-download mr-2"></i>
-                                                        <span class="text-sm">{{ basename($anexoItem) }}</span>
-                                                    </a>
-                                                </li>
-                                                @endif
-                                            @endforeach
+                                        @foreach($anexosArray as $anexoItem)
+                                        @if(is_array($anexoItem))
+                                        @foreach($anexoItem as $path)
+                                        @if(!empty($path))
+                                        <li>
+                                            <a href="{{ asset('storage/'.$path) }}" class="flex items-center px-3 py-2 text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors" target="_blank">
+                                                <i class="fas fa-file-download mr-2"></i>
+                                                <span class="text-sm">{{ basename($path) }}</span>
+                                            </a>
+                                        </li>
+                                        @endif
+                                        @endforeach
+                                        @elseif(!empty($anexoItem))
+                                        <li>
+                                            <a href="{{ asset('storage/'.$anexoItem) }}" class="flex items-center px-3 py-2 text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors" target="_blank">
+                                                <i class="fas fa-file-download mr-2"></i>
+                                                <span class="text-sm">{{ basename($anexoItem) }}</span>
+                                            </a>
+                                        </li>
+                                        @endif
+                                        @endforeach
                                         @else
                                         <li class="text-gray-500 italic py-2 px-3 bg-gray-50 rounded">Sem anexos</li>
                                         @endif

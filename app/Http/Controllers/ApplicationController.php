@@ -113,6 +113,12 @@ class ApplicationController extends Controller
             'tiposComEventos' => $this->getTiposComEventos(),
             'allTypes' => $allRequisitionTypes
         ]);
+
+        $requerimentos = ApplicationRequest::with(['forwarding', 'forwarding.receiver'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('application.index', compact('requerimentos'));
     }
 
     public function create()
@@ -618,11 +624,11 @@ class ApplicationController extends Controller
     }
 
     public function marcarComoVisto($id)
-{
-    $requerimento = ApplicationRequest::findOrFail($id);
-    $requerimento->visualizado = true; 
-    $requerimento->save();
-    
-    return response()->json(['success' => true]);
-}
+    {
+        $requerimento = ApplicationRequest::findOrFail($id);
+        $requerimento->visualizado = true;
+        $requerimento->save();
+
+        return response()->json(['success' => true]);
+    }
 }

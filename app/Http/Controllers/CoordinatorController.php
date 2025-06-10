@@ -24,20 +24,40 @@ class CoordinatorController extends Controller
     public function processRequest(Request $request, $forwardingId)
     {
         $forwarding = RequestForwarding::findOrFail($forwardingId);
-        $action = $request->input('action');
+        $requerimento = $forwarding->requerimento;
         
-        if (!in_array($action, ['deferido', 'indeferido', 'pendente'])) {
-            return redirect()->back()->with('error', 'Ação inválida');
+        if ($forwarding->receiver_id != Auth::id()) {
+            return redirect()->back()->with('error', 'Você não tem permissão para processar este requerimento.');
         }
         
-        $forwarding->status = $action;
+        $forwarding->status = $request->action;
+        
+        if ($request->has('resposta') && !empty($request->resposta)) {
+            $requerimento->resposta = $request->resposta;
+        }
+        
+        if ($request->hasFile('anexos')) {
+            $anexos = [];
+            foreach ($request->file('anexos') as $file) {
+                $path = $file->store('requerimentos_arquivos', 'public');
+                $anexos[] = $path;
+            }
+            
+            $anexosAntigos = $requerimento->anexos_finalizacao ? json_decode($requerimento->anexos_finalizacao, true) : [];
+            $todosAnexos = array_merge($anexosAntigos, $anexos);
+            
+            $requerimento->anexos_finalizacao = json_encode($todosAnexos);
+        }
+        
         $forwarding->save();
         
-        $requerimento = $forwarding->requerimento;
-        $requerimento->status = $action;
-        $requerimento->save();
+        if (in_array($request->action, ['finalizado', 'indeferido'])) {
+            $requerimento->status = $request->action;
+            $requerimento->finalizado_por = Auth::user()->name;
+            $requerimento->save();
+        }
         
-        return redirect()->back()->with('success', 'Requerimento processado com sucesso');
+        return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
     }
     
     public function returnRequest(Request $request, $forwardingId)
