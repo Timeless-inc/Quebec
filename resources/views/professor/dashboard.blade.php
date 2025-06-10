@@ -61,10 +61,10 @@
                         <div class="flex bg-gray-50 border-2 border-gray-200 rounded-lg">
                             <div class="w-12 flex items-center justify-center">
                                 <div class="rounded w-2 h-4/5 {{ $forwarding->status === 'encaminhado' ? 'bg-purple-500' : 
-                                        ($forwarding->status === 'deferido' ? 'bg-green-500' : 
+                                        ($forwarding->status === 'finalizado' ? 'bg-green-500' : 
            ($forwarding->status === 'indeferido' ? 'bg-red-500' : 
            ($forwarding->status === 'pendente' ? 'bg-yellow-500' : 
-           ($forwarding->status === 'devolver' ? 'bg-purple-500' : 'bg-gray-500')))) }}"></div>
+           ($forwarding->status === 'devolver' ? 'bg-pink-100' : 'bg-gray-500')))) }}"></div>
                             </div>
 
                             <div class="flex-1 p-6">
@@ -82,7 +82,7 @@
                                             @case('encaminhado')
                                             <span class="inline-block px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Encaminhado</span>
                                             @break
-                                            @case('deferido')
+                                            @case('finalizado')
                                             <span class="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">Deferido</span>
                                             @break
                                             @case('indeferido')
@@ -110,23 +110,15 @@
 
                                     @if ($forwarding->status == 'encaminhado')
                                     <div class="flex gap-3">
-                                        <form action="{{ route('professor.process', $forwarding->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="action" value="finalizado">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" data-bs-toggle="modal" data-bs-target="#deferirModal-{{ $forwarding->id }}" title="Deferir">
-                                                <i class="fas fa-check text-lg"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-green-600 rounded-md hover:bg-green-700" data-bs-toggle="modal" data-bs-target="#deferirModal-{{ $forwarding->id }}" title="Deferir">
+                                            <i class="fas fa-check text-lg"></i>
+                                        </button>
 
-                                        <form action="{{ route('professor.process', $forwarding->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="action" value="indeferido">
-                                            <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" data-bs-toggle="modal" data-bs-target="#indeferirModal-{{ $forwarding->id }}" title="Indeferir">
-                                                <i class="fas fa-times text-lg"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-red-600 rounded-md hover:bg-red-700" data-bs-toggle="modal" data-bs-target="#indeferirModal-{{ $forwarding->id }}" title="Indeferir">
+                                            <i class="fas fa-times text-lg"></i>
+                                        </button>
 
-                                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-purple-500 rounded-md hover:bg-purple-700" data-bs-toggle="modal" data-bs-target="#returnModal{{ $forwarding->id }}" title="Devolver">
+                                        <button type="button" class="w-8 h-8 flex items-center justify-center text-white bg-pink-500 rounded-md hover:bg-purple-700" data-bs-toggle="modal" data-bs-target="#returnModal{{ $forwarding->id }}" title="Devolver">
                                             <i class="fas fa-reply text-lg"></i>
                                         </button>
                                     </div>
@@ -147,7 +139,7 @@
                                     </div>
                                     <form action="{{ route('professor.process', $forwarding->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
                                         @csrf
-                                        <input type="hidden" name="action" value="deferido">
+                                        <input type="hidden" name="action" value="finalizado">
                                         <div class="modal-body p-4">
                                             <div class="mb-4">
                                                 <label for="resposta_{{ $forwarding->id }}" class="block text-sm font-medium text-gray-700 mb-1">Resposta (opcional):</label>
@@ -173,7 +165,6 @@
                             </div>
                         </div>
 
-                        <!-- Modal para Indeferir -->
                         <div class="modal fade" id="indeferirModal-{{ $forwarding->id }}" tabindex="-1" aria-labelledby="indeferirModalLabel-{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content rounded-lg shadow-lg">
@@ -205,7 +196,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Modal para devolução -->
+
                         <div class="modal fade" id="returnModal{{ $forwarding->id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -244,7 +235,6 @@
     </div>
 
     @foreach ($forwardings as $forwarding)
-    <!-- Modal de detalhes do requerimento -->
     <div class="modal fade" id="detalhesModal-{{ $forwarding->requerimento->id }}" tabindex="-1" aria-labelledby="detalhesModalLabel-{{ $forwarding->requerimento->id }}" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -257,7 +247,6 @@
                 <div class="modal-body p-0">
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <!-- Coluna da esquerda - Informações principais -->
                             <div class="space-y-6">
                                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
                                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Informações do Requerimento</h3>
@@ -269,7 +258,7 @@
                                             @case('encaminhado')
                                             <span class="inline-block px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Encaminhado</span>
                                             @break
-                                            @case('deferido')
+                                            @case('finalizado')
                                             <span class="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">Deferido</span>
                                             @break
                                             @case('indeferido')
@@ -307,7 +296,6 @@
                                 </div>
                             </div>
 
-                            <!-- Coluna da direita - Anexos e informações adicionais -->
                             <div class="space-y-6">
                                 @php
                                 // Verificar se há dados extras realmente válidos
@@ -377,7 +365,6 @@
                                 </div>
                                 @endif
 
-                                <!-- Observações - só mostrar se houver -->
                                 @if(!empty(trim($forwarding->requerimento->observacoes)))
                                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
                                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Observações</h3>
@@ -385,7 +372,6 @@
                                 </div>
                                 @endif
 
-                                <!-- Se não houver dados extra, anexos ou observações, mostrar uma mensagem -->
                                 @if(!$temDadosExtra && !$temAnexos && empty(trim($forwarding->requerimento->observacoes)))
                                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
                                     <div class="flex flex-col items-center justify-center py-8">
