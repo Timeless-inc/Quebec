@@ -12,11 +12,33 @@
     </x-slot>
 
     <div class="container mx-auto mt-4 px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <h4 class="text-gray-700 font-semibold">Deferidos</h4>
+                <p class="text-2xl font-bold text-gray-800">{{ 45 }}</p>
+                <p class="text-green-600 text-sm">+{{ 12 }} novos requerimentos</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <h4 class="text-gray-700 font-semibold">Indeferidos</h4>
+                <p class="text-2xl font-bold text-gray-800">{{ 15 }}</p>
+                <p class="text-green-600 text-sm">+{{ 8 }} novos requerimentos</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <h4 class="text-gray-700 font-semibold">Encaminhados</h4>
+                <p class="text-2xl font-bold text-gray-800">{{ 190 }}</p>
+                <p class="text-green-600 text-sm">+{{ 15 }} novos requerimentos</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <h4 class="text-gray-700 font-semibold">Pendentes</h4>
+                <p class="text-2xl font-bold text-gray-800">{{ 30 }}</p>
+                <p class="text-green-600 text-sm">+{{ 10 }} novos requerimentos</p>
+            </div>
+        </div>
+
         <!-- Barra de ações no topo -->
         <div class="flex flex-col sm:flex-row justify-between gap-3 mb-6 bg-white rounded-lg shadow-sm p-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <h3 class="text-lg font-semibold text-gray-700">Opções de Relatório</h3>
-
             </div>
 
             <div class="flex flex-wrap gap-2 action-buttons">
