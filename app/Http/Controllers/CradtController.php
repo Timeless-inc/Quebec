@@ -41,6 +41,8 @@ class CradtController extends Controller
         $requerimentos = $query->latest()->paginate(10);
         $requerimentos->appends(['status' => $status]);
 
+        $nome = "anderson";
+
         $events = Event::orderBy('start_date')->get();
 
         // Busque todas as solicitações pendentes ou em revisão
