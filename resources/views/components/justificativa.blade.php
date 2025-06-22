@@ -702,7 +702,7 @@
                                 </div>
                                 @endif
 
-                                @if($requerimento->status === 'encaminhado' && isset($requerimento->encaminhamento))
+                                @if($requerimento->status === 'encaminhado')
                                 <div class="bg-white rounded-2xl border border-purple-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="bg-gradient-to-r from-purple-50 to-indigo-50 px-6 py-4 border-b border-purple-100">
                                         <h6 class="text-lg font-bold text-purple-900 flex items-center">
@@ -717,16 +717,16 @@
                                             <div class="space-y-3">
                                                 <p class="text-sm text-gray-700">
                                                     <span class="font-semibold">Encaminhado para:</span>
-                                                    {{ $requerimento->encaminhamento->receiver->name ?? 'Não especificado' }}
+                                                   {{ $requerimento->forwarding->receiver->name ?? 'Não especificado' }}
                                                 </p>
                                                 <p class="text-sm text-gray-700">
                                                     <span class="font-semibold">Data de encaminhamento:</span>
-                                                    {{ isset($requerimento->encaminhamento->created_at) ? date('d/m/Y H:i', strtotime($requerimento->encaminhamento->created_at)) : 'Não especificado' }}
+                                                    {{ isset($requerimento->forwarding->created_at) ? date('d/m/Y H:i', strtotime($requerimento->forwarding->created_at)) : 'Não especificado' }}
                                                 </p>
-                                                @if(!empty($requerimento->encaminhamento->internal_message))
+                                                @if(!empty($requerimento->forwarding->internal_message))
                                                 <p class="text-sm text-gray-700">
                                                     <span class="font-semibold">Mensagem interna:</span>
-                                                    {{ $requerimento->encaminhamento->internal_message }}
+                                                    {{ $requerimento->forwarding->internal_message }}
                                                 </p>
                                                 @endif
                                             </div>

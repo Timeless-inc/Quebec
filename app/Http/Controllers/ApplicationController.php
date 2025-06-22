@@ -114,6 +114,8 @@ class ApplicationController extends Controller
             'allTypes' => $allRequisitionTypes
         ]);
 
+        $requerimento = ApplicationRequest::with('forwarding.receiver')->find($id);
+
         $requerimentos = ApplicationRequest::with(['forwarding', 'forwarding.receiver'])
             ->orderBy('created_at', 'desc')
             ->get();
