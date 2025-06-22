@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'Professoruser',
+            'name' => 'TEACHERuser',
             'username' => 'PROFuser',
             'email' => 'prof@prof.com',
             'password' => '12345678',
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'Coordenadoruser',
+            'name' => 'COORDINATORuser',
             'username' => 'COORDuser',
             'email' => 'coord@coord.com',
             'password' => '12345678',

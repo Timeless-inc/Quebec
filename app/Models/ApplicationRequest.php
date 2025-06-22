@@ -59,10 +59,16 @@ class ApplicationRequest extends Model
         });
     }
 
-    public function forwarding()
+    public function forwardingReturned()
     {
         return $this->hasOne(RequestForwarding::class, 'requerimento_id')
             ->where('is_returned', true) 
             ->latest();  
     }
+
+    public function forwarding()
+{
+    return $this->hasOne(RequestForwarding::class, 'requerimento_id')
+        ->latest();  
+}
 }
