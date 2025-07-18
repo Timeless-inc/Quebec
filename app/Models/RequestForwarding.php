@@ -18,9 +18,16 @@ class RequestForwarding extends Model
         'is_returned'
     ];
 
+    const STATUS_ENCAMINHADO = 'encaminhado';
+    const STATUS_FINALIZADO = 'finalizado';
+    const STATUS_INDEFERIDO = 'indeferido';
+    const STATUS_PENDENTE = 'pendente';
+    const STATUS_DEVOLVIDO = 'devolvido';
+    const STATUS_REENCAMINHADO = 'reencaminhado';
+
     public function requerimento()
     {
-        return $this->belongsTo(ApplicationRequest::class);
+        return $this->belongsTo(ApplicationRequest::class, 'requerimento_id', 'id');
     }
 
     public function sender()
@@ -32,4 +39,5 @@ class RequestForwarding extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
 }

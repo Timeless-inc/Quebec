@@ -13,8 +13,8 @@ class CoordinatorController extends Controller
         $userId = Auth::id();
         
         $forwardings = RequestForwarding::where('receiver_id', $userId)
-            ->where('status', 'encaminhado')
-            ->with('requerimento')
+            ->whereIn('status', ['encaminhado', 'devolvido'])
+            ->with(['requerimento', 'sender'])
             ->latest()
             ->get();
         
@@ -73,6 +73,6 @@ class CoordinatorController extends Controller
         $requerimento->status = 'devolvido';
         $requerimento->save();
         
-        return redirect()->back()->with('success', 'Requerimento devolvido com sucesso');
+        return redirect()->back()->with('success', 'Requerimento devolvido para o CRADT com sucesso');
     }
 }

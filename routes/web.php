@@ -187,6 +187,10 @@ Route::middleware(['auth', 'role:Cradt,Manager'])->prefix('encaminhamentos')->gr
     Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
 });
 
+// Rotas para Reencaminhamentos (Coordenador e Professor) - apenas POST
+Route::middleware(['auth', 'role:Coordenador,Professor'])->prefix('encaminhamentos')->group(function () {
+    Route::post('/reencaminhar/{forwarding}', [ForwardingController::class, 'forwardFromCoordinatorProfessor'])->name('forwardings.reforward.store');
+});
 
 Route::middleware(['auth', 'role:Professor,Coordenador'])->group(function () {
     Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');
