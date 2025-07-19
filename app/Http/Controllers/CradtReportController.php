@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;
+use App\Models\RequestForwarding;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -634,6 +635,59 @@ class CradtReportController extends Controller
                 WHEN faixa_tempo = "3-7 dias" THEN 4
                 ELSE 5
             END'))
+            ->get();
+
+        $userData['requerimentosEncaminhados'] = DB::table('request_forwardings')
+            ->join('requerimentos', 'request_forwardings.requerimento_id', '=', 'requerimentos.id')
+            ->join('users as receiver', 'request_forwardings.receiver_id', '=', 'receiver.id')
+            ->where('request_forwardings.sender_id', $user->id)
+            ->whereBetween('request_forwardings.created_at', [$startDate, $endDate])
+            ->select(
+                'requerimentos.id',
+                'requerimentos.tipoRequisicao',
+                'receiver.name as encaminhado_para',
+                'request_forwardings.status',
+                'request_forwardings.created_at as data_encaminhamento',
+                'request_forwardings.internal_message'
+            )
+            ->orderBy('request_forwardings.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        $userData['totalEncaminhados'] = DB::table('request_forwardings')
+            ->where('sender_id', $user->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+
+        $userData['requerimentosDevolvidos'] = DB::table('request_forwardings')
+            ->join('requerimentos', 'request_forwardings.requerimento_id', '=', 'requerimentos.id')
+            ->join('users as receiver', 'request_forwardings.receiver_id', '=', 'receiver.id')
+            ->where('request_forwardings.receiver_id', $user->id)
+            ->where('request_forwardings.status', 'devolvido')
+            ->whereBetween('request_forwardings.updated_at', [$startDate, $endDate])
+            ->select(
+                'requerimentos.id',
+                'requerimentos.tipoRequisicao',
+                'requerimentos.nomeCompleto as nome_aluno',
+                'request_forwardings.internal_message as motivo_devolucao',
+                'request_forwardings.updated_at as data_devolucao'
+            )
+            ->orderBy('request_forwardings.updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        $userData['totalDevolvidos'] = DB::table('request_forwardings')
+            ->where('receiver_id', $user->id)
+            ->where('status', 'devolvido')
+            ->whereBetween('updated_at', [$startDate, $endDate])
+            ->count();
+
+        $userData['encaminhamentosPorStatus'] = DB::table('request_forwardings')
+            ->where('sender_id', $user->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->orderByDesc('total')
             ->get();
         
         $userData['estatisticasMensais'] = $userData['estatisticasPeriodicas'] ?? [];

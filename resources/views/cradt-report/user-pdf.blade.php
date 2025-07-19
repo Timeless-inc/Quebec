@@ -168,6 +168,18 @@
             <span class="highlight-label">Tempo Médio de Resolução</span>
         </div>
     </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+        <div class="highlight" style="width: 45%;">
+            <span class="highlight-value">{{ $data['totalEncaminhados'] ?? 0 }}</span>
+            <span class="highlight-label">Total de Encaminhamentos</span>
+        </div>
+        
+        <div class="highlight" style="width: 45%;">
+            <span class="highlight-value">{{ $data['totalDevolvidos'] ?? 0 }}</span>
+            <span class="highlight-label">Total de Devoluções</span>
+        </div>
+    </div>
     
     <h2>Últimos Atendimentos</h2>
     @php
@@ -318,6 +330,108 @@
             <p>Nenhum dado disponível.</p>
         @endif
     </div>
+    
+    <h2>Requerimentos Encaminhados</h2>
+    @if(isset($data['requerimentosEncaminhados']) && count($data['requerimentosEncaminhados']) > 0)
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Encaminhado para</th>
+                <th>Status</th>
+                <th>Data Encaminhamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['requerimentosEncaminhados'] as $encaminhamento)
+            <tr>
+                <td>#{{ $encaminhamento->id }}</td>
+                <td>{{ \Illuminate\Support\Str::limit($encaminhamento->tipoRequisicao, 30) }}</td>
+                <td>{{ $encaminhamento->encaminhado_para }}</td>
+                <td>
+                    @if($encaminhamento->status == 'encaminhado')
+                    <span style="color: #9b59b6;">Encaminhado</span>
+                    @elseif($encaminhamento->status == 'finalizado')
+                    <span style="color: #00913F;">Finalizado</span>
+                    @elseif($encaminhamento->status == 'indeferido')
+                    <span style="color: #AF1B3F;">Indeferido</span>
+                    @elseif($encaminhamento->status == 'devolvido')
+                    <span style="color: #e91e63;">Devolvido</span>
+                    @else
+                    {{ ucfirst($encaminhamento->status) }}
+                    @endif
+                </td>
+                <td>{{ \Carbon\Carbon::parse($encaminhamento->data_encaminhamento)->format('d/m/Y') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    @else
+    <p>Nenhum requerimento encaminhado no período.</p>
+    @endif
+
+    <h2>Estatísticas de Encaminhamentos</h2>
+    @if(isset($data['encaminhamentosPorStatus']) && count($data['encaminhamentosPorStatus']) > 0)
+    <div class="chart-container">
+        @foreach($data['encaminhamentosPorStatus'] as $statusEnc)
+            <div class="bar-container">
+                <span class="bar-label">
+                    @if($statusEnc->status == 'encaminhado')
+                        Encaminhado
+                    @elseif($statusEnc->status == 'finalizado')
+                        Finalizado
+                    @elseif($statusEnc->status == 'indeferido')
+                        Indeferido
+                    @elseif($statusEnc->status == 'devolvido')
+                        Devolvido
+                    @else
+                        {{ ucfirst($statusEnc->status) }}
+                    @endif
+                </span>
+                <div class="bar" style="width: {{ min(300, $statusEnc->total * 30) }}px; 
+                    background-color: 
+                    {{ $statusEnc->status == 'finalizado' ? '#00913F' : 
+                      ($statusEnc->status == 'indeferido' ? '#AF1B3F' : 
+                      ($statusEnc->status == 'devolvido' ? '#e91e63' : '#9b59b6')) }}">
+                    <span class="bar-value">{{ $statusEnc->total }}</span>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    @else
+    <p>Nenhum dado de encaminhamento disponível.</p>
+    @endif
+
+    <div class="page-break"></div>
+
+    <h2>Requerimentos Devolvidos</h2>
+    @if(isset($data['requerimentosDevolvidos']) && count($data['requerimentosDevolvidos']) > 0)
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Aluno</th>
+                <th>Motivo da Devolução</th>
+                <th>Data Devolução</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['requerimentosDevolvidos'] as $devolucao)
+            <tr>
+                <td>#{{ $devolucao->id }}</td>
+                <td>{{ \Illuminate\Support\Str::limit($devolucao->tipoRequisicao, 25) }}</td>
+                <td>{{ \Illuminate\Support\Str::limit($devolucao->nome_aluno, 25) }}</td>
+                <td>{{ $devolucao->motivo_devolucao ?: 'Não informado' }}</td>
+                <td>{{ \Carbon\Carbon::parse($devolucao->data_devolucao)->format('d/m/Y') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    @else
+    <p>Nenhum requerimento devolvido no período.</p>
+    @endif
     
     <div class="footer">
         <p>Este relatório contém informações personalizadas baseadas nos atendimentos realizados pelo servidor.</p>
