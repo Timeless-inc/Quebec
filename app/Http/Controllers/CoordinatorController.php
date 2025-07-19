@@ -21,6 +21,11 @@ class CoordinatorController extends Controller
         return view('coordinator.dashboard', compact('forwardings'));
     }
     
+    public function reports()
+    {
+        return view('coordinator.reports');
+    }
+    
     public function processRequest(Request $request, $forwardingId)
     {
         $forwarding = RequestForwarding::findOrFail($forwardingId);

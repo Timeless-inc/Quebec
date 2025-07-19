@@ -21,6 +21,11 @@ class ProfessorController extends Controller
         return view('professor.dashboard', compact('forwardings'));
     }
     
+    public function reports()
+    {
+        return view('professor.reports');
+    }
+    
     public function processRequest(Request $request, $forwardingId)
     {
         $forwarding = RequestForwarding::findOrFail($forwardingId);

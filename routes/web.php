@@ -169,6 +169,7 @@ Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, '
 // Rotas para Coordenador
 Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(function () {
     Route::get('/dashboard', [CoordinatorController::class, 'dashboard'])->name('coordinator.dashboard');
+    Route::get('/reports', [CoordinatorController::class, 'reports'])->name('coordinator.reports');
     Route::post('/process/{forwarding}', [CoordinatorController::class, 'processRequest'])->name('coordinator.process');
     Route::post('/return/{forwarding}', [CoordinatorController::class, 'returnRequest'])->name('coordinator.return');
 });
@@ -176,6 +177,7 @@ Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(fu
 // Rotas para Professor
 Route::middleware(['auth', 'role:Professor'])->prefix('professor')->group(function () {
     Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
+    Route::get('/reports', [ProfessorController::class, 'reports'])->name('professor.reports');
     Route::post('/process/{forwarding}', [ProfessorController::class, 'processRequest'])->name('professor.process');
     Route::post('/return/{forwarding}', [ProfessorController::class, 'returnRequest'])->name('professor.return');
 });
