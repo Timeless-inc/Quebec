@@ -92,14 +92,14 @@ Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager,Coordenador,Pro
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
-    Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'index'])->name('application');
+Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'create'])->name('application');
     Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
     Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
     Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'role:Cradt,Manager,Coordenador,Professor'])->group(function () {
-    // Justificativas e atualização de status
+// Justificativas e atualização de status
     Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
     Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
     Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');

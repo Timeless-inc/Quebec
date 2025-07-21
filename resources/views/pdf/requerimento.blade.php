@@ -339,7 +339,9 @@
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Certificado de Conclusão' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Certificado de Conclusão - Ano ( ) Semestre ( )</td>
+                <td class="iten-column">
+                    Certificado de Conclusão - Ano ({{ $requerimento->tipoRequisicao == 'Certificado de Conclusão' && isset($requerimento->dadosExtra['ano']) ? $requerimento->dadosExtra['ano'] : '' }}) Semestre ({{ $requerimento->tipoRequisicao == 'Certificado de Conclusão' && isset($requerimento->dadosExtra['semestre']) ? $requerimento->dadosExtra['semestre'] : '' }})
+                </td>
                 <td class="anexo-column"></td>
                 <td class="documentacao-column">f - Histórico Escolar do Ensino Fundamental (original)</td>
             </tr>
@@ -381,12 +383,16 @@
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Declaração para Estágio' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Declaração para Estágio - Conclusão Ano ( ) Semestre ( )</td>
+                <td class="iten-column">
+                    Declaração para Estágio - Conclusão Ano ({{ $requerimento->tipoRequisicao == 'Declaração para Estágio' && isset($requerimento->dadosExtra['ano']) ? $requerimento->dadosExtra['ano'] : '' }}) Semestre ({{ $requerimento->tipoRequisicao == 'Declaração para Estágio' && isset($requerimento->dadosExtra['semestre']) ? $requerimento->dadosExtra['semestre'] : '' }})
+                </td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Diploma 1a Via ( ) 2a ( ) - Conclusão Ano ( ) Semestre ( )</td>
+                <td class="iten-column">
+                    Diploma 1a Via ({{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' && isset($requerimento->dadosExtra['via']) && $requerimento->dadosExtra['via'] == '1ª via' ? 'X' : '' }}) 2a ({{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' && isset($requerimento->dadosExtra['via']) && $requerimento->dadosExtra['via'] == '2ª via' ? 'X' : '' }}) - Conclusão Ano ({{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' && isset($requerimento->dadosExtra['ano']) ? $requerimento->dadosExtra['ano'] : '' }}) Semestre ({{ $requerimento->tipoRequisicao == 'Diploma 1ªvia/2ªvia' && isset($requerimento->dadosExtra['semestre']) ? $requerimento->dadosExtra['semestre'] : '' }})
+                </td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
@@ -401,7 +407,6 @@
                     $infoRequerimento = isset($partes[0]) ? $partes[0] : $observacoes;
                     $obsUsuario = isset($partes[1]) ? $partes[1] : '';
                     @endphp
-                    <strong>Informações do Requerimento:</strong><br>
                     {{ $infoRequerimento }}<br>
                     @if($obsUsuario)
                     <hr style="border: 1px solid #ccc; margin: 5px 0;">
@@ -427,7 +432,9 @@
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Histórico Escolar' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Histórico Escolar - Ano ( ) Semestre ( )</td>
+                <td class="iten-column">
+                    Histórico Escolar - Ano ({{ $requerimento->tipoRequisicao == 'Histórico Escolar' && isset($requerimento->dadosExtra['ano']) ? $requerimento->dadosExtra['ano'] : '' }}) Semestre ({{ $requerimento->tipoRequisicao == 'Histórico Escolar' && isset($requerimento->dadosExtra['semestre']) ? $requerimento->dadosExtra['semestre'] : '' }})
+                </td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>
@@ -452,7 +459,12 @@
             </tr>
             <tr>
                 <td class="botao-column">{{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' ? '[X]' : '[O]' }}</td>
-                <td class="iten-column">Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC</td>
+                <td class="iten-column">
+                    Reintegração ({{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' && isset($requerimento->dadosExtra['opcao_reintegracao']) && $requerimento->dadosExtra['opcao_reintegracao'] == 'Reintegração' ? 'X' : '' }})
+                    Estágio ({{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' && isset($requerimento->dadosExtra['opcao_reintegracao']) && $requerimento->dadosExtra['opcao_reintegracao'] == 'Estágio' ? 'X' : '' }})
+                    Entrega do Relatório de Estágio ({{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' && isset($requerimento->dadosExtra['opcao_reintegracao']) && $requerimento->dadosExtra['opcao_reintegracao'] == 'Entrega do Relatório de Estágio' ? 'X' : '' }})
+                    TCC ({{ $requerimento->tipoRequisicao == 'Reintegração ( ) Estágio ( ) Entrega do Relatório de Estágio ( ) TCC' && isset($requerimento->dadosExtra['opcao_reintegracao']) && $requerimento->dadosExtra['opcao_reintegracao'] == 'TCC' ? 'X' : '' }})
+                </td>
                 <td class="anexo-column"></td>
             </tr>
             <tr>

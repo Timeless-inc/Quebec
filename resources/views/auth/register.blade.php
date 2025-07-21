@@ -75,7 +75,7 @@
                                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="username" type="text" name="username" :value="old('username')" required autofocus autocomplete="username" placeholder="fulano.silva"
+                                    <input id="username" type="text" name="username" :value="old('username')" autofocus autocomplete="username" placeholder="fulano.silva"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('username')" class="mt-1 text-xs" />
@@ -90,7 +90,7 @@
                                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                         </svg>
                                     </div>
-                                    <input id="name" type="text" name="name" :value="old('name')" required autocomplete="name" placeholder="Fulano da Silva"
+                                    <input id="name" type="text" name="name" :value="old('name')" autocomplete="name" placeholder="Fulano da Silva"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs" />
@@ -107,7 +107,7 @@
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                     </svg>
                                 </div>
-                                <input id="email" type="email" name="email" :value="old('email')" required autocomplete="email" placeholder="seuemail@gmail.com"
+                                <input id="email" type="email" name="email" :value="old('email')" autocomplete="email" placeholder="seuemail@gmail.com"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs" />
@@ -122,7 +122,7 @@
                                         <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input id="matricula" type="text" name="matricula" :value="old('matricula')" required placeholder="2025IFPEI0001"
+                                <input id="matricula" type="text" name="matricula" :value="old('matricula')" placeholder="2025IFPEI0001"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('matricula')" class="mt-1 text-xs" />
@@ -164,7 +164,7 @@
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="rg" type="text" name="rg" :value="old('rg')" required placeholder="00.000.000-0"
+                                    <input id="rg" type="text" name="rg" :value="old('rg')" placeholder="00.000.000-0"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('rg')" class="mt-1 text-xs" />
@@ -179,7 +179,7 @@
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="cpf" type="text" name="cpf" :value="old('cpf')" required placeholder="000.000.000-00"
+                                    <input id="cpf" type="text" name="cpf" :value="old('cpf')" placeholder="000.000.000-00"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('cpf')" class="mt-1 text-xs" />
@@ -196,7 +196,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                                     </div>
-                                    <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="**********"
+                                    <input id="password" type="password" name="password" autocomplete="new-password" placeholder="**********"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle" data-target="password">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 eye-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -216,7 +216,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                                     </div>
-                                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="**********"
+                                    <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" placeholder="**********"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer password-toggle" data-target="password_confirmation">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 eye-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -338,6 +338,79 @@
                         `;
                     }
                 });
+            });
+
+            const form = document.querySelector("form[action='{{ route('register') }}']");
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                let valid = true;
+                let messages = [];
+                // Limpa mensagens antigas
+                document.querySelectorAll('.js-error-message').forEach(el => el.remove());
+
+                function showError(input, message) {
+                    // Remove erro duplicado se já existir
+                    let relativeContainer = input.closest('.relative');
+                    let errorAlreadyExists = false;
+                    if (relativeContainer) {
+                        // Verifica se já existe erro após o .relative
+                        if (relativeContainer.nextElementSibling && relativeContainer.nextElementSibling.classList.contains('js-error-message')) {
+                            errorAlreadyExists = true;
+                        }
+                    } else {
+                        if (input.nextElementSibling && input.nextElementSibling.classList.contains('js-error-message')) {
+                            errorAlreadyExists = true;
+                        }
+                    }
+                    if (errorAlreadyExists) return;
+                    const div = document.createElement('div');
+                    div.className = 'js-error-message text-red-500 text-xs mt-1';
+                    div.textContent = message;
+                    if (relativeContainer) {
+                        // Insere a mensagem após o container .relative
+                        relativeContainer.parentNode.insertBefore(div, relativeContainer.nextSibling);
+                    } else {
+                        input.after(div);
+                    }
+                }
+
+                // Campos obrigatórios
+                const requiredFields = [
+                    {id: 'username', label: 'Nome de Usuário'},
+                    {id: 'name', label: 'Nome Completo'},
+                    {id: 'email', label: 'E-mail'},
+                    {id: 'matricula', label: 'Matrícula'},
+                    {id: 'rg', label: 'RG'},
+                    {id: 'cpf', label: 'CPF'},
+                    {id: 'password', label: 'Senha'},
+                    {id: 'password_confirmation', label: 'Confirmação de Senha'}
+                ];
+                requiredFields.forEach(field => {
+                    const input = document.getElementById(field.id);
+                    if (input && input.offsetParent !== null && !input.value.trim()) {
+                        showError(input, `O campo ${field.label} é obrigatório.`);
+                        valid = false;
+                    }
+                });
+
+                // Senha igual confirmação
+                const password = document.getElementById('password');
+                const passwordConf = document.getElementById('password_confirmation');
+                if (password && passwordConf) {
+                    if (password.value && password.value.length < 8) {
+                        showError(password, 'A senha deve ter pelo menos 8 caracteres.');
+                        valid = false;
+                    }
+                    if (password.value && passwordConf.value && password.value !== passwordConf.value) {
+                        showError(passwordConf, 'A confirmação de senha não corresponde.');
+                        valid = false;
+                    }
+                }
+
+                if (!valid) {
+                    e.preventDefault();
+                }
             });
         });
     </script>

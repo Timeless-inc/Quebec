@@ -49,7 +49,7 @@
                                             </div>
                                             <div>
                                                 <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular <span id="celularRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="celular" name="celular" value="{{ Auth::user()->celular }}" required>
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" required>
                                             </div>
                                         </div>
 
@@ -64,22 +64,22 @@
                                             </div>
                                             <div>
                                                 <label for="orgaoExpedidor" class="block text-sm font-medium text-gray-700 mb-1">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="orgaoExpedidor" name="orgaoExpedidor">
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ old('orgaoExpedidor', $orgaoExpedidor ?? '') }}">
                                             </div>
                                         </div>
 
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                             <div>
                                                 <label for="campus" class="block text-sm font-medium text-gray-700 mb-1">Campus <span id="campusRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="campus" name="campus">
+                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="campus" name="campus" value="{{ old('campus', $campus ?? '') }}">
                                             </div>
                                             <div>
                                                 <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula <span id="matriculaRequired" class="text-red-500">*</span></label>
                                                 <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula" name="matricula">
                                                     <option value="">Selecione uma matrícula</option>
-                                                    <option value="{{ Auth::user()->matricula }}" selected>{{ Auth::user()->matricula }}</option>
+                                                    <option value="{{ Auth::user()->matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->matricula ? 'selected' : '' }}>{{ Auth::user()->matricula }}</option>
                                                     @if(Auth::user()->second_matricula)
-                                                    <option value="{{ Auth::user()->second_matricula }}">{{ Auth::user()->second_matricula }}</option>
+                                                    <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -87,9 +87,9 @@
                                                 <label for="situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
                                                 <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="situacao" name="situacao">
                                                     <option value="">Escolha</option>
-                                                    <option value="1">Matriculado</option>
-                                                    <option value="2">Graduado</option>
-                                                    <option value="3">Desvinculado</option>
+<option value="1" {{ old('situacao', $situacao ?? '') == 1 ? 'selected' : '' }}>Matriculado</option>
+<option value="2" {{ old('situacao', $situacao ?? '') == 2 ? 'selected' : '' }}>Graduado</option>
+<option value="3" {{ old('situacao', $situacao ?? '') == 3 ? 'selected' : '' }}>Desvinculado</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -99,33 +99,33 @@
                                                 <label for="curso" class="block text-sm font-medium text-gray-700 mb-1">Curso <span id="cursoRequired" class="text-red-500">*</span></label>
                                                 <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="curso" name="curso">
                                                     <option value="">Escolha</option>
-                                                    <option value="1">Administração</option>
-                                                    <option value="2">Sistemas para Internet</option>
-                                                    <option value="3">Logística</option>
-                                                    <option value="4">Gestão de Qualidade</option>
-                                                    <option value="5">Informática para Internet</option>
+<option value="1" {{ old('curso', $curso ?? '') == 1 ? 'selected' : '' }}>Administração</option>
+<option value="2" {{ old('curso', $curso ?? '') == 2 ? 'selected' : '' }}>Sistemas para Internet</option>
+<option value="3" {{ old('curso', $curso ?? '') == 3 ? 'selected' : '' }}>Logística</option>
+<option value="4" {{ old('curso', $curso ?? '') == 4 ? 'selected' : '' }}>Gestão de Qualidade</option>
+<option value="5" {{ old('curso', $curso ?? '') == 5 ? 'selected' : '' }}>Informática para Internet</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Período <span id="periodoRequired" class="text-red-500">*</span></label>
                                                 <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="periodo" name="periodo">
                                                     <option value="">Escolha</option>
-                                                    <option value="1">1º</option>
-                                                    <option value="2">2º</option>
-                                                    <option value="3">3º</option>
-                                                    <option value="4">4º</option>
-                                                    <option value="5">5º</option>
-                                                    <option value="6">6º</option>
-                                                    <option value="7">7º</option>
-                                                    <option value="8">8º</option>
+<option value="1" {{ old('periodo', $periodo ?? '') == 1 ? 'selected' : '' }}>1º</option>
+<option value="2" {{ old('periodo', $periodo ?? '') == 2 ? 'selected' : '' }}>2º</option>
+<option value="3" {{ old('periodo', $periodo ?? '') == 3 ? 'selected' : '' }}>3º</option>
+<option value="4" {{ old('periodo', $periodo ?? '') == 4 ? 'selected' : '' }}>4º</option>
+<option value="5" {{ old('periodo', $periodo ?? '') == 5 ? 'selected' : '' }}>5º</option>
+<option value="6" {{ old('periodo', $periodo ?? '') == 6 ? 'selected' : '' }}>6º</option>
+<option value="7" {{ old('periodo', $periodo ?? '') == 7 ? 'selected' : '' }}>7º</option>
+<option value="8" {{ old('periodo', $periodo ?? '') == 8 ? 'selected' : '' }}>8º</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <label for="turno" class="block text-sm font-medium text-gray-700 mb-1">Turno <span id="turnoRequired" class="text-red-500">*</span></label>
                                                 <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="turno" name="turno">
                                                     <option value="">Escolha</option>
-                                                    <option value="manhã">Manhã</option>
-                                                    <option value="tarde">Tarde</option>
+                                                    <option value="manhã" {{ old('turno', $turno ?? '') == 'manhã' ? 'selected' : '' }}>Manhã</option>
+                                                    <option value="tarde" {{ old('turno', $turno ?? '') == 'tarde' ? 'selected' : '' }}>Tarde</option>
                                                 </select>
                                             </div>
                                         </div>
