@@ -13,6 +13,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ProfileChangeRequestController;
 use App\Http\Controllers\CoordinatorController;
+use App\Http\Controllers\CoordinatorReportController;
+use App\Http\Controllers\ProfessorReportController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ForwardingController;
 use Illuminate\Support\Facades\Route;
@@ -169,6 +171,10 @@ Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, '
 // Rotas para Coordenador
 Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(function () {
     Route::get('/dashboard', [CoordinatorController::class, 'dashboard'])->name('coordinator.dashboard');
+    Route::get('/reports', [CoordinatorReportController::class, 'index'])->name('coordinator.reports');
+    Route::get('/reports/processed', [CoordinatorReportController::class, 'generateProcessedReport'])->name('coordinator.reports.processed');
+    Route::get('/reports/period', [CoordinatorReportController::class, 'generatePeriodReport'])->name('coordinator.reports.period');
+    Route::get('/reports/statistics', [CoordinatorReportController::class, 'getStatistics'])->name('coordinator.reports.statistics');
     Route::post('/process/{forwarding}', [CoordinatorController::class, 'processRequest'])->name('coordinator.process');
     Route::post('/return/{forwarding}', [CoordinatorController::class, 'returnRequest'])->name('coordinator.return');
 });
@@ -176,6 +182,10 @@ Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(fu
 // Rotas para Professor
 Route::middleware(['auth', 'role:Professor'])->prefix('professor')->group(function () {
     Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
+    Route::get('/reports', [ProfessorReportController::class, 'index'])->name('professor.reports');
+    Route::get('/reports/processed', [ProfessorReportController::class, 'generateProcessedReport'])->name('professor.reports.processed');
+    Route::get('/reports/period', [ProfessorReportController::class, 'generatePeriodReport'])->name('professor.reports.period');
+    Route::get('/reports/statistics', [ProfessorReportController::class, 'getStatistics'])->name('professor.reports.statistics');
     Route::post('/process/{forwarding}', [ProfessorController::class, 'processRequest'])->name('professor.process');
     Route::post('/return/{forwarding}', [ProfessorController::class, 'returnRequest'])->name('professor.return');
 });
@@ -187,6 +197,10 @@ Route::middleware(['auth', 'role:Cradt,Manager'])->prefix('encaminhamentos')->gr
     Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
 });
 
+// Rotas para Reencaminhamentos (Coordenador e Professor) - apenas POST
+Route::middleware(['auth', 'role:Coordenador,Professor'])->prefix('encaminhamentos')->group(function () {
+    Route::post('/reencaminhar/{forwarding}', [ForwardingController::class, 'forwardFromCoordinatorProfessor'])->name('forwardings.reforward.store');
+});
 
 Route::middleware(['auth', 'role:Professor,Coordenador'])->group(function () {
     Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');

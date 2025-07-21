@@ -13,12 +13,17 @@ class ProfessorController extends Controller
         $userId = Auth::id();
         
         $forwardings = RequestForwarding::where('receiver_id', $userId)
-            ->where('status', 'encaminhado')
-            ->with('requerimento')
+            ->whereIn('status', ['encaminhado', 'devolvido'])
+            ->with(['requerimento', 'sender'])
             ->latest()
             ->get();
         
         return view('professor.dashboard', compact('forwardings'));
+    }
+    
+    public function reports()
+    {
+        return view('professor.reports');
     }
     
     public function processRequest(Request $request, $forwardingId)
@@ -73,6 +78,6 @@ class ProfessorController extends Controller
         $requerimento->status = 'devolvido';
         $requerimento->save();
         
-        return redirect()->back()->with('success', 'Requerimento devolvido com sucesso');
+        return redirect()->back()->with('success', 'Requerimento devolvido para o CRADT com sucesso');
     }
 }

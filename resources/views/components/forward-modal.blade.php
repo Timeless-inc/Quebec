@@ -11,7 +11,7 @@
                     <div class="mb-4">
                         <label for="receiver_type" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Destinatário:</label>
                         <select class="form-control" id="receiver_type_{{ $requerimento->id }}" onchange="toggleReceivers({{ $requerimento->id }})">
-                            <option value="">Selecione o tipo</option>
+                            <option value="">Selecione o Cargo</option>
                             <option value="coordenador">Coordenador</option>
                             <option value="professor">Professor</option>
                         </select>

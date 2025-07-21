@@ -34,7 +34,7 @@
     }
 </style>
 
-<x-app-layout>
+<x-app-coordinator-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -70,7 +70,8 @@
                                             ($forwarding->status === 'finalizado' ? 'bg-emerald-500' : 
                                             ($forwarding->status === 'indeferido' ? 'bg-red-500' : 
                                             ($forwarding->status === 'pendente' ? 'bg-amber-500' : 
-                                            ($forwarding->status === 'devolvido' ? 'bg-pink-500' : 'bg-gray-500')))) }} shadow-sm"></div>
+                                            ($forwarding->status === 'devolvido' ? 'bg-yellow-500' : 
+                                            ($forwarding->status === 'reencaminhado' ? 'bg-orange-500' : 'bg-gray-500'))))) }} shadow-sm"></div>
                                         
                                         <div>
                                             <h3 class="text-md font-semibold text-gray-900 truncate max-w-xs">#{{ $forwarding->requerimento->id }} - {{ $forwarding->requerimento->tipoRequisicao }}</h3>
@@ -83,6 +84,11 @@
                                             @case('encaminhado')
                                                 <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full border border-purple-200">
                                                     <i class="fas fa-share mr-1"></i>Encaminhado
+                                                </span>
+                                                @break
+                                            @case('reencaminhado')
+                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-orange-700 bg-orange-100 rounded-full border border-orange-200">
+                                                    <i class="fas fa-share-square mr-1"></i>Reencaminhado
                                                 </span>
                                                 @break
                                             @case('finalizado')
@@ -177,6 +183,17 @@
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-white bg-pink-600 border border-pink-700 rounded-lg hover:bg-pink-700 transition-colors" data-bs-toggle="modal" data-bs-target="#returnModal{{ $forwarding->id }}" title="Devolver">
                                             <i class="fas fa-reply text-sm"></i>
                                         </button>
+
+                                        <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-white bg-purple-600 border border-purple-700 rounded-lg hover:bg-purple-700 transition-colors" data-bs-toggle="modal" data-bs-target="#reencaminharModal-{{ $forwarding->id }}" title="Encaminhar">
+                                            <i class="fas fa-share text-sm"></i>
+                                        </button>
+                                        @elseif ($forwarding->status == 'devolvido')
+                                        <div class="w-px h-6 bg-gray-300 mx-2"></div>
+                                        
+                                        <div class="inline-flex items-center px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Requerimento Devolvido
+                                        </div>
                                         @endif
                                     </div>
                                 </div>
@@ -294,9 +311,19 @@
                                     <form action="{{ route('coordinator.return', $forwarding->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-body p-6">
+                                            <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                                                <div class="flex items-start">
+                                                    <i class="fas fa-info-circle text-blue-400 mt-0.5 mr-2"></i>
+                                                    <div class="text-sm text-blue-700">
+                                                        <p class="font-semibold">Este requerimento será devolvido para:</p>
+                                                        <p>CRADT - Coordenação de Registros Acadêmicos, Diplomação e Turnos</p>                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                             <div class="mb-4">
-                                                <label for="internal_message" class="block text-sm font-semibold text-gray-700 mb-2">Mensagem Interna (não visível ao aluno):</label>
-                                                <textarea class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors" id="internal_message" name="internal_message" rows="3" placeholder="Informe o motivo da devolução..."></textarea>
+                                                <label for="internal_message" class="block text-sm font-semibold text-gray-700 mb-2">Motivo da devolução:</label>
+                                                <textarea class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors" id="internal_message" name="internal_message" rows="3" placeholder="Informe o motivo da devolução..." required></textarea>
+                                                <p class="text-xs text-gray-500 mt-2">Esta mensagem será visível para quem receberá o requerimento devolvido.</p>
                                             </div>
                                         </div>
                                         <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
@@ -636,5 +663,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de Reencaminhamento -->
+    @include('components.reforward-modal', ['forwarding' => $forwarding])
+
     @endforeach
-</x-app-layout>
+</x-app-coordinator-layout>
