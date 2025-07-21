@@ -15,6 +15,7 @@ use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use App\Models\UserLastRequisitionData;
 
 class ApplicationController extends Controller
 {
@@ -123,28 +124,39 @@ class ApplicationController extends Controller
         return view('application.index', compact('requerimentos'));
     }
 
-    public function create()
-    {
-        $user = Auth::user();
+public function create()
+{
+    $user = Auth::user();
 
-        $availableTypes = $this->getAvailableRequisitionTypes();
-        $tiposRequisicao = collect($this->tiposRequisicao)
-            ->filter(function ($value, $key) use ($availableTypes) {
-                return in_array($key, $availableTypes);
-            })
-            ->toArray();
+    // Buscar dados persistidos
+    $lastData = UserLastRequisitionData::where('user_id', $user->id)->first();
 
-        return view('application.create', [
-            'nomeCompleto' => $user->name,
-            'matricula'    => $user->matricula,
-            'email'        => $user->email,
-            'cpf'          => $user->cpf,
-            'data'         => now()->format('Y-m-d'),
-            'cursos'       => $this->cursos,
-            'tiposRequisicao' => $tiposRequisicao,
-            'tiposComEventos' => $this->getTiposComEventos(),
-        ]);
-    }
+    $availableTypes = $this->getAvailableRequisitionTypes();
+    $tiposRequisicao = collect($this->tiposRequisicao)
+        ->filter(function ($value, $key) use ($availableTypes) {
+            return in_array($key, $availableTypes);
+        })
+        ->toArray();
+
+    return view('application.index', [
+        'nomeCompleto' => $user->name,
+        'matricula'    => $user->matricula,
+        'email'        => $user->email,
+        'cpf'          => $user->cpf,
+        'celular'      => $lastData->celular ?? $user->celular,
+        'rg'           => $user->rg,
+        'orgaoExpedidor' => $lastData->orgao_expedidor ?? '',
+        'campus'       => $lastData->campus ?? '',
+        'situacao'     => $lastData->situacao ?? '',
+        'curso'        => $lastData->curso ?? '',
+        'periodo'      => $lastData->periodo ?? '',
+        'turno'        => $lastData->turno ?? '',
+        'data'         => now()->format('Y-m-d'),
+        'cursos'       => $this->cursos,
+        'tiposRequisicao' => $tiposRequisicao,
+        'tiposComEventos' => $this->getTiposComEventos(),
+    ]);
+}
 
     public function store(Request $request)
     {
@@ -251,6 +263,19 @@ class ApplicationController extends Controller
                     throw new \Exception('Erro ao recuperar requerimento após criação');
                 }
             }
+
+UserLastRequisitionData::updateOrCreate(
+    ['user_id' => Auth::id()],
+    [
+        'celular'         => $validatedData['celular'],
+        'orgao_expedidor' => $validatedData['orgaoExpedidor'],
+        'campus'          => $validatedData['campus'],
+        'situacao'        => $request->situacao, // Salve o valor numérico
+        'curso'           => $request->curso,    // Salve o valor numérico
+        'periodo'         => $request->periodo,  // Salve o valor numérico
+        'turno'           => $request->turno,    // Salve o valor (manhã/tarde)
+    ]
+);
 
             Log::info('Requerimento criado com sucesso', [
                 'id' => $applicationRequest->id,
