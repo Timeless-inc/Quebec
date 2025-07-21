@@ -401,6 +401,11 @@ UserLastRequisitionData::updateOrCreate(
             'dadosExtra.ano_semestre' => 'required_if:tipoRequisicao,30,31,32|string|max:50',
         ]);
 
+        // Corrigir o campo curso para salvar o nome, não o número
+        if (isset($validatedData['curso']) && isset($this->cursos[$validatedData['curso']])) {
+            $validatedData['curso'] = $this->cursos[$validatedData['curso']];
+        }
+
         $attachmentPaths = $requerimento->anexarArquivos ? json_decode($requerimento->anexarArquivos, true) : [];
 
         if ($request->hasFile('anexarArquivos')) {
