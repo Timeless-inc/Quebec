@@ -38,6 +38,22 @@ class CradtReportController extends Controller
         //}
         //Gate::authorize('isCradt', $user);
 
+        // Resumo para os cards do dashboard
+        $resumo = [
+            'deferidos' => ApplicationRequest::where('status', 'finalizado')->count(),
+            'novos_deferidos' => ApplicationRequest::where('status', 'finalizado')
+                ->whereDate('created_at', '>=', now()->subDays(30))->count(),
+            'indeferidos' => ApplicationRequest::where('status', 'indeferido')->count(),
+            'novos_indeferidos' => ApplicationRequest::where('status', 'indeferido')
+                ->whereDate('created_at', '>=', now()->subDays(30))->count(),
+            'encaminhados' => ApplicationRequest::where('status', 'em_andamento')->count(),
+            'novos_encaminhados' => ApplicationRequest::where('status', 'em_andamento')
+                ->whereDate('created_at', '>=', now()->subDays(30))->count(),
+            'pendentes' => ApplicationRequest::where('status', 'pendente')->count(),
+            'novos_pendentes' => ApplicationRequest::where('status', 'pendente')
+                ->whereDate('created_at', '>=', now()->subDays(30))->count(),
+        ];
+
         $requerimentos = ApplicationRequest::select('situacao', DB::raw('count(*) as total'))
             ->groupBy('situacao')
             ->orderByDesc('total')
@@ -77,6 +93,7 @@ class CradtReportController extends Controller
         $filtrosDisponiveis = array_keys($this->filtrosDisponiveis);
 
         return view('cradt-report.index', compact(
+            'resumo',
             'requerimentos',
             'requerimentosTipo',
             'requerimentosStatus',
