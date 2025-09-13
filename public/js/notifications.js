@@ -316,5 +316,16 @@ function showTypedPopupNotification(message, type = 'success', duration = 5000) 
 //showTypedPopupNotification('Evento termina em breve', 'warning');
 //showTypedPopupNotification('Falha ao enviar documento', 'error');
 
-// Inicializa o sistema de notificações ao carregar a página
-document.addEventListener('DOMContentLoaded', fetchNotifications);
+// O código agora verifica se o sino de notificação existe na página ANTES de tentar buscar as notificações.
+document.addEventListener('DOMContentLoaded', () => {
+    // Procura por um elemento essencial do sistema de sino (pode ser qualquer um, como o ícone ou o contador).
+    const bellElement = document.getElementById('notification-icon-bell');
+
+    // Se o elemento do sino for encontrado, a página deve ter o sistema de notificações.
+    // Então, e SOMENTE então, chamamos a função para buscar os dados.
+    if (bellElement) {
+        fetchNotifications();
+    }
+    // Se não encontrar o sino (como na página do professor), este código é simplesmente ignorado,
+    // evitando os erros no console. As funções de pop-up continuarão funcionando normalmente.
+});

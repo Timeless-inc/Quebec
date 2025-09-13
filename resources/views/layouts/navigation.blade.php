@@ -1,9 +1,7 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ in_array(Auth::user()->role, ['Cradt', 'Manager']) ? url('/cradt/dashboard') : url('/aluno/dashboard') }}">
                         <x-application-logo />
@@ -23,27 +21,26 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Botão de Notificações -->
+                
+                @if(Auth::user()->role === 'Aluno')
                 <div id="notification-icon" class="relative mr-2">
                     <button
                         type="button"
                         onclick="toggleNotifications('notification-list')"
                         id="notification-button"
                         class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-sm flex items-center">
-                        <!-- Ícone do Sino -->
                         <span id="notification-icon-bell" class="text-orange-500">
                             🔔
                         </span>
-                        <!-- Contador de Notificações -->
                         <span id="notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">
                             0
                         </span>
                     </button>
-                    <!-- Lista de Notificações -->
                     <div id="notification-list" class="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg w-64 z-50" style="display: none;">
                         <ul id="notifications" class="p-2 text-sm text-green-700 max-h-80 overflow-y-auto"></ul>
                     </div>
                 </div>
+                @endif
                 
                 <div x-data="{ open: false }" class="ml-3 relative">
                     <div>
@@ -75,7 +72,6 @@
 
                         <div class="border-t border-gray-100 my-1"></div>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 border-l-4 border-transparent hover:border-red-500 group">
@@ -90,22 +86,20 @@
             </div>
 
             <div class="flex items-center sm:hidden">
-                <!-- Botão de Notificações Mobile -->
+                
+                @if(Auth::user()->role === 'Aluno')
                 <div id="mobile-notification-icon" class="relative mr-3">
                     <button
                         type="button"
                         onclick="toggleNotificationsMobile()"
                         class="text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
-                        <!-- Ícone do Sino -->
                         <span class="text-orange-500">
                             🔔
                         </span>
-                        <!-- Contador de Notificações Mobile -->
                         <span id="mobile-notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">
                             0
                         </span>
                     </button>
-                    <!-- Lista de Notificações Mobile -->
                     <div id="mobile-notification-list" class="fixed inset-0 pt-16 px-4 pb-4 bg-gray-800 bg-opacity-75 z-50" style="display: none;">
                         <div class="bg-white rounded-lg shadow-xl max-w-md mx-auto overflow-hidden">
                             <div class="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
@@ -122,8 +116,8 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 
-                <!-- Botão Hamburguer -->
                 <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-600 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -134,7 +128,6 @@
         </div>
     </div>
 
-    <!-- Menu Responsivo (visível apenas quando o hamburguer é clicado) -->
     <div :class="{'block': open, 'hidden': !open}" class="sm:hidden">
         <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex items-center">
@@ -154,7 +147,6 @@
             @endif
         </div>
 
-        <!-- Opções de Perfil e Logout (Mobile) -->
         <div class="pt-4 pb-1 border-t border-gray-200 bg-gray-50">
             <div class="px-4 py-2">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name ?? Auth::user()->username }}</div>
@@ -169,7 +161,6 @@
                     {{ __('Perfil') }}
                 </x-responsive-nav-link>
 
-                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link 
@@ -336,14 +327,17 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/notifications/count')
-            .then(response => response.json())
-            .then(data => {
-                updateNotificationCounter(data.count);
-            })
-            .catch(error => {
-                console.error('Erro ao carregar contagem de notificações:', error);
-            });
+        // Esta verificação impede que o fetch seja executado se o sino não estiver na página.
+        if (document.getElementById('notification-count')) {
+            fetch('/notifications/count')
+                .then(response => response.json())
+                .then(data => {
+                    updateNotificationCounter(data.count);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar contagem de notificações:', error);
+                });
+        }
         
         const notificationList = document.getElementById('notification-list');
         const mobileNotificationList = document.getElementById('mobile-notification-list');

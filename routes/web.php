@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
     })->middleware('auth')->name('profile.check-duplicate');
 
     // Rotas para gerenciamento de notificações
+    Route::get('/notifications/count', [NotificationController::class, 'unreadCount'])->name('notifications.count');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);

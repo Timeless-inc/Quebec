@@ -31,6 +31,21 @@ class NotificationController extends Controller
         return response()->json($formattedNotifications);
     }
 
+/**
+ * Conta e retorna o número de notificações não lidas para o usuário autenticado.
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function unreadCount()
+{
+    $count = Notification::where('user_id', Auth::id())
+                             ->where('is_read', false)
+                             ->count();
+
+    return response()->json(['count' => $count]);
+}
+
+
     /**
  * Marca uma notificação como lida.
  *
