@@ -10,6 +10,14 @@ class ApplicationRequest extends Model
 {
     use HasFactory;
 
+     /**
+     * 
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     protected $table = 'requerimentos';
 
     protected $fillable = [
@@ -38,7 +46,7 @@ class ApplicationRequest extends Model
 
     protected $casts = [
         'anexarArquivos' => 'array',
-        'dadosExtra' => 'array', // Garante que dadosExtra seja tratado como array
+        'dadosExtra' => 'array', 
     ];
 
     protected $attributes = [

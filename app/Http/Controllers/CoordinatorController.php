@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RequestForwarding;
 use Illuminate\Support\Facades\Auth;
+use App\Events\ApplicationStatusChanged;
 
 class CoordinatorController extends Controller
 {
@@ -30,6 +31,8 @@ class CoordinatorController extends Controller
     {
         $forwarding = RequestForwarding::findOrFail($forwardingId);
         $requerimento = $forwarding->requerimento;
+
+         $oldStatus = $requerimento->status;
         
         if ($forwarding->receiver_id != Auth::id()) {
             return redirect()->back()->with('error', 'Você não tem permissão para processar este requerimento.');
@@ -60,6 +63,8 @@ class CoordinatorController extends Controller
             $requerimento->status = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
+
+            event(new ApplicationStatusChanged($requerimento, $oldStatus, $requerimento->status));
         }
         
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');

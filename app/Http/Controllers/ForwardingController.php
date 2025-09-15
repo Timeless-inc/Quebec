@@ -9,6 +9,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Events\RequirementForwarded;
 
 class ForwardingController extends Controller
 {
@@ -34,7 +35,8 @@ class ForwardingController extends Controller
         ]);
 
         $requerimento = ApplicationRequest::findOrFail($requerimentoId);
-        RequestForwarding::create([
+    
+        $newForwarding = RequestForwarding::create([
             'requerimento_id' => $requerimento->id,
             'sender_id' => Auth::user()->id,
             'receiver_id' => $request->receiver_id,
@@ -43,6 +45,11 @@ class ForwardingController extends Controller
 
         $requerimento->status = 'encaminhado';
         $requerimento->save();
+
+        $recipientUser = User::find($request->receiver_id);
+        if ($recipientUser) {
+            event(new RequirementForwarded($newForwarding, $recipientUser));
+        }
 
         return redirect()->back()->with('success', 'Requerimento encaminhado com sucesso.');
     }
@@ -97,7 +104,7 @@ class ForwardingController extends Controller
         $originalForwarding->status = 'reencaminhado';
         $originalForwarding->save();
 
-        RequestForwarding::create([
+        $newForwarding = RequestForwarding::create([
             'requerimento_id' => $requerimento->id,
             'sender_id' => Auth::user()->id,
             'receiver_id' => $request->receiver_id,
@@ -108,9 +115,14 @@ class ForwardingController extends Controller
         $requerimento->status = 'encaminhado';
         $requerimento->save();
 
+        $recipientUser = User::find($request->receiver_id);
+        if ($recipientUser) {
+            event(new RequirementForwarded($newForwarding, $recipientUser));
+        }
+    
         $user = Auth::user();
         if ($user->role === 'Coordenador') {
-            return redirect()->route('coordinator.dashboard')->with('success', 'Requerimento reencaminhado com sucesso.');
+        return redirect()->route('coordinator.dashboard')->with('success', 'Requerimento reencaminhado com sucesso.');
         } elseif ($user->role === 'Professor') {
             return redirect()->route('professor.dashboard')->with('success', 'Requerimento reencaminhado com sucesso.');
         }

@@ -145,7 +145,7 @@
             <h2>Requisição #{{ $request->key }}</h2>
         </div>
         <div class="content">
-            <p class="subtitle">Olá {{ $request->nomeCompleto }}!</p>
+            <p class="subtitle">Olá, {{ $request->nomeCompleto }}!</p>
             <p>Sua solicitação de <span class="highlight">{{ $request->tipoRequisicao }}</span>, feita no dia <span class="highlight">{{ \Carbon\Carbon::parse($request->created_at)->format('d/m/Y') }}</span>, 
             {{ $newStatus == 'pendente' ? 'está' : 'foi' }} <span class="highlight">{{ $newStatus }}</span>.</p>
             <p>Requerimento atualizado em <span class="highlight">{{ \Carbon\Carbon::parse($request->updated_at)->format('d/m/Y H:i') }}</span>.</p>

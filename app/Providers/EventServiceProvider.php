@@ -48,6 +48,10 @@ class EventServiceProvider extends ServiceProvider
             SendEventExpiringNotification::class,
         ],
 
+        RequirementForwarded::class => [
+            SendForwardedRequirementNotification::class,
+        ],
+
     ];
 
     /**
