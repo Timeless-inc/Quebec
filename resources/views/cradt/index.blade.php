@@ -1,15 +1,14 @@
-<title>SRE</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<script src="{{ asset('js/filterJustificativas.js') }}"></script>
-<script src="{{ asset('js/datepicker.js') }}"></script>
-<link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
-<link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
-<script src="{{ asset('js/form-loading.js') }}" defer></script>
-<meta name="csrf-token" content="{{ csrf_token() }}">
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+@endpush
 
-<x-appcradt>
+@push('scripts')
+    <script src="{{ asset('js/filterJustificativas.js') }}"></script>
+    <script src="{{ asset('js/datepicker.js') }}"></script>
+    <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
+@endpush
+
+<x-app-cradt>
     <x-slot name="header">
         <div class="flex justify-between items-center w-full">
             <div>
@@ -402,8 +401,6 @@
         });
     </script>
 
-    <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
-
     <style>
         input[type="date"] {
             min-width: 180px;
@@ -423,4 +420,4 @@
             opacity: 1;
         }
     </style>
-</x-appcradt>
+</x-app-cradt>

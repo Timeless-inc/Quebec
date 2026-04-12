@@ -1,6 +1,6 @@
-<x-apphome>
+<x-app-home>
 
-</x-apphome>
+</x-app-home>
 
 <input type="text" name="nomeCompleto" value="{{ $nomeCompleto }}" readonly>
 <input type="text" name="matricula" value="{{ $matricula }}" readonly>
