@@ -9,17 +9,19 @@
         "@tailwindcss/forms": "^0.5.2",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.21",
-        "axios": "^1.8.2",
+        "axios": "^1.15.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.5.3",
         "tailwindcss": "^3.4.17",
-        "vite": "^6.2"
+        "vite": "^6.4.2"
     },
     "dependencies": {
         "chart.js": "^4.4.7"
     },
     "overrides": {
+        "form-data": "^4.0.4",
+        "rollup": "^4.59.0",
         "lodash": "^4.17.21",
         "glob-parent": "^6.0.2",
         "minimist": "^1.2.6",
