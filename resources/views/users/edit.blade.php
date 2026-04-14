@@ -1,4 +1,4 @@
-<x-app-cradt>
+<x-app-diretor-geral-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -132,7 +132,7 @@
             </div>
         </div>
     </div>
-</x-app-cradt>
+</x-app-diretor-geral-layout>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
