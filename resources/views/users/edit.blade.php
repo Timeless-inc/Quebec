@@ -100,15 +100,14 @@
                         <div>
                             <label for="role" class="block text-sm font-medium text-gray-700">Cargo</label>
 
-                            @if(old('role', $user->role) === 'Manager')
-                                <input type="text" value="Manager" disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100">
-                                <input type="hidden" name="role" value="Manager">
-                            @else
-                                <select name="role" id="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="Aluno" {{ (old('role', $user->role) == 'Aluno') ? 'selected' : '' }}>Aluno</option>
-                                    <option value="Cradt" {{ (old('role', $user->role) == 'Cradt') ? 'selected' : '' }}>CRADT</option>
-                                </select>
-                            @endif
+                            <select name="role" id="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="Aluno" {{ (old('role', $user->role) == 'Aluno') ? 'selected' : '' }}>Aluno</option>
+                                <option value="Cradt" {{ (old('role', $user->role) == 'Cradt') ? 'selected' : '' }}>CRADT</option>
+                                <option value="Diretor Geral" {{ (old('role', $user->role) == 'Diretor Geral') ? 'selected' : '' }}>Diretor Geral</option>
+                                @foreach($roles as $customRole)
+                                    <option value="{{ $customRole->label }}" {{ (old('role', $user->role) == $customRole->label) ? 'selected' : '' }}>{{ $customRole->label }}</option>
+                                @endforeach
+                            </select>
 
                             @error('role')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -117,7 +116,12 @@
                     </div>
                     <!-- Botões de ação -->
                     <div class="mt-6 flex justify-end">
-                        <a href="{{ route('users.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+                        @php
+                            $backRoute = auth()->user()->isDiretorGeral()
+                                ? route('diretor-geral.users.index')
+                                : route('users.index');
+                        @endphp
+                        <a href="{{ $backRoute }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
                             Cancelar
                         </a>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

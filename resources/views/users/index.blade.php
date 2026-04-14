@@ -24,6 +24,11 @@
                                 <option value="">Todos</option>
                                 <option value="Aluno" {{ request('role') == 'Aluno' ? 'selected' : '' }}>Aluno</option>
                                 <option value="Cradt" {{ request('role') == 'Cradt' ? 'selected' : '' }}>CRADT</option>
+
+                                <option value="Diretor Geral" {{ request('role') == 'Diretor Geral' ? 'selected' : '' }}>Diretor Geral</option>
+                                @foreach($roles as $customRole)
+                                    <option value="{{ $customRole->label }}" {{ request('role') == $customRole->label ? 'selected' : '' }}>{{ $customRole->label }}</option>
+                                @endforeach
                             </select>
                         </div>
                         
@@ -63,7 +68,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matrículas</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPF</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
-                                @if(auth()->user()->role === 'Manager')
+                                @if(auth()->user()->role === 'Manager' || auth()->user()->isDiretorGeral())
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                 @endif
                             </tr>
@@ -90,28 +95,27 @@
                                         </span>
                                     </td>
                                     
+                                    @if(auth()->user()->role === 'Manager' || auth()->user()->isDiretorGeral())
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        @auth
-                                            @if(auth()->user()->role === 'Manager')
-                                                <a href="{{ route('users.edit', $user->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
-                                            @endif
-                                         @endauth
+                                        @php
+                                            $editRoute   = auth()->user()->isDiretorGeral() ? route('diretor-geral.users.edit', $user->id)   : route('users.edit', $user->id);
+                                            $deleteRoute = auth()->user()->isDiretorGeral() ? route('diretor-geral.users.destroy', $user->id) : route('users.destroy', $user->id);
+                                        @endphp
 
-                                        <!-- Botão de exclusão -->
-                                        @auth
-                                        @if(auth()->user()->role === 'Manager')
+                                        <a href="{{ $editRoute }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+
                                         @if(auth()->id() !== $user->id)
-                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline ml-2">
+                                            <form action="{{ $deleteRoute }}" method="POST" class="inline ml-2">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
+                                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                                        onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
                                                     Excluir
                                                 </button>
                                             </form>
                                         @endif
-                                        @endif
-                                        @endauth
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

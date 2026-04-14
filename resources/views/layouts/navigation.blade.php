@@ -5,13 +5,13 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ in_array(Auth::user()->role, ['Cradt', 'Manager']) ? url('/cradt/dashboard') : url('/aluno/dashboard') }}">
+                    <a href="{{ Auth::user()->getDashboardRoute() }}">
                         <x-application-logo />
                     </a>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="Auth::user()->getDashboardRoute()" :active="request()->routeIs('dashboard') || request()->routeIs('diretor-geral.dashboard') || request()->routeIs('painel.dashboard') || request()->routeIs('cradt')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @if(Auth::user()->role === 'Cradt')
@@ -137,7 +137,7 @@
     <!-- Menu Responsivo (visível apenas quando o hamburguer é clicado) -->
     <div :class="{'block': open, 'hidden': !open}" class="sm:hidden">
         <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex items-center">
+            <x-responsive-nav-link :href="Auth::user()->getDashboardRoute()" :active="request()->routeIs('dashboard') || request()->routeIs('diretor-geral.dashboard') || request()->routeIs('painel.dashboard') || request()->routeIs('cradt')" class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
