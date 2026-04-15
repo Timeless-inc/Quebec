@@ -4,6 +4,9 @@ let notifications = [];
  * Busca notificações do servidor e atualiza a interface.
  */
 function fetchNotifications() {
+    const notificationList = document.getElementById('notifications');
+    if (!notificationList) return;
+
     fetch('/notifications')
         .then(response => {
             if (!response.ok) {
@@ -18,7 +21,6 @@ function fetchNotifications() {
         .catch(error => {
             console.error('Erro:', error);
             showTypedPopupNotification('Ocorreu um erro ao processar a notificação. Tente novamente.', 'error');
-            notification.is_read = false;
             updateNotificationUI();
         });
 }

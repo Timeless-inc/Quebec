@@ -58,8 +58,11 @@ class ForwardingController extends Controller
             'status'          => 'encaminhado',
         ]);
 
+        $oldStatus = $requerimento->status;
         $requerimento->status = 'encaminhado';
         $requerimento->save();
+
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'encaminhado'));
 
         return redirect()->back()->with('success', 'Requerimento encaminhado com sucesso.');
     }
@@ -117,8 +120,11 @@ class ForwardingController extends Controller
             'internal_message' => $request->internal_message,
         ]);
 
+        $oldStatus = $requerimento->status;
         $requerimento->status = 'encaminhado';
         $requerimento->save();
+
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'encaminhado'));
 
         $user = Auth::user();
         if ($user->isDiretorGeral()) {
@@ -159,9 +165,12 @@ class ForwardingController extends Controller
         $forwarding->save();
 
         if (in_array($request->action, ['finalizado', 'indeferido'])) {
+            $oldStatus = $requerimento->status;
             $requerimento->status        = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
+            
+            event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, $request->action));
         }
 
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
@@ -176,9 +185,12 @@ class ForwardingController extends Controller
         $forwarding->is_returned      = true;
         $forwarding->save();
 
+        $oldStatus = $forwarding->requerimento->status;
         $requerimento         = $forwarding->requerimento;
         $requerimento->status = 'devolvido';
         $requerimento->save();
+
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'devolvido'));
 
         return redirect()->back()->with('success', 'Requerimento devolvido para o CRADT com sucesso');
     }

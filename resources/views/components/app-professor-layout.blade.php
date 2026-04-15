@@ -4,6 +4,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @auth
+            <meta name="user-id" content="{{ auth()->id() }}">
+            <meta name="user-role" content="{{ auth()->user()->role }}">
+        @endauth
 
         <title>{{ config('app.name', 'SRE') }}</title>
 
@@ -105,5 +109,6 @@
 
         <!-- Custom JavaScript -->
         <script src="{{ asset('js/form-loading.js') }}"></script>
+        <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
     </body>
 </html>

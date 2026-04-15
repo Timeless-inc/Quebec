@@ -4,6 +4,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @auth
+            <meta name="user-id" content="{{ auth()->id() }}">
+            <meta name="user-role" content="{{ auth()->user()->role }}">
+        @endauth
 
         <title>{{ config('app.name', 'SRE') }}</title>
 
@@ -87,6 +91,9 @@
 
          <!-- Importação do script de notificações -->
         <script src="{{ asset('js/notifications.js') }}"></script>
+
+        <!-- Importação do script de Real-time -->
+        <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
 
         <!-- Script para exibir as notificações -->
         <script>

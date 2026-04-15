@@ -5,7 +5,6 @@
 @push('scripts')
     <script src="{{ asset('js/filterJustificativas.js') }}"></script>
     <script src="{{ asset('js/datepicker.js') }}"></script>
-    <script src="{{ asset('js/requerimentos-realtime.js') }}"></script>
 @endpush
 
 <x-app-cradt>
