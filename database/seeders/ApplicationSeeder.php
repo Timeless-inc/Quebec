@@ -14,11 +14,11 @@ class ApplicationSeeder extends Seeder
     {
         $faker = Faker::create('pt_BR');
 
-        $users = User::where('role', 'CRADT')->get();
+        $users = User::whereIn('role', ['Cradt', 'Diretor Geral'])->get();
 
         if ($users->isEmpty()) {
-            $this->command->error('Nenhum usuário com cargo CRADT encontrado! O seeder precisa de servidores para requisições finalizadas/indeferidas.');
-            return; // Encerrar o seeder se não houver usuários CRADT
+            $this->command->error('Nenhum usuário com cargo CRADT ou Diretor Geral encontrado!');
+            return;
         }
         
         $tipoRequisicaoOptions = [

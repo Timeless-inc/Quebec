@@ -1,12 +1,12 @@
-<title>SRE - Coordenador - Relatórios</title>
+<title>SRE - {{ $roleName ?? 'Diretor Geral' }} - Relatórios</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<x-app-coordinator-layout>
+<x-app-diretor-geral-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Relatórios - Coordenador') }}
+                {{ __('Relatórios — ' . ($roleName ?? 'Diretor Geral')) }}
             </h2>
         </div>
     </x-slot>
@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Card de Relatório de Requerimentos Processados -->
+                        <!-- Requerimentos Processados -->
                         <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
                                 <div class="flex items-center">
@@ -40,13 +40,17 @@
                                 </p>
                                 <div class="dropdown">
                                     <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-file-pdf mr-2"></i>
-                                        Gerar Relatório
+                                        <i class="fas fa-file-pdf mr-2"></i>Gerar Relatório
                                     </button>
                                     <ul class="dropdown-menu w-100">
-                                        <li><a class="dropdown-item" href="{{ route('coordinator.reports.processed', ['period' => 'mes-atual']) }}">Mês Atual</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('coordinator.reports.processed', ['period' => 'mes-anterior']) }}">Mês Anterior</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('coordinator.reports.processed', ['period' => 'ano-atual']) }}">Ano Atual</a></li>
+                                        @php
+                                            $rpx = $routePrefix ?? 'diretor-geral';
+                                            $cs  = $cargoSlug ?? null;
+                                            $params = $rpx === 'painel' ? ['cargoSlug' => $cs] : [];
+                                        @endphp
+                                        <li><a class="dropdown-item" href="{{ route($rpx.'.reports.processed', array_merge($params, ['period' => 'mes-atual'])) }}">Mês Atual</a></li>
+                                        <li><a class="dropdown-item" href="{{ route($rpx.'.reports.processed', array_merge($params, ['period' => 'mes-anterior'])) }}">Mês Anterior</a></li>
+                                        <li><a class="dropdown-item" href="{{ route($rpx.'.reports.processed', array_merge($params, ['period' => 'ano-atual'])) }}">Ano Atual</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" href="#" onclick="openCustomPeriodModal('processed')">Período Personalizado</a></li>
                                     </ul>
@@ -54,7 +58,7 @@
                             </div>
                         </div>
 
-                        <!-- Card de Relatório por Período -->
+                        <!-- Relatório por Período -->
                         <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-green-500 to-green-600 p-4">
                                 <div class="flex items-center">
@@ -72,13 +76,12 @@
                                     Gere relatórios personalizados selecionando um período específico para análise.
                                 </p>
                                 <button class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors" onclick="openCustomPeriodModal('period')">
-                                    <i class="fas fa-filter mr-2"></i>
-                                    Configurar Período
+                                    <i class="fas fa-filter mr-2"></i>Configurar Período
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Card de Estatísticas -->
+                        <!-- Estatísticas -->
                         <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-4">
                                 <div class="flex items-center">
@@ -96,8 +99,7 @@
                                     Visualize estatísticas detalhadas sobre sua atividade de processamento de requerimentos.
                                 </p>
                                 <button class="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-lg transition-colors" onclick="showStatistics()">
-                                    <i class="fas fa-chart-line mr-2"></i>
-                                    Ver Estatísticas
+                                    <i class="fas fa-chart-line mr-2"></i>Ver Estatísticas
                                 </button>
                             </div>
                         </div>
@@ -107,7 +109,7 @@
         </div>
     </div>
 
-    <!-- Modal para período personalizado -->
+    <!-- Modal período personalizado -->
     <div class="modal fade" id="customPeriodModal" tabindex="-1" aria-labelledby="customPeriodModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -135,12 +137,12 @@
         </div>
     </div>
 
-    <!-- Modal para estatísticas -->
+    <!-- Modal de estatísticas -->
     <div class="modal fade" id="statisticsModal" tabindex="-1" aria-labelledby="statisticsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="statisticsModalLabel">Estatísticas do Coordenador</h5>
+                    <h5 class="modal-title" id="statisticsModalLabel">Estatísticas do Diretor Geral</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -163,142 +165,57 @@
         function openCustomPeriodModal(reportType) {
             currentReportType = reportType;
             const modal = new bootstrap.Modal(document.getElementById('customPeriodModal'));
-            
-            // Definir datas padrão
             const today = new Date();
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            
             const formatDate = (date) => {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             };
-            
             document.getElementById('startDate').value = formatDate(firstDayOfMonth);
             document.getElementById('endDate').value = formatDate(today);
-            
             modal.show();
         }
 
         function showStatistics() {
             const modal = new bootstrap.Modal(document.getElementById('statisticsModal'));
             modal.show();
-            
-            // Carregar estatísticas via AJAX
-            fetch('{{ route("coordinator.reports.statistics") }}')
-                .then(response => response.json())
+            fetch('{{ isset($routePrefix) && $routePrefix === "painel" ? route("painel.reports.statistics", ["cargoSlug" => $cargoSlug]) : route("diretor-geral.reports.statistics") }}')
+                .then(r => r.json())
                 .then(data => {
                     const content = `
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-primary text-white">
-                                    <div class="card-body text-center">
-                                        <h2>${data.totalProcessados}</h2>
-                                        <p class="mb-0">Total Processados</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-info text-white">
-                                    <div class="card-body text-center">
-                                        <h2>${data.totalEncaminhados}</h2>
-                                        <p class="mb-0">Total Recebidos</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-warning text-white">
-                                    <div class="card-body text-center">
-                                        <h2>${data.totalDevolvidos}</h2>
-                                        <p class="mb-0">Total Devolvidos</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card bg-success text-white">
-                                    <div class="card-body text-center">
-                                        <h2>${data.totalEncaminhados > 0 ? Math.round((data.totalProcessados / data.totalEncaminhados) * 100) : 0}%</h2>
-                                        <p class="mb-0">Taxa de Processamento</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="col-md-6 mb-3"><div class="card bg-primary text-white"><div class="card-body text-center"><h2>${data.totalProcessados}</h2><p class="mb-0">Total Processados</p></div></div></div>
+                            <div class="col-md-6 mb-3"><div class="card bg-info text-white"><div class="card-body text-center"><h2>${data.totalEncaminhados}</h2><p class="mb-0">Total Recebidos</p></div></div></div>
+                            <div class="col-md-6 mb-3"><div class="card bg-warning text-white"><div class="card-body text-center"><h2>${data.totalDevolvidos}</h2><p class="mb-0">Total Devolvidos</p></div></div></div>
+                            <div class="col-md-6 mb-3"><div class="card bg-success text-white"><div class="card-body text-center"><h2>${data.totalEncaminhados > 0 ? Math.round((data.totalProcessados / data.totalEncaminhados) * 100) : 0}%</h2><p class="mb-0">Taxa de Processamento</p></div></div></div>
                         </div>
-                        
                         <h6 class="mt-4">Atividade nos Últimos 6 Meses</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Mês</th>
-                                        <th>Processados</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.estatisticasMensais.map(item => `
-                                        <tr>
-                                            <td>${item.mes}</td>
-                                            <td>${item.total}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <h6 class="mt-4">Status dos Requerimentos</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Quantidade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.statusStats.map(item => `
-                                        <tr>
-                                            <td>${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</td>
-                                            <td>${item.total}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
+                        <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Mês</th><th>Processados</th></tr></thead><tbody>
+                            ${data.estatisticasMensais.map(i => `<tr><td>${i.mes}</td><td>${i.total}</td></tr>`).join('')}
+                        </tbody></table></div>
                     `;
                     document.getElementById('statisticsContent').innerHTML = content;
                 })
-                .catch(error => {
-                    console.error('Erro ao carregar estatísticas:', error);
-                    document.getElementById('statisticsContent').innerHTML = 
-                        '<div class="alert alert-danger">Erro ao carregar estatísticas.</div>';
+                .catch(() => {
+                    document.getElementById('statisticsContent').innerHTML = '<div class="alert alert-danger">Erro ao carregar estatísticas.</div>';
                 });
         }
 
         document.getElementById('generateCustomPeriodReport').addEventListener('click', function() {
             const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            
-            if (!startDate || !endDate) {
-                alert('Por favor, selecione as datas inicial e final.');
-                return;
-            }
-            
-            if (new Date(startDate) > new Date(endDate)) {
-                alert('A data inicial deve ser anterior à data final.');
-                return;
-            }
-            
+            const endDate   = document.getElementById('endDate').value;
+            if (!startDate || !endDate) { alert('Selecione as datas.'); return; }
+            if (new Date(startDate) > new Date(endDate)) { alert('Data inicial deve ser anterior à final.'); return; }
             let url = '';
             if (currentReportType === 'processed') {
-                url = `{{ route('coordinator.reports.processed') }}?period=personalizado&startDate=${startDate}&endDate=${endDate}`;
-            } else if (currentReportType === 'period') {
-                url = `{{ route('coordinator.reports.period') }}?startDate=${startDate}&endDate=${endDate}`;
+                url = `{{ isset($routePrefix) && $routePrefix === 'painel' ? route('painel.reports.processed', ['cargoSlug' => $cargoSlug]) : route('diretor-geral.reports.processed') }}?period=personalizado&startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                url = `{{ isset($routePrefix) && $routePrefix === 'painel' ? route('painel.reports.period', ['cargoSlug' => $cargoSlug]) : route('diretor-geral.reports.period') }}?startDate=${startDate}&endDate=${endDate}`;
             }
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('customPeriodModal'));
-            modal.hide();
-            
+            bootstrap.Modal.getInstance(document.getElementById('customPeriodModal')).hide();
             window.location.href = url;
         });
     </script>
-</x-app-coordinator-layout>
+</x-app-diretor-geral-layout>

@@ -1,4 +1,4 @@
-<title>SRE - Coordenador</title>
+<title>SRE - {{ $roleName ?? 'Diretor Geral' }}</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,11 +34,11 @@
     }
 </style>
 
-<x-app-coordinator-layout>
+<x-app-diretor-geral-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard do Coordenador') }}
+                {{ __('Dashboard — ' . ($roleName ?? 'Diretor Geral')) }}
             </h2>
         </div>
     </x-slot>
@@ -188,8 +188,10 @@
                                             <i class="fas fa-share text-sm"></i>
                                         </button>
                                         @elseif ($forwarding->status == 'devolvido')
+                                        <!-- Divisor vertical -->
                                         <div class="w-px h-6 bg-gray-300 mx-2"></div>
                                         
+                                        <!-- Indicador de requerimento devolvido -->
                                         <div class="inline-flex items-center px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full">
                                             <i class="fas fa-exclamation-triangle mr-1"></i>
                                             Requerimento Devolvido
@@ -219,7 +221,7 @@
                                         </div>
                                         <button type="button" class="btn-close btn-close-white opacity-75 hover:opacity-100 transition-opacity" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ route('coordinator.process', $forwarding->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
+                                    <form action="{{ $routePrefix === 'painel' ? route('painel.process', ['cargoSlug' => $cargoSlug, 'forwarding' => $forwarding->id]) : route('diretor-geral.process', $forwarding->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
                                         @csrf
                                         <input type="hidden" name="action" value="finalizado">
                                         <div class="modal-body p-6">
@@ -266,7 +268,7 @@
                                         </div>
                                         <button type="button" class="btn-close btn-close-white opacity-75 hover:opacity-100 transition-opacity" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ route('coordinator.process', $forwarding->id) }}" method="POST" class="deny-form">
+                                    <form action="{{ $routePrefix === 'painel' ? route('painel.process', ['cargoSlug' => $cargoSlug, 'forwarding' => $forwarding->id]) : route('diretor-geral.process', $forwarding->id) }}" method="POST" class="deny-form">
                                         @csrf
                                         <input type="hidden" name="action" value="indeferido">
                                         <div class="modal-body p-6">
@@ -308,7 +310,7 @@
                                         </div>
                                         <button type="button" class="btn-close btn-close-white opacity-75 hover:opacity-100 transition-opacity" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form action="{{ route('coordinator.return', $forwarding->id) }}" method="POST">
+                                    <form action="{{ $routePrefix === 'painel' ? route('painel.return', ['cargoSlug' => $cargoSlug, 'forwarding' => $forwarding->id]) : route('diretor-geral.return', $forwarding->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-body p-6">
                                             <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -316,7 +318,8 @@
                                                     <i class="fas fa-info-circle text-blue-400 mt-0.5 mr-2"></i>
                                                     <div class="text-sm text-blue-700">
                                                         <p class="font-semibold">Este requerimento será devolvido para:</p>
-                                                        <p>CRADT - Coordenação de Registros Acadêmicos, Diplomação e Turnos</p>                                                    </div>
+                                                        <p>CRADT - Coordenação de Registros Acadêmicos, Diplomação e Turnos</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                             
@@ -668,4 +671,4 @@
     @include('components.reforward-modal', ['forwarding' => $forwarding])
 
     @endforeach
-</x-app-coordinator-layout>
+</x-app-diretor-geral-layout>

@@ -50,25 +50,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'TEACHERuser',
-            'username' => 'PROFuser',
-            'email' => 'prof@prof.com',
+            'name' => 'Diretor Geral',
+            'username' => 'diretor',
+            'email' => 'diretor@diretor.com',
             'password' => '12345678',
             'cpf' => '725.426.889-02',
             'rg' => '9235528',
-            'matricula' => 'PROF001',
-            'role'=> 'Professor',
-        ]);
-
-        User::factory()->create([
-            'name' => 'COORDINATORuser',
-            'username' => 'COORDuser',
-            'email' => 'coord@coord.com',
-            'password' => '12345678',
-            'cpf' => '725.426.889-03',
-            'rg' => '9235529',
-            'matricula' => 'COORD001',
-            'role'=> 'Coordenador',
+            'matricula' => 'DIR001',
+            'role'=> 'Diretor Geral',
         ]);
 
         $this->call([  

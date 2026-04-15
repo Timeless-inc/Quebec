@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
@@ -16,14 +17,22 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!Auth::check()) { 
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
 
-        $user = Auth::user(); 
+        $user = Auth::user();
 
-        if ($user->role === 'Cradt') {
+        // 1. Super-acesso para Cradt e Diretor Geral
+        if (in_array($user->role, ['Cradt', 'Diretor Geral'])) {
             return $next($request);
+        }
+
+        if (in_array('Diretor Geral', $roles)) {
+            $isDynamic = Role::where('label', $user->role)->exists();
+            if ($isDynamic) {
+                return $next($request);
+            }
         }
 
         if (in_array($user->role, $roles)) {

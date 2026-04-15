@@ -12,124 +12,133 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ProfileChangeRequestController;
-use App\Http\Controllers\CoordinatorController;
-use App\Http\Controllers\CoordinatorReportController;
-use App\Http\Controllers\ProfessorReportController;
-use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ForwardingController;
+use App\Http\Controllers\DiretorGeralController;
+use App\Http\Controllers\RoleController;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
-// Rota pública para verificação de atualizações 
-
 
 //Geral - Rotas Públicas
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+Route::get('/dashboard', function (Request $request) {
     $user = $request->user();
 
-    if ($user->role === 'Cradt' || $user->role === 'Manager') {
-        // Redireciona usando o nome da rota
+    if (in_array($user->role, ['Cradt', 'Manager'])) {
         return redirect()->route('cradt');
-    } else if ($user->role === 'Coordenador') {
-        return redirect()->route('coordinator.dashboard');
-    } else if ($user->role === 'Professor') {
-        return redirect()->route('professor.dashboard');
     }
 
+    if ($user->isDiretorGeral()) {
+        return redirect()->route('diretor-geral.dashboard');
+    }
 
-    return (new DashboardController())->index();
+    if ($user->role === 'Aluno') {
+        return (new DashboardController())->index();
+    }
+
+    $allDynamicRoles = Role::pluck('label')->toArray();
+    if (in_array($user->role, $allDynamicRoles)) {
+        return redirect()->route('painel.dashboard', [
+            'cargoSlug' => $user->getRouteSlug(),
+        ]);
+    }
+
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('login')->withErrors([
+        'email' => 'Seu cargo ("' . $user->role . '") não tem acesso ao sistema. Contacte o administrador.',
+    ]);
 })
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// Rotas comuns a todos os usuários autenticados
+
+// ─────────────────────────────────────────────
+//  Rotas comuns a todos os usuários autenticados
+// ─────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    // Rotas para gerenciamento de perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rota para solicitar atualização de perfil
     Route::post('/profile/request-update', [ProfileController::class, 'requestUpdate'])->name('profile.request-update');
 
-    // Rota para verificar duplicidade de perfil
-    Route::get('/profile/check-duplicate', function(Request $request) {
-        $field = $request->input('field');
-        $value = $request->input('value');
+    Route::get('/profile/check-duplicate', function (Request $request) {
+        $field  = $request->input('field');
+        $value  = $request->input('value');
         $userId = Auth::id();
-        
+
         if (!in_array($field, ['cpf', 'rg', 'matricula'])) {
             return response()->json(['error' => 'Campo inválido'], 400);
         }
-        
+
         $exists = \App\Models\User::where($field, $value)
             ->where('id', '!=', $userId)
             ->exists();
-        
+
         return response()->json(['exists' => $exists]);
     })->middleware('auth')->name('profile.check-duplicate');
 
-    // Rotas para gerenciamento de notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);
 });
 
-// Rotas específicas para Alunos e CRADT (compartilhadas)
-Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Manager,Coordenador,Professor'])->group(function () {
+// ─────────────────────────────────────────────
+//  Rotas compartilhadas: Aluno, Cradt, Diretor Geral + cargos dinâmicos
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Diretor Geral'])->group(function () {
     Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
     Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
     Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
     Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
 });
+
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
-Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'create'])->name('application');
+    Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'create'])->name('application');
     Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
     Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
     Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
 });
 
-Route::middleware(['auth', 'verified', 'role:Cradt,Manager,Coordenador,Professor'])->group(function () {
-// Justificativas e atualização de status
+// Justificativas e status — Cradt, Diretor Geral (+ cargos dinâmicos via super-acesso do middleware)
+Route::middleware(['auth', 'verified', 'role:Cradt,Diretor Geral'])->group(function () {
     Route::get('/justificativas', [JustificativaController::class, 'index'])->name('justificativas.index');
     Route::post('/justificativa/update-status/{id}', [JustificativaController::class, 'updateStatus'])->name('justificativa.updateStatus');
     Route::patch('/requerimentos/{id}/status', [ApplicationController::class, 'updateStatus'])->name('application.updateStatus');
     Route::post('/requerimento/{id}/marcar-como-visto', [ApplicationController::class, 'marcarComoVisto'])->name('requerimento.marcarComoVisto');
 });
 
-// Rotas específicas para CRADT e manager
-Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function () {
-    // Dashboard CRADT
+// ─────────────────────────────────────────────
+//  Rotas específicas para CRADT e Manager
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'verified', 'role:Cradt'])->group(function () {
     Route::get('/cradt/dashboard', [CradtController::class, 'index'])->name('cradt');
     Route::get('/cradt', [CradtController::class, 'index'])->name('cradt.index');
 
-    // Relatórios
     Route::get('/cradt/report/chart-data', [CradtReportController::class, 'getChartData'])->name('cradt.chart-data');
     Route::get('/cradt/report', [CradtReportController::class, 'index'])->name('cradt-report');
     Route::get('/getFilteredData', [CradtReportController::class, 'getFilteredData']);
     Route::get('/getCrossReport', [CradtReportController::class, 'getCrossReport'])->name('reports.getCrossReport');
     Route::get('/cradt/reports/user-pdf', [CradtReportController::class, 'generateUserPdf'])->name('cradt-report.user-pdf');
 
-    // Gerenciamento de usuários
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
 
-    // Cadastro de CRADT
     Route::get('/cradt/register', [CradtController::class, 'showRegistrationForm'])->name('cradt.register');
     Route::post('/cradt/register', [CradtController::class, 'register']);
 
-    // Eventos
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
@@ -137,26 +146,97 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Manager'])->group(function ()
     Route::post('/events/store-exception', [EventController::class, 'storeException'])->name('events.store-exception');
     Route::get('/api/users/search-by-cpf/{cpf}', [EventController::class, 'searchByCpf']);
     Route::post('/events/configure-required-types', [EventController::class, 'configureRequiredTypes'])->name('events.configure-required-types');
+
     Route::get('/api/requerimentos/check-updates', function () {
         $lastUpdate = \App\Models\ApplicationRequest::latest('updated_at')->value('updated_at');
-
         \Illuminate\Support\Facades\Log::info('Requisição de verificação recebida', [
             'last_update' => $lastUpdate,
-            'request_ip' => request()->ip()
+            'request_ip'  => request()->ip(),
         ]);
-
         return response()->json([
             'lastUpdate' => $lastUpdate,
-            'serverTime' => now()->toIso8601String()
+            'serverTime' => now()->toIso8601String(),
         ]);
     });
+
     Route::get('/document/{id}', function ($id) {
         $request = App\Models\ProfileChangeRequest::findOrFail($id);
-            return Storage::response($request->document_path);
+        return Storage::response($request->document_path);
     })->name('document.view')->middleware('auth');
 });
 
-// Rotas para gerenciamento de solicitações de alteração de perfil
+// ─────────────────────────────────────────────
+//  Rotas para Diretor Geral
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'role:Diretor Geral'])->prefix('diretor-geral')->group(function () {
+    Route::get('/dashboard', [DiretorGeralController::class, 'dashboard'])->name('diretor-geral.dashboard');
+    Route::get('/reports', [DiretorGeralController::class, 'reports'])->name('diretor-geral.reports');
+    Route::get('/reports/processed', [DiretorGeralController::class, 'generateProcessedReport'])->name('diretor-geral.reports.processed');
+    Route::get('/reports/period', [DiretorGeralController::class, 'generatePeriodReport'])->name('diretor-geral.reports.period');
+    Route::get('/reports/statistics', [DiretorGeralController::class, 'getStatistics'])->name('diretor-geral.reports.statistics');
+    Route::post('/process/{forwarding}', [DiretorGeralController::class, 'processRequest'])->name('diretor-geral.process');
+    Route::post('/return/{forwarding}', [DiretorGeralController::class, 'returnRequest'])->name('diretor-geral.return');
+
+    // Gerenciamento de usuários
+    Route::get('/users', [UserManagementController::class, 'index'])->name('diretor-geral.users.index');
+    Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('diretor-geral.users.edit');
+    Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('diretor-geral.users.update');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('diretor-geral.users.destroy');
+});
+
+// ─────────────────────────────
+//  Rotas dinâmicas: /painel/{cargoSlug}/ para cargos da tabela roles
+// ─────────────────────────────
+Route::middleware(['auth', 'role:Diretor Geral'])
+    ->prefix('painel/{cargoSlug}')
+    ->name('painel.')
+    ->group(function () {
+        Route::get('/dashboard', [DiretorGeralController::class, 'dynamicDashboard'])->name('dashboard');
+        Route::get('/reports', [DiretorGeralController::class, 'dynamicReports'])->name('reports');
+        Route::get('/reports/processed', [DiretorGeralController::class, 'generateProcessedReport'])->name('reports.processed');
+        Route::get('/reports/period', [DiretorGeralController::class, 'generatePeriodReport'])->name('reports.period');
+        Route::get('/reports/statistics', [DiretorGeralController::class, 'getStatistics'])->name('reports.statistics');
+        Route::post('/process/{forwarding}', [DiretorGeralController::class, 'processRequest'])->name('process');
+        Route::post('/return/{forwarding}', [DiretorGeralController::class, 'returnRequest'])->name('return');
+    });
+
+// ─────────────────────────────────────────────
+//  Gerenciamento de Cargos (somente Diretor Geral)
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'role:Diretor Geral'])->prefix('cargos')->name('cargos.')->group(function () {
+    Route::get('/', [RoleController::class, 'index'])->name('index');
+    Route::get('/create', [RoleController::class, 'create'])->name('create');
+    Route::post('/', [RoleController::class, 'store'])->name('store');
+    Route::get('/{cargo}/edit', [RoleController::class, 'edit'])->name('edit');
+    Route::put('/{cargo}', [RoleController::class, 'update'])->name('update');
+    Route::delete('/{cargo}', [RoleController::class, 'destroy'])->name('destroy');
+});
+
+// ─────────────────────────────────────────────
+//  Encaminhamentos — reencaminhar (Diretor Geral + cargos dinâmicos)
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'role:Diretor Geral'])->prefix('encaminhamentos')->group(function () {
+    Route::post('/reencaminhar/{forwarding}', [ForwardingController::class, 'forwardFromCoordinatorProfessor'])->name('forwardings.reforward.store');
+});
+
+// Processar / devolver via ForwardingController (genérico para Diretor Geral + cargos com acesso)
+Route::middleware(['auth', 'role:Diretor Geral'])->group(function () {
+    Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');
+    Route::post('/requerimentos/return/{forwarding}', [ForwardingController::class, 'returnRequest'])->name('requerimentos.return');
+});
+
+// ─────────────────────────────────────────────
+//  Encaminhamentos — CRADT envia (criar/listar)
+// ─────────────────────────────────────────────
+Route::middleware(['auth', 'role:Cradt'])->prefix('encaminhamentos')->group(function () {
+    Route::get('/create/{requerimento}', [ForwardingController::class, 'showForwardForm'])->name('forwardings.create');
+    Route::post('/store/{requerimento}', [ForwardingController::class, 'forward'])->name('forwardings.store');
+    Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
+});
+
+// ─────────────────────────────────────────────
+//  Solicitações de alteração de perfil
+// ─────────────────────────────────────────────
 Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.')->group(function () {
     Route::post('/{profileRequest}/approve', [ProfileChangeRequestController::class, 'approve'])->name('approve');
     Route::post('/{profileRequest}/reject', [ProfileChangeRequestController::class, 'reject'])->name('reject');
@@ -164,47 +244,7 @@ Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.
     Route::post('/group/{groupId}/reject', [ProfileChangeRequestController::class, 'rejectGroup'])->name('reject-group');
 });
 
-
 // Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
-
-// Rotas para Coordenador
-Route::middleware(['auth', 'role:Coordenador'])->prefix('coordenador')->group(function () {
-    Route::get('/dashboard', [CoordinatorController::class, 'dashboard'])->name('coordinator.dashboard');
-    Route::get('/reports', [CoordinatorReportController::class, 'index'])->name('coordinator.reports');
-    Route::get('/reports/processed', [CoordinatorReportController::class, 'generateProcessedReport'])->name('coordinator.reports.processed');
-    Route::get('/reports/period', [CoordinatorReportController::class, 'generatePeriodReport'])->name('coordinator.reports.period');
-    Route::get('/reports/statistics', [CoordinatorReportController::class, 'getStatistics'])->name('coordinator.reports.statistics');
-    Route::post('/process/{forwarding}', [CoordinatorController::class, 'processRequest'])->name('coordinator.process');
-    Route::post('/return/{forwarding}', [CoordinatorController::class, 'returnRequest'])->name('coordinator.return');
-});
-
-// Rotas para Professor
-Route::middleware(['auth', 'role:Professor'])->prefix('professor')->group(function () {
-    Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
-    Route::get('/reports', [ProfessorReportController::class, 'index'])->name('professor.reports');
-    Route::get('/reports/processed', [ProfessorReportController::class, 'generateProcessedReport'])->name('professor.reports.processed');
-    Route::get('/reports/period', [ProfessorReportController::class, 'generatePeriodReport'])->name('professor.reports.period');
-    Route::get('/reports/statistics', [ProfessorReportController::class, 'getStatistics'])->name('professor.reports.statistics');
-    Route::post('/process/{forwarding}', [ProfessorController::class, 'processRequest'])->name('professor.process');
-    Route::post('/return/{forwarding}', [ProfessorController::class, 'returnRequest'])->name('professor.return');
-});
-
-// Rotas para Encaminhamentos (CRADT)
-Route::middleware(['auth', 'role:Cradt,Manager'])->prefix('encaminhamentos')->group(function () {
-    Route::get('/create/{requerimento}', [ForwardingController::class, 'showForwardForm'])->name('forwardings.create');
-    Route::post('/store/{requerimento}', [ForwardingController::class, 'forward'])->name('forwardings.store');
-    Route::get('/', [ForwardingController::class, 'viewForwarded'])->name('forwardings.index');
-});
-
-// Rotas para Reencaminhamentos (Coordenador e Professor) - apenas POST
-Route::middleware(['auth', 'role:Coordenador,Professor'])->prefix('encaminhamentos')->group(function () {
-    Route::post('/reencaminhar/{forwarding}', [ForwardingController::class, 'forwardFromCoordinatorProfessor'])->name('forwardings.reforward.store');
-});
-
-Route::middleware(['auth', 'role:Professor,Coordenador'])->group(function () {
-    Route::post('/requerimentos/process/{forwarding}', [ForwardingController::class, 'processRequest'])->name('requerimentos.process');
-    Route::post('/requerimentos/return/{forwarding}', [ForwardingController::class, 'returnRequest'])->name('requerimentos.return');
-});
 
 require __DIR__ . '/auth.php';

@@ -96,13 +96,23 @@ class ProfileController extends Controller
         $fields = $request->input('fields');
         $user = Auth::user();
         
+        $fieldLabels = [
+            'name' => 'Nome',
+            'matricula' => 'Matrícula Principal',
+            'second_matricula' => 'Segunda Matrícula',
+            'cpf' => 'CPF',
+            'rg' => 'RG',
+        ];
+        
         foreach ($fields as $fieldName => $fieldData) {
             if (!isset($fieldData['selected']) || $fieldData['selected'] != 'on') {
                 continue;
             }
             
+            $label = $fieldLabels[$fieldName] ?? $fieldName;
+            
             if (!isset($fieldData['value']) || !$fieldData['value']) {
-                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
+                return back()->withErrors(["O valor para o campo <b>'{$label}'</b> é obrigatório."])->withInput();
             }
             
             if (in_array($fieldName, ['cpf', 'rg', 'matricula'])) {
@@ -111,15 +121,9 @@ class ProfileController extends Controller
                     ->first();
                     
                 if ($existingUser) {
-                    $fieldLabels = [
-                        'cpf' => 'CPF',
-                        'rg' => 'RG',
-                        'matricula' => 'Matrícula'
-                    ];
-                    
                     return back()
                         ->withInput()
-                        ->withErrors(["O {$fieldLabels[$fieldName]} '{$fieldData['value']}' já está registrado para outro usuário."]);
+                        ->withErrors(["O(a) <b>'{$label}'</b> '{$fieldData['value']}' já está registrado(a) para outro usuário."]);
                 }
             }
         }
@@ -133,13 +137,10 @@ class ProfileController extends Controller
             }
 
             $hasSelectedField = true;
-
-            if (!isset($fieldData['value']) || !$fieldData['value']) {
-                return back()->withErrors(["O valor para o campo '{$fieldName}' é obrigatório."]);
-            }
+            $label = $fieldLabels[$fieldName] ?? $fieldName;
 
             if (!$request->hasFile("fields.{$fieldName}.document")) {
-                return back()->withErrors(["O documento comprobatório para o campo '{$fieldName}' é obrigatório."]);
+                return back()->withErrors(["O documento comprobatório para o campo <b>'{$label}'</b> é obrigatório."])->withInput();
             }
 
             try {
@@ -160,7 +161,7 @@ class ProfileController extends Controller
                 
             } catch (\Exception $e) {
                 
-                return back()->withErrors(["Erro ao processar a solicitação para '{$fieldName}': " . $e->getMessage()]);
+                return back()->withErrors(["Erro ao processar a solicitação para <b>'{$label}'</b>: " . $e->getMessage()]);
             }
         }
 

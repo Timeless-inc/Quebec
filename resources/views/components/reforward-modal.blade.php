@@ -34,53 +34,40 @@
                     </div>
 
                     <!-- Seleção de Destinatário -->
-                    <div class="mb-4">
-                        <label for="receiver_type_{{ $forwarding->id }}" class="form-label">
-                            <i class="fas fa-users mr-2"></i>
-                            Tipo de Destinatário:
-                        </label>
-                        <select class="form-control" id="receiver_type_{{ $forwarding->id }}" onchange="toggleReforwardReceivers({{ $forwarding->id }})">
-                            <option value="">Selecione o tipo</option>
-                            <option value="coordenador">Coordenador</option>
-                            <option value="professor">Professor</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4" id="coordenador_reforward_group_{{ $forwarding->id }}" style="display: none;">
-                        <label for="coordenador_reforward_id_{{ $forwarding->id }}" class="form-label">
-                            <i class="fas fa-user-tie mr-2"></i>
-                            Coordenador:
-                        </label>
-                        <select class="form-control" id="coordenador_reforward_id_{{ $forwarding->id }}" name="receiver_id">
-                            <option value="">Selecione um coordenador</option>
-                            @php
-                                $coordenadores = App\Models\User::where('role', 'Coordenador')
-                                    ->where('id', '!=', Auth::id())
-                                    ->get();
-                            @endphp
-                            @foreach ($coordenadores as $coordenador)
-                                <option value="{{ $coordenador->id }}">{{ $coordenador->name }} - {{ $coordenador->email }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4" id="professor_reforward_group_{{ $forwarding->id }}" style="display: none;">
-                        <label for="professor_reforward_id_{{ $forwarding->id }}" class="form-label">
-                            <i class="fas fa-chalkboard-teacher mr-2"></i>
-                            Professor:
-                        </label>
-                        <select class="form-control" id="professor_reforward_id_{{ $forwarding->id }}" name="receiver_id">
-                            <option value="">Selecione um professor</option>
-                            @php
-                                $professores = App\Models\User::where('role', 'Professor')
-                                    ->where('id', '!=', Auth::id())
-                                    ->get();
-                            @endphp
-                            @foreach ($professores as $professor)
-                                <option value="{{ $professor->id }}">{{ $professor->name }} - {{ $professor->email }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    @php
+                        // Busca todos os usuários que podem receber encaminhamentos (excluindo o usuário atual)
+                        $forwardableLabels = \App\Models\Role::getAllForwardableRoleLabels();
+                        $availableReceivers = \App\Models\User::whereIn('role', $forwardableLabels)
+                            ->where('id', '!=', Auth::id())
+                            ->orderBy('role')
+                            ->orderBy('name')
+                            ->get()
+                            ->groupBy('role');
+                    @endphp
+
+                    @if($availableReceivers->isEmpty())
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Não há destinatários disponíveis para reencaminhamento. Verifique se existem usuários com cargos que permitem receber encaminhamentos.
+                        </div>
+                    @else
+                        <div class="mb-4">
+                            <label for="receiver_id_{{ $forwarding->id }}" class="form-label">
+                                <i class="fas fa-users mr-2"></i>
+                                Destinatário:
+                            </label>
+                            <select class="form-control" id="receiver_id_{{ $forwarding->id }}" name="receiver_id" required>
+                                <option value="">Selecione o destinatário</option>
+                                @foreach($availableReceivers as $roleName => $users)
+                                    <optgroup label="{{ $roleName }}">
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }} — {{ $user->email }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
 
                     <!-- Mensagem Interna -->
                     <div class="mb-4">
@@ -88,7 +75,7 @@
                             <i class="fas fa-comment mr-2"></i>
                             Mensagem Interna (opcional):
                         </label>
-                        <textarea class="form-control" id="internal_message_{{ $forwarding->id }}" name="internal_message" rows="3" 
+                        <textarea class="form-control" id="internal_message_{{ $forwarding->id }}" name="internal_message" rows="3"
                                   placeholder="Adicione uma mensagem interna para o destinatário..."></textarea>
                         <small class="form-text text-muted">
                             Esta mensagem será visível apenas para o destinatário do encaminhamento.
@@ -100,7 +87,7 @@
                         <i class="fas fa-times mr-2"></i>
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" @if($availableReceivers->isEmpty()) disabled @endif>
                         <i class="fas fa-paper-plane mr-2"></i>
                         Reencaminhar
                     </button>
@@ -109,29 +96,3 @@
         </div>
     </div>
 </div>
-
-<script>
-function toggleReforwardReceivers(id) {
-    const type = document.getElementById('receiver_type_' + id).value;
-    const coordGroup = document.getElementById('coordenador_reforward_group_' + id);
-    const profGroup = document.getElementById('professor_reforward_group_' + id);
-    const coordSelect = document.getElementById('coordenador_reforward_id_' + id);
-    const profSelect = document.getElementById('professor_reforward_id_' + id);
-    
-    if (coordGroup) coordGroup.style.display = 'none';
-    if (profGroup) profGroup.style.display = 'none';
-    
-    if (coordSelect) coordSelect.value = '';
-    if (profSelect) profSelect.value = '';
-    
-    if (type === 'coordenador' && coordGroup) {
-        coordGroup.style.display = 'block';
-        if (coordSelect) coordSelect.setAttribute('name', 'receiver_id');
-        if (profSelect) profSelect.removeAttribute('name');
-    } else if (type === 'professor' && profGroup) {
-        profGroup.style.display = 'block';
-        if (profSelect) profSelect.setAttribute('name', 'receiver_id');
-        if (coordSelect) coordSelect.removeAttribute('name');
-    }
-}
-</script>

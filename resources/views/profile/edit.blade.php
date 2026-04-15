@@ -168,7 +168,7 @@
         <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
             <ul class="list-disc pl-5">
                 @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+                <li>{!! $error !!}</li>
                 @endforeach
             </ul>
         </div>
@@ -651,6 +651,14 @@
                     if (!anyChecked) {
                         e.preventDefault();
                         return;
+                    }
+                    
+                    // Disable inputs from the hidden view to avoid payload conflicts
+                    const isMobile = window.innerWidth <= 768;
+                    if (isMobile) {
+                        profileForm.querySelectorAll('.desktop-view input, .desktop-view select, .desktop-view textarea').forEach(el => el.disabled = true);
+                    } else {
+                        profileForm.querySelectorAll('.mobile-view input, .mobile-view select, .mobile-view textarea').forEach(el => el.disabled = true);
                     }
                     
                     spinner.classList.remove('hidden');

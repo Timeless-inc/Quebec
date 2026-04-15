@@ -8,67 +8,44 @@
             <form action="{{ route('forwardings.store', $requerimento->id) }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="mb-4">
-                        <label for="receiver_type" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Destinatário:</label>
-                        <select class="form-control" id="receiver_type_{{ $requerimento->id }}" onchange="toggleReceivers({{ $requerimento->id }})">
-                            <option value="">Selecione o Cargo</option>
-                            <option value="coordenador">Coordenador</option>
-                            <option value="professor">Professor</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4" id="coordenador_group_{{ $requerimento->id }}" style="display: none;">
-                        <label for="coordenador_id_{{ $requerimento->id }}" class="block text-sm font-medium text-gray-700 mb-1">Coordenador:</label>
-                        <select class="form-control" id="coordenador_id_{{ $requerimento->id }}" name="receiver_id">
-                            <option value="">Selecione um coordenador</option>
-                            @php
-                                $coordenadores = App\Models\User::where('role', 'Coordenador')->get();
-                            @endphp
-                            @foreach ($coordenadores as $coordenador)
-                                <option value="{{ $coordenador->id }}">{{ $coordenador->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4" id="professor_group_{{ $requerimento->id }}" style="display: none;">
-                        <label for="professor_id_{{ $requerimento->id }}" class="block text-sm font-medium text-gray-700 mb-1">Professor:</label>
-                        <select class="form-control" id="professor_id_{{ $requerimento->id }}" name="receiver_id">
-                            <option value="">Selecione um professor</option>
-                            @php
-                                $professores = App\Models\User::where('role', 'Professor')->get();
-                            @endphp
-                            @foreach ($professores as $professor)
-                                <option value="{{ $professor->id }}">{{ $professor->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    @php
+                        // Busca todos os usuários que podem receber encaminhamentos
+                        $forwardableLabels = \App\Models\Role::getAllForwardableRoleLabels();
+                        $allReceivers = \App\Models\User::whereIn('role', $forwardableLabels)
+                            ->orderBy('role')
+                            ->orderBy('name')
+                            ->get()
+                            ->groupBy('role');
+                    @endphp
+
+                    @if($allReceivers->isEmpty())
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Não há destinatários disponíveis. Verifique se existem usuários com cargos que permitem receber encaminhamentos.
+                        </div>
+                    @else
+                        <div class="mb-4">
+                            <label for="receiver_id_fw_{{ $requerimento->id }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                Destinatário:
+                            </label>
+                            <select class="form-control" id="receiver_id_fw_{{ $requerimento->id }}" name="receiver_id" required>
+                                <option value="">Selecione o destinatário</option>
+                                @foreach($allReceivers as $roleName => $users)
+                                    <optgroup label="{{ $roleName }}">
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Encaminhar</button>
+                    <button type="submit" class="btn btn-primary" @if($allReceivers->isEmpty()) disabled @endif>Encaminhar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-function toggleReceivers(id) {
-    const type = document.getElementById('receiver_type_' + id).value;
-    
-    if (type === 'coordenador') {
-        document.getElementById('coordenador_group_' + id).style.display = 'block';
-        document.getElementById('professor_group_' + id).style.display = 'none';
-        document.getElementById('professor_id_' + id).name = '';
-        document.getElementById('coordenador_id_' + id).name = 'receiver_id';
-    } else if (type === 'professor') {
-        document.getElementById('professor_group_' + id).style.display = 'block';
-        document.getElementById('coordenador_group_' + id).style.display = 'none';
-        document.getElementById('coordenador_id_' + id).name = '';
-        document.getElementById('professor_id_' + id).name = 'receiver_id';
-    } else {
-        document.getElementById('coordenador_group_' + id).style.display = 'none';
-        document.getElementById('professor_group_' + id).style.display = 'none';
-    }
-}
-</script>
