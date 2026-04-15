@@ -52,6 +52,7 @@ class ProfileController extends Controller
             'cpf' => 'required|string|size:11|unique:users,cpf,' . $user->id,
             'rg' => 'required|string|max:15',
             'matricula' => 'required|string|max:20|unique:users,matricula,' . $user->id,
+            'second_matricula' => 'nullable|string|max:20|unique:users,second_matricula,' . $user->id,
         ]);
 
         $user->fill($validatedData);

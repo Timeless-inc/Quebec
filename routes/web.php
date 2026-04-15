@@ -27,6 +27,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function (Request $request) {
+    // Keep flashed notifications during redirect
+    session()->reflash();
+
     $user = $request->user();
 
     if (in_array($user->role, ['Cradt', 'Manager'])) {

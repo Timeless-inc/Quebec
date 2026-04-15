@@ -17,7 +17,7 @@ public function rules(): array
 {
     return [
         'name' => ['required', 'string', 'max:255'],
-        'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
     ];
 }
 

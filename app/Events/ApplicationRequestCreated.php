@@ -6,12 +6,12 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\ApplicationRequest;
 
-class ApplicationRequestCreated
+class ApplicationRequestCreated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -39,8 +39,28 @@ class ApplicationRequestCreated
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        $channels = [];
+        
+        $channels[] = new PrivateChannel('admin.requerimentos');
+
+        $aluno = \App\Models\User::where('cpf', $this->request->cpf)
+            ->orWhere('email', $this->request->email)
+            ->first();
+
+        if ($aluno) {
+            $channels[] = new PrivateChannel('App.Models.User.' . $aluno->id);
+        }
+
+        return $channels;
+    }
+
+    /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs(): string
+    {
+        return 'ApplicationRequestCreated';
     }
 }
