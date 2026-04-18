@@ -113,4 +113,21 @@ class SendStatusUpdateNotification implements ShouldQueue
             }
         }
     }
+
+    /**
+     * Formata o status para exibição legível.
+     */
+    private function formatStatus($status)
+    {
+        $statusMap = [
+            'pendente' => 'Pendente',
+            'em_andamento' => 'Em Andamento',
+            'deferido' => 'Deferido',
+            'indeferido' => 'Indeferido',
+            'encaminhado' => 'Encaminhado',
+            'devolvido' => 'Devolvido',
+        ];
+        
+        return $statusMap[$status] ?? ucfirst(str_replace('_', ' ', $status));
+    }
 }

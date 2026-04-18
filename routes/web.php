@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         return response()->json(['exists' => $exists]);
     })->middleware('auth')->name('profile.check-duplicate');
 
+    Route::get('/notifications/count', [NotificationController::class, 'unreadCount'])->name('notifications.count');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);
