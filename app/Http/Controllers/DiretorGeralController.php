@@ -191,6 +191,8 @@ class DiretorGeralController extends Controller
 
         $forwarding->save();
 
+        $oldStatus = $requerimento->status;
+
     if (in_array($request->action, ['finalizado', 'indeferido'])) {
             $requerimento->status       = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
@@ -224,6 +226,8 @@ class DiretorGeralController extends Controller
         }
     }
 
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, $request->action));
+
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
     }
 
@@ -239,6 +243,8 @@ class DiretorGeralController extends Controller
         $requerimento         = $forwarding->requerimento;
         $requerimento->status = 'devolvido';
         $requerimento->save();
+
+        $oldStatus = $requerimento->status;
 
         $aluno = \App\Models\User::where('cpf', $requerimento->cpf)
         ->orWhere('email', $requerimento->email)
@@ -264,6 +270,8 @@ class DiretorGeralController extends Controller
             ]);
         }
     }
+
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'devolvido'));
 
         return redirect()->back()->with('success', 'Requerimento devolvido para o CRADT com sucesso');
     }
