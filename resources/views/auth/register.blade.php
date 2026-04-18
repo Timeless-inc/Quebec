@@ -75,7 +75,7 @@
                                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="username" type="text" name="username" :value="old('username')" autofocus autocomplete="username" placeholder="fulano.silva"
+                                    <input id="username" type="text" name="username" value="{{ old('username') }}" autofocus autocomplete="username" placeholder="fulano.silva"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('username')" class="mt-1 text-xs" />
@@ -90,7 +90,7 @@
                                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                         </svg>
                                     </div>
-                                    <input id="name" type="text" name="name" :value="old('name')" autocomplete="name" placeholder="Fulano da Silva"
+                                    <input id="name" type="text" name="name" value="{{ old('name') }}" autocomplete="name" placeholder="Fulano da Silva"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs" />
@@ -107,7 +107,7 @@
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                     </svg>
                                 </div>
-                                <input id="email" type="email" name="email" :value="old('email')" autocomplete="email" placeholder="seuemail@gmail.com"
+                                <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" placeholder="seuemail@gmail.com"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs" />
@@ -122,7 +122,7 @@
                                         <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input id="matricula" type="text" name="matricula" :value="old('matricula')" placeholder="2025IFPEI0001"
+                                <input id="matricula" type="text" name="matricula" value="{{ old('matricula') }}" placeholder="2025IFPEI0001"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('matricula')" class="mt-1 text-xs" />
@@ -131,7 +131,7 @@
                         <!-- Checkbox para segunda matrícula -->
                         <div class="mt-2">
                             <div class="flex items-center">
-                                <input id="has_second_matricula" type="checkbox" name="has_second_matricula" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                                <input id="has_second_matricula" type="checkbox" name="has_second_matricula" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" {{ old('has_second_matricula') ? 'checked' : '' }}>
                                 <label for="has_second_matricula" class="ml-2 block text-sm text-gray-700">
                                     {{ __('Possuo uma segunda matrícula') }}
                                 </label>
@@ -139,7 +139,7 @@
                         </div>
 
                         <!-- Segunda Matrícula (condicional) -->
-                        <div id="second_matricula_container" class="hidden mt-4">
+                        <div id="second_matricula_container" class="{{ old('has_second_matricula') ? '' : 'hidden' }} mt-4">
                             <label for="second_matricula" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Segunda Matrícula') }}</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -147,7 +147,7 @@
                                         <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input id="second_matricula" type="text" name="second_matricula" :value="old('second_matricula')" placeholder="2025IFPEI0002"
+                                <input id="second_matricula" type="text" name="second_matricula" value="{{ old('second_matricula') }}" placeholder="2025IFPEI0002" {{ old('has_second_matricula') ? 'required' : '' }}
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('second_matricula')" class="mt-1 text-xs" />
@@ -164,9 +164,10 @@
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="rg" type="text" name="rg" :value="old('rg')" placeholder="00.000.000-0"
+                                    <input id="rg" type="text" name="rg" value="{{ old('rg') }}" placeholder="RG ou CIN (11 dígitos)"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
+                                <p class="mt-1 text-xs text-gray-500">Para CIN, informe os 11 dígitos do CPF.</p>
                                 <x-input-error :messages="$errors->get('rg')" class="mt-1 text-xs" />
                             </div>
 
@@ -179,7 +180,7 @@
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="cpf" type="text" name="cpf" :value="old('cpf')" placeholder="000.000.000-00"
+                                    <input id="cpf" type="text" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('cpf')" class="mt-1 text-xs" />
@@ -282,18 +283,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (jQuery) {
                 jQuery(document).ready(function($) {
-                    $("#rg").mask('00.000.000-0');
                     $("#cpf").mask('000.000.000-00', {
                         reverse: true
-                    });
-
-                    // Mostrar ou ocultar o campo de segunda matrícula
-                    $('#has_second_matricula').on('change', function() {
-                        if ($(this).is(':checked')) {
-                            $('#second_matricula_container').removeClass('hidden');
-                        } else {
-                            $('#second_matricula_container').addClass('hidden');
-                        }
                     });
                 });
             } else {
@@ -304,17 +295,25 @@
             const secondMatriculaContainer = document.getElementById('second_matricula_container');
             const secondMatriculaInput = document.getElementById('second_matricula');
 
+            function syncSecondMatriculaVisibility() {
+                if (!hasSecondMatriculaCheckbox || !secondMatriculaContainer || !secondMatriculaInput) {
+                    return;
+                }
+
+                if (hasSecondMatriculaCheckbox.checked) {
+                    secondMatriculaContainer.classList.remove('hidden');
+                    secondMatriculaInput.setAttribute('required', 'required');
+                    return;
+                }
+
+                secondMatriculaContainer.classList.add('hidden');
+                secondMatriculaInput.removeAttribute('required');
+                secondMatriculaInput.value = '';
+            }
+
             if (hasSecondMatriculaCheckbox && secondMatriculaContainer) {
-                hasSecondMatriculaCheckbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        secondMatriculaContainer.classList.remove('hidden');
-                        secondMatriculaInput.setAttribute('required', 'required');
-                    } else {
-                        secondMatriculaContainer.classList.add('hidden');
-                        secondMatriculaInput.removeAttribute('required');
-                        secondMatriculaInput.value = '';
-                    }
-                });
+                syncSecondMatriculaVisibility();
+                hasSecondMatriculaCheckbox.addEventListener('change', syncSecondMatriculaVisibility);
             }
 
             const passwordToggles = document.querySelectorAll('.password-toggle');
@@ -345,7 +344,6 @@
 
             form.addEventListener('submit', function(e) {
                 let valid = true;
-                let messages = [];
                 // Limpa mensagens antigas
                 document.querySelectorAll('.js-error-message').forEach(el => el.remove());
 
