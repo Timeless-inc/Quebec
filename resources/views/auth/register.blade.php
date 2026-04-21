@@ -61,7 +61,7 @@
                     <!-- Session Status -->
                     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                    <form method="POST" action="{{ route('register') }}" class="space-y-4">
+                    <form method="POST" action="{{ route('register') }}" class="space-y-4" novalidate>
                         @csrf
 
                         <!-- Nome de Usuário e Nome Completo lado a lado -->
@@ -155,7 +155,19 @@
 
                         <!-- RG e CPF lado a lado -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- RG -->
+                            <!-- RG / UF -->
+                            <div>
+                                <label for="rg_uf" class="block text-sm font-medium text-gray-700 mb-1">{{ __('UF') }}</label>
+                                <select id="rg_uf" name="rg_uf"
+                                    class="py-3 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
+                                    <option value="">UF</option>
+                                    @foreach ($states as $code => $name)
+                                        <option value="{{ $code }}" @selected(old('rg_uf') === $code)>{{ $code }}, {{ $name }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('rg_uf')" class="mt-1 text-xs" />
+                            </div>
+
                             <div>
                                 <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">{{ __('RG') }}</label>
                                 <div class="relative">
@@ -164,10 +176,10 @@
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
                                         </svg>
                                     </div>
-                                    <input id="rg" type="text" name="rg" value="{{ old('rg') }}" placeholder="RG ou CIN (11 dígitos)"
+                                    <input id="rg" type="text" name="rg" value="{{ old('rg') }}" placeholder="RG ou CIN"
+                                        minlength="7" maxlength="11" autocomplete="off" inputmode="text"
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
-                                <p class="mt-1 text-xs text-gray-500">Para CIN, informe os 11 dígitos do CPF.</p>
                                 <x-input-error :messages="$errors->get('rg')" class="mt-1 text-xs" />
                             </div>
 
@@ -291,6 +303,16 @@
                 console.error('jQuery não está carregado!');
             }
 
+            const rgInput = document.getElementById('rg');
+            if (rgInput) {
+                rgInput.addEventListener('input', function() {
+                    this.value = this.value
+                        .toUpperCase()
+                        .replace(/[^0-9A-Z]/g, '')
+                        .slice(0, 11);
+                });
+            }
+
             const hasSecondMatriculaCheckbox = document.getElementById('has_second_matricula');
             const secondMatriculaContainer = document.getElementById('second_matricula_container');
             const secondMatriculaInput = document.getElementById('second_matricula');
@@ -379,6 +401,7 @@
                     {id: 'name', label: 'Nome Completo'},
                     {id: 'email', label: 'E-mail'},
                     {id: 'matricula', label: 'Matrícula'},
+                    {id: 'rg_uf', label: 'UF'},
                     {id: 'rg', label: 'RG'},
                     {id: 'cpf', label: 'CPF'},
                     {id: 'password', label: 'Senha'},
@@ -391,6 +414,14 @@
                         valid = false;
                     }
                 });
+
+                // Segunda matrícula obrigatória quando checkbox estiver marcado
+                if (hasSecondMatriculaCheckbox && hasSecondMatriculaCheckbox.checked && secondMatriculaInput) {
+                    if (!secondMatriculaInput.value.trim()) {
+                        showError(secondMatriculaInput, 'O campo Segunda Matrícula é obrigatório.');
+                        valid = false;
+                    }
+                }
 
                 // Senha igual confirmação
                 const password = document.getElementById('password');

@@ -20,21 +20,21 @@ class ValidRgOrCin implements ValidationRule
             return;
         }
 
-        if (ctype_digit($identity) && strlen($identity) === 11) {
+        if ($this->normalizedCpf !== '' && $identity === $this->normalizedCpf) {
             if (!ValidCpf::isValid($identity)) {
                 $fail('A CIN informada é inválida.');
-                return;
-            }
-
-            if ($this->normalizedCpf !== '' && $identity !== $this->normalizedCpf) {
-                $fail('Quando a identidade for CIN, o número deve ser igual ao CPF informado.');
             }
 
             return;
         }
 
-        if (!preg_match('/^\d{6,13}[0-9X]$/', $identity)) {
-            $fail('Informe um RG válido ou uma CIN válida.');
+        if (strlen($identity) < 7 || strlen($identity) > 11) {
+            $fail('O RG deve ter entre 7 e 11 caracteres.');
+            return;
+        }
+
+        if (!preg_match('/^[0-9A-Z]+$/', $identity)) {
+            $fail('O RG deve conter apenas letras e números.');
         }
     }
 }
