@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'matricula',
         'second_matricula',
+        'rg_uf',
         'cpf',
         'rg',
         'password',
