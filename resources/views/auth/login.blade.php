@@ -64,7 +64,7 @@
 
                     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('login') }}" novalidate>
                         @csrf
 
                         <div class="mb-4">
@@ -75,11 +75,12 @@
                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                     </svg>
                                 </div>
-                                <input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username"
+                                <input id="email" type="email" name="email" value="{{ old('email') }}" autofocus autocomplete="username"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full"
                                     placeholder="E-mail">
                             </div>
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            <div id="js-error-email" class="text-red-500 text-sm mt-2"></div>
                         </div>
 
                         <div class="mb-4">
@@ -89,7 +90,7 @@
                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input id="password" type="password" name="password" required autocomplete="current-password"
+                                <input id="password" type="password" name="password" autocomplete="current-password"
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full"
                                     placeholder="Senha">
                                 <!-- Botão para mostrar/esconder senha -->
@@ -101,6 +102,7 @@
                                 </div>
                             </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                            <div id="js-error-password" class="text-red-500 text-sm mt-2"></div>
                         </div>
 
                         <!-- Lembrar senha e Esqueceu senha -->
@@ -146,8 +148,74 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
             const passwordToggles = document.querySelectorAll('.password-toggle');
             
+            // Função para mostrar erro
+            function showError(fieldId, message) {
+                const errorElement = document.getElementById(`js-error-${fieldId}`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+            
+            // Função para limpar erros
+            function clearError(fieldId) {
+                const errorElement = document.getElementById(`js-error-${fieldId}`);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.style.display = 'none';
+                }
+            }
+            
+            // Função para validar email
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Validação ao enviar o formulário
+            form.addEventListener('submit', function(e) {
+                let valid = true;
+                
+                // Limpar erros anteriores
+                clearError('email');
+                clearError('password');
+                
+                // Validar email
+                if (!emailInput.value.trim()) {
+                    showError('email', 'O campo E-mail é obrigatório.');
+                    valid = false;
+                } else if (!isValidEmail(emailInput.value.trim())) {
+                    showError('email', 'Informe um e-mail válido.');
+                    valid = false;
+                }
+                
+                // Validar senha
+                if (!passwordInput.value.trim()) {
+                    showError('password', 'O campo Senha é obrigatório.');
+                    valid = false;
+                }
+                
+                // Se houver erro, prevenir submit
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Limpar erro ao começar a digitar
+            emailInput.addEventListener('input', function() {
+                clearError('email');
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                clearError('password');
+            });
+            
+            // Toggle de mostrar/esconder senha
             passwordToggles.forEach(toggle => {
                 toggle.addEventListener('click', function() {
                     const targetId = this.getAttribute('data-target');

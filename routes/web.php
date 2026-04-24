@@ -15,6 +15,13 @@ use App\Http\Controllers\ProfileChangeRequestController;
 use App\Http\Controllers\ForwardingController;
 use App\Http\Controllers\DiretorGeralController;
 use App\Http\Controllers\RoleController;
+use App\Mail\ApplicationStatusChangedMail;
+use App\Mail\EventExpiringMail;
+use App\Mail\NewApplicationRequestMail;
+use App\Mail\NewEventMail;
+use App\Mail\WelcomeStudentMail;
+use App\Models\ApplicationRequest;
+use App\Models\Event;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -250,5 +257,98 @@ Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.
 
 // Rota compartilhada para visualização de justificativa de aluno
 Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
+
+// Preview local de templates de e-mail para ajustes visuais.
+if (app()->environment('local')) {
+    Route::middleware('auth')->prefix('dev/emails')->name('dev.emails.')->group(function () {
+        Route::get('/', function () {
+            $links = [
+                'Nova requisição' => route('dev.emails.new-request'),
+                'Status alterado' => route('dev.emails.request-status-changed'),
+                'Novo evento' => route('dev.emails.new-event'),
+                'Evento expirando (3 dias)' => route('dev.emails.event-expiring', ['days' => 3]),
+                'Evento expirando (amanhã)' => route('dev.emails.event-expiring', ['days' => 1]),
+                'Evento expirando (hoje)' => route('dev.emails.event-expiring', ['days' => 0]),
+                'Boas-vindas aluno' => route('dev.emails.welcome-student'),
+                'Reset de senha' => route('dev.emails.reset-password'),
+            ];
+
+            $html = '<h1>Preview de Emails</h1><ul style="line-height:1.9">';
+            foreach ($links as $label => $url) {
+                $html .= '<li><a href="' . e($url) . '">' . e($label) . '</a></li>';
+            }
+            $html .= '</ul>';
+
+            return response($html);
+        })->name('index');
+
+        Route::get('/new-request', function (Request $request) {
+            $fakeRequest = new ApplicationRequest();
+            $fakeRequest->id = now()->timestamp;
+            $fakeRequest->key = 'REQ-TESTE-' . now()->format('His');
+            $fakeRequest->tipoRequisicao = 'Exemplo de Requerimento';
+            $fakeRequest->created_at = now();
+            $fakeRequest->email = $request->user()->email;
+
+            $fakeUser = (object) [
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+            ];
+
+            return new NewApplicationRequestMail($fakeRequest, $fakeUser);
+        })->name('new-request');
+
+        Route::get('/request-status-changed', function (Request $request) {
+            $fakeRequest = new ApplicationRequest();
+            $fakeRequest->id = 1001;
+            $fakeRequest->key = 'REQ-STATUS-1001';
+            $fakeRequest->nomeCompleto = $request->user()->name;
+            $fakeRequest->tipoRequisicao = 'Aproveitamento de Disciplina';
+            $fakeRequest->created_at = now()->subDays(5);
+            $fakeRequest->updated_at = now();
+            $fakeRequest->email = $request->user()->email;
+
+            return new ApplicationStatusChangedMail($fakeRequest, 'pendente', 'em_andamento');
+        })->name('request-status-changed');
+
+        Route::get('/new-event', function (Request $request) {
+            $fakeEvent = new Event();
+            $fakeEvent->id = 2001;
+            $fakeEvent->title = 'Semana Acadêmica de Tecnologia';
+            $fakeEvent->start_date = now()->addDays(2);
+            $fakeEvent->end_date = now()->addDays(12);
+            $fakeEvent->requisition_type_id = 1;
+
+            return new NewEventMail($fakeEvent, $request->user());
+        })->name('new-event');
+
+        Route::get('/event-expiring', function (Request $request) {
+            $daysLeft = (int) $request->query('days', 3);
+            $daysLeft = max(0, min(30, $daysLeft));
+
+            $fakeEvent = new Event();
+            $fakeEvent->id = 3001;
+            $fakeEvent->title = 'Edital de Monitoria 2026.1';
+            $fakeEvent->start_date = now()->subDays(10);
+            $fakeEvent->end_date = now()->addDays($daysLeft);
+            $fakeEvent->requisition_type_id = 1;
+
+            return new EventExpiringMail($fakeEvent, $request->user(), $daysLeft);
+        })->name('event-expiring');
+
+        Route::get('/welcome-student', function (Request $request) {
+            return new WelcomeStudentMail($request->user());
+        })->name('welcome-student');
+
+        Route::get('/reset-password', function (Request $request) {
+            $url = url(route('password.reset', [
+                'token' => 'token-preview-email',
+                'email' => $request->user()->email,
+            ], false));
+
+            return view('emails.reset-password', ['url' => $url]);
+        })->name('reset-password');
+    });
+}
 
 require __DIR__ . '/auth.php';
