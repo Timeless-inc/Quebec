@@ -164,13 +164,15 @@ class ForwardingController extends Controller
 
         $forwarding->save();
 
-        if (in_array($request->action, ['finalizado', 'indeferido'])) {
+        if (in_array($request->action, ['finalizado', 'indeferido', 'deferido'])) {
             $oldStatus = $requerimento->status;
             $requerimento->status        = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
             
             event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, $request->action));
+        } else {
+            event(new \App\Events\ApplicationStatusChanged($requerimento, $requerimento->status, $requerimento->status));
         }
 
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
