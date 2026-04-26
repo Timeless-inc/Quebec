@@ -58,7 +58,7 @@ class NewForwardedRequirementMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.requirements.forwarded',
+            view: 'emails.new-forwarded-requirement',
             with: [
                 'recipient' => $this->recipient,
                 'applicationRequest' => $this->applicationRequest,
