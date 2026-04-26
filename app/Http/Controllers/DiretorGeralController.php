@@ -192,10 +192,16 @@ class DiretorGeralController extends Controller
 
         $forwarding->save();
 
-        if (in_array($request->action, ['finalizado', 'indeferido'])) {
+        if (in_array($request->action, ['finalizado', 'indeferido', 'deferido'])) {
+            $oldStatus = $requerimento->status;
             $requerimento->status       = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
+
+            event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, $request->action));
+        } else {
+            // Em caso de outra ação que modifique apenas o encaminhamento:
+            event(new \App\Events\ApplicationStatusChanged($requerimento, $requerimento->status, $requerimento->status));
         }
 
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
@@ -211,9 +217,12 @@ class DiretorGeralController extends Controller
         $forwarding->is_returned      = true;
         $forwarding->save();
 
+        $oldStatus = $forwarding->requerimento->status;
         $requerimento         = $forwarding->requerimento;
         $requerimento->status = 'devolvido';
         $requerimento->save();
+
+        event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'devolvido'));
 
         return redirect()->back()->with('success', 'Requerimento devolvido para o CRADT com sucesso');
     }
