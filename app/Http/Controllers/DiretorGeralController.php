@@ -160,8 +160,9 @@ class DiretorGeralController extends Controller
     }
 
 
-    public function processRequest(Request $request, $forwardingId)
+    public function processRequest(Request $request)
     {
+        $forwardingId = $request->route('forwarding');
         $forwarding   = RequestForwarding::findOrFail($forwardingId);
         $requerimento = $forwarding->requerimento;
 
@@ -200,8 +201,9 @@ class DiretorGeralController extends Controller
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
     }
 
-    public function returnRequest(Request $request, $forwardingId)
+    public function returnRequest(Request $request)
     {
+        $forwardingId = $request->route('forwarding');
         $forwarding = RequestForwarding::findOrFail($forwardingId);
 
         $forwarding->status           = 'devolvido';
