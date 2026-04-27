@@ -7,11 +7,13 @@ use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use App\Events\EventCreated;
 use App\Events\EventExpiring;
+use App\Events\RequirementForwarded;
 use App\Listeners\SendEventExpiringNotification;
 use App\Listeners\SendEventNotification;
 use App\Listeners\SendWelcomeEmail;
 use App\Listeners\SendNewRequestNotification;
 use App\Listeners\SendStatusUpdateNotification;
+use App\Listeners\SendForwardedRequirementNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -46,6 +48,10 @@ class EventServiceProvider extends ServiceProvider
 
         EventExpiring::class => [
             SendEventExpiringNotification::class,
+        ],
+
+        RequirementForwarded::class => [
+            SendForwardedRequirementNotification::class,
         ],
 
     ];

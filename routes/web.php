@@ -19,9 +19,11 @@ use App\Mail\ApplicationStatusChangedMail;
 use App\Mail\EventExpiringMail;
 use App\Mail\NewApplicationRequestMail;
 use App\Mail\NewEventMail;
+use App\Mail\NewForwardedRequirementMail;
 use App\Mail\WelcomeStudentMail;
 use App\Models\ApplicationRequest;
 use App\Models\Event;
+use App\Models\RequestForwarding;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -95,6 +97,7 @@ Route::middleware('auth')->group(function () {
         return response()->json(['exists' => $exists]);
     })->middleware('auth')->name('profile.check-duplicate');
 
+    Route::get('/notifications/count', [NotificationController::class, 'unreadCount'])->name('notifications.count');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification']);
@@ -264,6 +267,7 @@ if (app()->environment('local')) {
             $links = [
                 'Nova requisição' => route('dev.emails.new-request'),
                 'Status alterado' => route('dev.emails.request-status-changed'),
+                'Requerimento encaminhado' => route('dev.emails.new-forwarded-requirement'),
                 'Novo evento' => route('dev.emails.new-event'),
                 'Evento expirando (3 dias)' => route('dev.emails.event-expiring', ['days' => 3]),
                 'Evento expirando (amanhã)' => route('dev.emails.event-expiring', ['days' => 1]),
@@ -334,6 +338,33 @@ if (app()->environment('local')) {
 
             return new EventExpiringMail($fakeEvent, $request->user(), $daysLeft);
         })->name('event-expiring');
+
+        Route::get('/new-forwarded-requirement', function (Request $request) {
+            $fakeRequest = new ApplicationRequest();
+            $fakeRequest->id = 5001;
+            $fakeRequest->key = 'REQ-ENCAMINHADO-5001';
+            $fakeRequest->nomeCompleto = 'João Pedro da Silva';
+            $fakeRequest->email = 'joao.silva@exemplo.com';
+            $fakeRequest->cpf = '123.456.789-00';
+            $fakeRequest->tipoRequisicao = 'Aproveitamento de Disciplina';
+            $fakeRequest->campus = 'Campus Igarassu';
+            $fakeRequest->curso = 'Tecnólogo em Sistemas para Internet';
+            $fakeRequest->periodo = '6º Período';
+            $fakeRequest->turno = 'Vespertino';
+            $fakeRequest->motivo = 'Solicito aproveitamento da disciplina XYZ conforme documentação anexada.';
+            $fakeRequest->created_at = now()->subDays(3);
+            $fakeRequest->status = 'encaminhado';
+
+            $fakeForwarding = new \App\Models\RequestForwarding();
+            $fakeForwarding->id = 1001;
+            $fakeForwarding->created_at = now();
+            $fakeForwarding->sender = (object) [
+                'name' => 'CRADT',
+                'role' => 'Coordenadoria de Requerimentos',
+            ];
+
+            return new NewForwardedRequirementMail($request->user(), $fakeRequest, $fakeForwarding);
+        })->name('new-forwarded-requirement');
 
         Route::get('/welcome-student', function (Request $request) {
             return new WelcomeStudentMail($request->user());

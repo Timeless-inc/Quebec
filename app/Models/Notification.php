@@ -9,7 +9,7 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'message', 'is_read'];
+    protected $fillable = ['user_id', 'title', 'message', 'is_read', 'event_type', 'related_id'];
 
     public function user()
     {
@@ -22,10 +22,5 @@ class Notification extends Model
         return self::where('user_id', $userId)
             ->where('is_read', false)
             ->update(['is_read' => true]);
-    }
-
-    public function event()
-    {
-        return $this->belongsTo(Event::class, 'event_id');
     }
 }

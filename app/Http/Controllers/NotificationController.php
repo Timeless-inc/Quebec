@@ -10,26 +10,49 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Notification::where('user_id', Auth::id())
-            ->with('event') // Carrega o evento quando existe
             ->orderBy('created_at', 'desc')
             ->get();
 
-
-        // Formatar as notificações para incluir a data do evento (quando existir)
         $formattedNotifications = $notifications->map(function ($notification) {
             $data = $notification->toArray();
             
-            if ($notification->event) {
-                $data['event_date'] = $notification->event->date;
-            } else {
-                $data['event_date'] = null;
-            }
+            $data['event_type_label'] = $this->getEventTypeLabel($notification->event_type);
             
             return $data;
         });
 
         return response()->json($formattedNotifications);
     }
+
+    /**
+     * Retorna label legível para o tipo de evento.
+     */
+    private function getEventTypeLabel($eventType)
+    {
+        $labels = [
+            'request_created' => 'Novo Requerimento',
+            'status_changed' => 'Mudança de Status',
+            'event_created' => 'Novo Evento',
+            'event_expiring' => 'Evento Expirando',
+            'user_registered' => 'Bem-vindo',
+        ];
+        
+        return $labels[$eventType] ?? 'Notificação';
+    }
+
+    /**
+ * Retorna a contagem de notificações não lidas para o usuário autenticado.
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function unreadCount()
+{
+    $count = Notification::where('user_id', Auth::id())
+        ->where('is_read', false)
+        ->count();
+
+    return response()->json(['count' => $count]);
+}
 
     /**
  * Marca uma notificação como lida.

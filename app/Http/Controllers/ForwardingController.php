@@ -6,6 +6,8 @@ use App\Models\ApplicationRequest;
 use App\Models\RequestForwarding;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Notification;
+use App\Events\ApplicationStatusChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -51,7 +53,7 @@ class ForwardingController extends Controller
         ]);
 
         $requerimento = ApplicationRequest::findOrFail($requerimentoId);
-        RequestForwarding::create([
+        $newForwarding = RequestForwarding::create([
             'requerimento_id' => $requerimento->id,
             'sender_id'       => Auth::user()->id,
             'receiver_id'     => $request->receiver_id,
@@ -62,7 +64,37 @@ class ForwardingController extends Controller
         $requerimento->status = 'encaminhado';
         $requerimento->save();
 
+        $alunoUser = User::where('email', $requerimento->email)->first();
+        if ($alunoUser && $alunoUser->role === 'Aluno') {
+            try {
+                
+                Notification::create([
+                    'user_id' => $alunoUser->id,
+                    'title' => 'Requerimento Encaminhado',
+                    'message' => "Seu requerimento #" . $requerimento->id . " foi encaminhado para avaliação de um responsável. Você receberá uma notificação quando houver uma atualização.",
+                    'event_type' => 'requirement_forwarded',
+                    'related_id' => $requerimento->id,
+                    'is_read' => false
+                ]);
+                Log::info('Notificação de encaminhamento criada para aluno', [
+                    'user_id' => $alunoUser->id,
+                    'request_id' => $requerimento->id,
+                    'receiver_id' => $request->receiver_id
+                ]);
+            } catch (\Exception $notificationError) {
+                Log::error('Erro ao criar notificação de encaminhamento para aluno', [
+                    'message' => $notificationError->getMessage()
+                ]);
+            }
+        }
+
         event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'encaminhado'));
+
+        // Dispara evento de encaminhamento para notificar o destinatário
+        $recipientUser = User::find($request->receiver_id);
+        if ($recipientUser) {
+            event(new \App\Events\RequirementForwarded($newForwarding, $recipientUser));
+        }
 
         return redirect()->back()->with('success', 'Requerimento encaminhado com sucesso.');
     }
@@ -112,7 +144,7 @@ class ForwardingController extends Controller
         $originalForwarding->status = 'reencaminhado';
         $originalForwarding->save();
 
-        RequestForwarding::create([
+        $newForwarding = RequestForwarding::create([
             'requerimento_id'  => $requerimento->id,
             'sender_id'        => Auth::user()->id,
             'receiver_id'      => $request->receiver_id,
@@ -124,7 +156,37 @@ class ForwardingController extends Controller
         $requerimento->status = 'encaminhado';
         $requerimento->save();
 
+        $alunoUser = User::where('email', $requerimento->email)->first();
+        if ($alunoUser && $alunoUser->role === 'Aluno') {
+            try {
+                
+                Notification::create([
+                    'user_id' => $alunoUser->id,
+                    'title' => 'Requerimento Encaminhado',
+                    'message' => "Seu requerimento #" . $requerimento->id . " foi encaminhado para avaliação de um responsável. Você receberá uma notificação quando houver uma atualização.",
+                    'event_type' => 'requirement_forwarded',
+                    'related_id' => $requerimento->id,
+                    'is_read' => false
+                ]);
+                Log::info('Notificação de encaminhamento criada para aluno (reencaminhamento)', [
+                    'user_id' => $alunoUser->id,
+                    'request_id' => $requerimento->id,
+                    'receiver_id' => $request->receiver_id
+                ]);
+            } catch (\Exception $notificationError) {
+                Log::error('Erro ao criar notificação de reencaminhamento para aluno', [
+                    'message' => $notificationError->getMessage()
+                ]);
+            }
+        }
+
         event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'encaminhado'));
+
+        // Dispara evento de encaminhamento para notificar o novo destinatário
+        $recipientUser = User::find($request->receiver_id);
+        if ($recipientUser) {
+            event(new \App\Events\RequirementForwarded($newForwarding, $recipientUser));
+        }
 
         $user = Auth::user();
         if ($user->isDiretorGeral()) {
@@ -169,6 +231,33 @@ class ForwardingController extends Controller
             $requerimento->status        = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
+
+            $aluno = User::where('cpf', $requerimento->cpf)
+            ->orWhere('email', $requerimento->email)
+            ->first();
+
+        if ($aluno && $aluno->role === 'Aluno') {
+            try {
+                $statusText = $request->action === 'finalizado' ? 'Aprovado' : 'Indeferido';
+                Notification::create([
+                    'user_id' => $aluno->id,
+                    'title' => $statusText === 'Aprovado' ? 'Requerimento Deferido!' : 'Requerimento Indeferido!',
+                    'message' => "Seu requerimento #" . $requerimento->id . " foi " . ($statusText === 'Aprovado' ? 'DEFERIDO' : 'INDEFERIDO') . ".",
+                    'event_type' => 'status_' . $request->action,
+                    'related_id' => $requerimento->id,
+                    'is_read' => false
+                ]);
+                Log::info('Notificação pop-up criada com sucesso para aluno (Forwarding)', [
+                    'user_id' => $aluno->id,
+                    'request_id' => $requerimento->id,
+                    'status' => $request->action
+                ]);
+            } catch (\Exception $notificationError) {
+                Log::error('Erro ao criar notificação pop-up', [
+                    'message' => $notificationError->getMessage()
+                ]);
+            }
+        }
             
             event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, $request->action));
         }
@@ -189,6 +278,31 @@ class ForwardingController extends Controller
         $requerimento         = $forwarding->requerimento;
         $requerimento->status = 'devolvido';
         $requerimento->save();
+
+         $aluno = User::where('cpf', $requerimento->cpf)
+        ->orWhere('email', $requerimento->email)
+        ->first();
+
+    if ($aluno && $aluno->role === 'Aluno') {
+        try {
+            Notification::create([
+                'user_id' => $aluno->id,
+                'title' => 'Requerimento Devolvido',
+                'message' => 'Seu requerimento #' . $requerimento->id . ' foi devolvido  à CRADT. Você será notificado quando houver uma atualização.',
+                'is_read' => false,
+                'event_type' => 'request_returned',
+                'related_id' => $requerimento->id,
+            ]);
+            Log::info('Notificação de devolução criada para aluno (Forwarding)', [
+                'user_id' => $aluno->id,
+                'request_id' => $requerimento->id
+            ]);
+        } catch (\Exception $notificationError) {
+            Log::error('Erro ao criar notificação de devolução', [
+                'message' => $notificationError->getMessage()
+            ]);
+        }
+    }
 
         event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'devolvido'));
 

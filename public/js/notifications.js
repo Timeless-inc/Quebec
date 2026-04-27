@@ -320,3 +320,6 @@ function showTypedPopupNotification(message, type = 'success', duration = 5000) 
 
 // Inicializa o sistema de notificações ao carregar a página
 document.addEventListener('DOMContentLoaded', fetchNotifications);
+
+// Polling periódico a cada 5 segundos para verificar novas notificações
+setInterval(fetchNotifications, 5000);
