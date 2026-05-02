@@ -247,8 +247,6 @@ class DiretorGeralController extends Controller
         $requerimento->status = 'devolvido';
         $requerimento->save();
 
-        $oldStatus = $requerimento->status;
-
         $aluno = \App\Models\User::where('cpf', $requerimento->cpf)
         ->orWhere('email', $requerimento->email)
         ->first();
