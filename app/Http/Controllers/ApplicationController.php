@@ -264,34 +264,45 @@ public function create()
                 }
             }
 
-UserLastRequisitionData::updateOrCreate(
-    ['user_id' => Auth::id()],
-    [
-        'celular'         => $validatedData['celular'],
-        'orgao_expedidor' => $validatedData['orgaoExpedidor'],
-        'campus'          => $validatedData['campus'],
-        'situacao'        => $request->situacao, // Salve o valor numérico
-        'curso'           => $request->curso,    // Salve o valor numérico
-        'periodo'         => $request->periodo,  // Salve o valor numérico
-        'turno'           => $request->turno,    // Salve o valor (manhã/tarde)
-    ]
-);
-
             Log::info('Requerimento criado com sucesso', [
                 'id' => $applicationRequest->id,
                 'key' => $applicationRequest->key
             ]);
 
-            Log::info('Disparando evento ApplicationRequestCreated');
+            Log::info('Atualizando dados de última requisição do usuário');
+            UserLastRequisitionData::updateOrCreate(
+                ['user_id' => Auth::id()],
+                [
+                    'celular'         => $validatedData['celular'],
+                    'orgao_expedidor' => $validatedData['orgaoExpedidor'],
+                    'campus'          => $validatedData['campus'],
+                    'situacao'        => $request->situacao,
+                    'curso'           => $request->curso,
+                    'periodo'         => $request->periodo,
+                    'turno'           => $request->turno,
+                ]
+            );
+            Log::info('Dados de última requisição atualizados com sucesso');
+
+            Log::info('Criando notificação pop-up de confirmação (síncrono)');
+            try {
+                Notification::create([
+                    'user_id' => Auth::id(),
+                    'title' => 'Requerimento Criado',
+                    'message' => 'Seu requerimento #' . $applicationRequest->id . ' foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
+                    'is_read' => false,
+                    'event_type' => 'request_created',
+                    'related_id' => $applicationRequest->id,
+                ]);
+                Log::info('Notificação pop-up criada com sucesso (síncrono)');
+            } catch (\Exception $notificationError) {
+                Log::error('Erro ao criar notificação pop-up', [
+                    'message' => $notificationError->getMessage()
+                ]);
+            }
+            Log::info('Disparando evento ApplicationRequestCreated para processamento assíncrono');
             event(new ApplicationRequestCreated($applicationRequest));
             Log::info('Evento disparado com sucesso');
-
-            Notification::create([
-                'user_id' => Auth::id(),
-                'title' => 'Requerimento Criado',
-                'message' => 'Seu requerimento foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
-                'is_read' => false
-            ]);
 
             return redirect()->route('dashboard')
                 ->with('notification', [
@@ -523,23 +534,34 @@ UserLastRequisitionData::updateOrCreate(
         $requerimento->save();
 
         if ($olderStatus !== $newStatus) {
-            $statusText = $this->getStatusText($newStatus);
-
             $user = \App\Models\User::where('email', $requerimento->email)->first();
 
-            if ($user) {
-                Notification::create([
-                    'user_id' => $user->id,
-                    'email' => $requerimento->email,
-                    'requerimento_id' => $requerimento->id,
-                    'title' => 'Status Atualizado',
-                    'message' => "Seu requerimento teve o status atualizado para: {$statusText}!",
-                    'is_read' => false
-                ]);
+            if ($user && $user->role === 'Aluno') {
+                try {
+                    $statusText = $this->getStatusText($newStatus);
+                    Notification::create([
+                        'user_id' => $user->id,
+                        'title' => 'Status Atualizado',
+                        'message' => "Seu requerimento #" . $requerimento->id . " teve o status atualizado para: {$statusText}",
+                        'event_type' => 'status_changed',
+                        'related_id' => $requerimento->id,
+                        'is_read' => false
+                    ]);
+                    Log::info('Notificação pop-up de status criada com sucesso (síncrono)', [
+                        'user_id' => $user->id,
+                        'request_id' => $requerimento->id,
+                        'status' => $newStatus
+                    ]);
+                } catch (\Exception $notificationError) {
+                    Log::error('Erro ao criar notificação pop-up de status', [
+                        'message' => $notificationError->getMessage()
+                    ]);
+                }
             }
+            Log::info('Disparando evento ApplicationStatusChanged para envio de email');
+            event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
+            Log::info('Evento disparado com sucesso');
         }
-
-        event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');

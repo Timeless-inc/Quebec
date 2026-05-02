@@ -8,6 +8,7 @@ use App\Events\ApplicationRequestCreated;
 use App\Mail\NewApplicationRequestMail;
 use App\Models\User;
 use App\Models\ApplicationRequest;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -95,7 +96,6 @@ class SendNewRequestNotification implements ShouldQueue
             ]);
             
             Mail::to($request->email)->queue(new NewApplicationRequestMail($request, $user));
-            
             
             Cache::put($cacheKey, true, now()->addHours(24));
             Cache::put($recentEmailKey, true, now()->addHours(6));
