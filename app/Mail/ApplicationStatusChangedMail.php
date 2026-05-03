@@ -72,6 +72,8 @@ class ApplicationStatusChangedMail extends Mailable implements ShouldQueue
             'em_andamento' => 'Em Andamento',
             'deferido' => 'Deferido',
             'indeferido' => 'Indeferido',
+            'encaminhado' => 'Encaminhado',  
+            'devolvido' => 'Devolvido', 
         ];
         
         return $statusMap[$status] ?? ucfirst($status);

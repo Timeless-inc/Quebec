@@ -160,8 +160,9 @@ class DiretorGeralController extends Controller
     }
 
 
-    public function processRequest(Request $request, $forwardingId)
+    public function processRequest(Request $request)
     {
+        $forwardingId = $request->route('forwarding');
         $forwarding   = RequestForwarding::findOrFail($forwardingId);
         $requerimento = $forwarding->requerimento;
 
@@ -193,7 +194,7 @@ class DiretorGeralController extends Controller
 
         $oldStatus = $requerimento->status;
 
-    if (in_array($request->action, ['finalizado', 'indeferido'])) {
+    if (in_array($request->action, ['finalizado', 'indeferido', 'deferido'])) {
             $requerimento->status       = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
@@ -231,8 +232,9 @@ class DiretorGeralController extends Controller
         return redirect()->back()->with('success', 'Requerimento processado com sucesso.');
     }
 
-    public function returnRequest(Request $request, $forwardingId)
+    public function returnRequest(Request $request)
     {
+        $forwardingId = $request->route('forwarding');
         $forwarding = RequestForwarding::findOrFail($forwardingId);
 
         $forwarding->status           = 'devolvido';
@@ -240,11 +242,10 @@ class DiretorGeralController extends Controller
         $forwarding->is_returned      = true;
         $forwarding->save();
 
+        $oldStatus = $forwarding->requerimento->status;
         $requerimento         = $forwarding->requerimento;
         $requerimento->status = 'devolvido';
         $requerimento->save();
-
-        $oldStatus = $requerimento->status;
 
         $aluno = \App\Models\User::where('cpf', $requerimento->cpf)
         ->orWhere('email', $requerimento->email)

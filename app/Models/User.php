@@ -103,7 +103,7 @@ class User extends Authenticatable
         }
         
         $slug = $this->getRouteSlug();
-        if (\App\Models\Role::where('slug', $slug)->exists()) {
+        if (\App\Models\Role::where('label', $this->role)->exists()) {
             return route('painel.dashboard', ['cargoSlug' => $slug]);
         }
 
