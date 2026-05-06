@@ -30,7 +30,7 @@
                 <div class="flex items-center space-x-3">
                     <!-- Indicador de Status -->
                     <div class="w-3 h-3 rounded-full {{ 
-                        $status === 'em_andamento' || $status === 'encaminhado' ? 'bg-blue-500' : 
+                        $status === 'em_andamento' || $status === 'encaminhado' || $status === 'devolvido' ? 'bg-blue-500' :
                         ($status === 'finalizado' ? 'bg-emerald-500' : 
                         ($status === 'indeferido' ? 'bg-red-500' : 
                         ($status === 'pendente' ? 'bg-amber-500' : 'bg-gray-500'))) }} shadow-sm"></div>
@@ -51,6 +51,11 @@
                         @case('encaminhado')
                             <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
                                 <i class="fas fa-clock mr-1"></i>Em Andamento
+                            </span>
+                            @break
+                        @case('devolvido')
+                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
+                                <i class="fas fa-redo mr-1"></i>Em Andamento
                             </span>
                             @break
                         @case('finalizado')

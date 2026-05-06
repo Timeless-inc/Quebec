@@ -14,13 +14,17 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class DiretorGeralController extends Controller
 {
 
-
     public function dashboard()
     {
         $userId = Auth::id();
 
         $forwardings = RequestForwarding::where('receiver_id', $userId)
-            ->whereIn('status', ['encaminhado', 'devolvido'])
+            ->whereIn('id', function ($query) use ($userId) {
+                $query->selectRaw('MAX(id)')
+                    ->from('request_forwardings')
+                    ->where('receiver_id', $userId)
+                    ->groupBy('requerimento_id');
+            })
             ->with(['requerimento', 'sender'])
             ->latest()
             ->get();
@@ -42,7 +46,12 @@ class DiretorGeralController extends Controller
         }
 
         $forwardings = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['encaminhado', 'devolvido'])
+            ->whereIn('id', function ($query) use ($user) {
+                $query->selectRaw('MAX(id)')
+                    ->from('request_forwardings')
+                    ->where('receiver_id', $user->id)
+                    ->groupBy('requerimento_id');
+            })
             ->with(['requerimento', 'sender'])
             ->latest()
             ->get();
@@ -51,20 +60,6 @@ class DiretorGeralController extends Controller
         $routePrefix = 'painel';
 
         return view('diretor-geral.dashboard', compact('forwardings', 'roleName', 'cargoSlug', 'routePrefix'));
-    }
-
-    public function dynamicReports(string $cargoSlug)
-    {
-        $user = Auth::user();
-
-        if ($cargoSlug !== $user->getRouteSlug()) {
-            abort(403, 'Você não tem acesso a este painel.');
-        }
-
-        $roleName    = $user->role;
-        $routePrefix = 'painel';
-
-        return view('diretor-geral.reports', compact('roleName', 'cargoSlug', 'routePrefix'));
     }
 
     public function reports()
