@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Rules\ValidateUploadFile;
+use App\Services\ImageProcessor;
 
 class ProfileChangeRequestController extends Controller
 {
@@ -16,9 +18,20 @@ class ProfileChangeRequestController extends Controller
         $user = Auth::user();
         $fieldChanges = [];
 
+        // Valida documentos enviados
+        $rules = [];
+        if ($request->hasFile('name_document')) $rules['name_document'] = ['nullable','file', new ValidateUploadFile()];
+        if ($request->hasFile('matricula_document')) $rules['matricula_document'] = ['nullable','file', new ValidateUploadFile()];
+        if ($request->hasFile('cpf_document')) $rules['cpf_document'] = ['nullable','file', new ValidateUploadFile()];
+        if ($request->hasFile('rg_document')) $rules['rg_document'] = ['nullable','file', new ValidateUploadFile()];
+        if (!empty($rules)) {
+            $request->validate($rules);
+        }
+
         if ($request->filled('name') && $request->name !== $user->name) {
             if ($request->hasFile('name_document')) {
-                $path = $request->file('name_document')->store('profile-documents');
+                $processor = app(ImageProcessor::class);
+                $path = $processor->processAndStore($request->file('name_document'), 'profile-documents');
                 $fieldChanges[] = [
                     'user_id' => $user->id,
                     'field' => 'name',
@@ -32,7 +45,8 @@ class ProfileChangeRequestController extends Controller
 
         if ($request->filled('matricula') && $request->matricula !== $user->matricula) {
             if ($request->hasFile('matricula_document')) {
-                $path = $request->file('matricula_document')->store('profile-documents');
+                $processor = app(ImageProcessor::class);
+                $path = $processor->processAndStore($request->file('matricula_document'), 'profile-documents');
                 $fieldChanges[] = [
                     'user_id' => $user->id,
                     'field' => 'matricula',
@@ -46,7 +60,8 @@ class ProfileChangeRequestController extends Controller
 
         if ($request->filled('cpf') && $request->cpf !== $user->cpf) {
             if ($request->hasFile('cpf_document')) {
-                $path = $request->file('cpf_document')->store('profile-documents');
+                $processor = app(ImageProcessor::class);
+                $path = $processor->processAndStore($request->file('cpf_document'), 'profile-documents');
                 $fieldChanges[] = [
                     'user_id' => $user->id,
                     'field' => 'cpf',
@@ -60,7 +75,8 @@ class ProfileChangeRequestController extends Controller
 
         if ($request->filled('rg') && $request->rg !== $user->rg) {
             if ($request->hasFile('rg_document')) {
-                $path = $request->file('rg_document')->store('profile-documents');
+                $processor = app(ImageProcessor::class);
+                $path = $processor->processAndStore($request->file('rg_document'), 'profile-documents');
                 $fieldChanges[] = [
                     'user_id' => $user->id,
                     'field' => 'rg',

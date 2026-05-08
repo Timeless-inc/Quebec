@@ -53,8 +53,8 @@
 
                     <div class="mb-4">
                         <label for="anexos_finalizacao" class="block text-sm font-medium text-gray-700 mb-1">Anexar arquivos (opcional):</label>
-                        <input type="file" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 form-control-sm" id="anexos_finalizacao" name="anexos_finalizacao[]" multiple>
-                        <p class="text-xs text-gray-500 mt-1">Formatos aceitos: PDF, JPG, PNG (máx. 2MB por arquivo)</p>
+                        <input type="file" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 form-control-sm" id="anexos_finalizacao" name="anexos_finalizacao[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                        <p class="text-sm text-gray-500 mt-1">PDF até 5 MB. Imagens são otimizadas automaticamente quando necessário. Tipos permitidos: pdf, jpg, jpeg, png, webp.</p>
                     </div>
                 </div>
                 <div class="modal-footer p-4 border-t border-gray-200 flex justify-end gap-3">

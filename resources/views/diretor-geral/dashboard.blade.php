@@ -232,8 +232,8 @@
 
                                             <div class="mb-4">
                                                 <label for="anexos_{{ $forwarding->id }}" class="block text-sm font-semibold text-gray-700 mb-2">Anexar arquivos (opcional):</label>
-                                                <input type="file" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 form-control-sm transition-colors" id="anexos_{{ $forwarding->id }}" name="anexos[]" multiple>
-                                                <p class="text-xs text-gray-500 mt-2">Formatos aceitos: PDF, JPG, PNG (máx. 2MB por arquivo)</p>
+                                                <input type="file" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 form-control-sm transition-colors" id="anexos_{{ $forwarding->id }}" name="anexos[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="text-xs text-gray-500 mt-2">PDF até 5 MB. Imagens são otimizadas automaticamente quando necessário. Tipos permitidos: pdf, jpg, jpeg, png, webp.</p>
                                             </div>
                                         </div>
                                         <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">

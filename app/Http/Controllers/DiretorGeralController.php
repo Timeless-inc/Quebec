@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Rules\ValidateUploadFile;
+use App\Services\ImageProcessor;
 
 class DiretorGeralController extends Controller
 {
@@ -155,7 +157,7 @@ class DiretorGeralController extends Controller
     }
 
 
-    public function processRequest(Request $request)
+    public function processRequest(\App\Http\Requests\ValidateUploadsRequest $request)
     {
         $forwardingId = $request->route('forwarding');
         $forwarding   = RequestForwarding::findOrFail($forwardingId);
@@ -171,10 +173,16 @@ class DiretorGeralController extends Controller
             $requerimento->resposta = $request->resposta;
         }
 
+        // Validar anexos - permitir PDF até 5MB durante deferimento
+        $request->validate([
+            'anexos.*' => ['nullable','file', new ValidateUploadFile(['pdf' => config('validation.file_limits.pdf_process', 5120)])],
+        ]);
+
         if ($request->hasFile('anexos')) {
+            $processor = app(ImageProcessor::class);
             $anexos = [];
             foreach ($request->file('anexos') as $file) {
-                $path     = $file->store('requerimentos_arquivos', 'public');
+                $path     = $processor->processAndStore($file, 'anexos_finalizacao');
                 $anexos[] = $path;
             }
 

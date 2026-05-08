@@ -8,6 +8,16 @@
             <meta name="user-id" content="{{ auth()->id() }}">
             <meta name="user-role" content="{{ auth()->user()->role }}">
         @endauth
+        <meta name="upload-limits" content='{{ json_encode(array(
+            "image" => config("validation.file_limits.image_upload_max_kb"),
+            "pdf" => config("validation.file_limits.pdf"),
+            "total" => config("validation.file_limits.total_per_request_kb"),
+            "image_target_max_width" => config("validation.file_limits.image_target_max_width"),
+            "client_warning_kb" => config("validation.file_limits.client_warning_kb"),
+            "image_max_pixels" => config("validation.file_limits.image_max_pixels"),
+            "client_max_pixels" => config("validation.file_limits.client_max_pixels"),
+            "client_compress_trigger_kb" => config("validation.file_limits.client_compress_trigger_kb")
+        )) }}'>
 
         <title>{{ config('app.name', 'SRE') }}</title>
 

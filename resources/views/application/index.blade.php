@@ -50,6 +50,7 @@
                                             <div>
                                                 <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular <span id="celularRequired" class="text-red-500">*</span></label>
                                                 <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" required>
+                                                <p id="celularError" class="text-red-600 text-sm hidden mt-1">Informe um número de celular válido com 11 dígitos (somente números).</p>
                                             </div>
                                         </div>
 
@@ -158,12 +159,13 @@
                                             </div>
                                             <div class="relative">
                                                 <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
-                                                <div class="relative" id="anexoDropdown" style="display: none;">
+                                                <div class="relative hidden" id="anexoDropdown">
                                                     <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                                                         Anexos/informações (clique para abrir)
                                                     </button>
                                                     <div id="anexoDropdownMenu" class="hidden absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg p-4 max-h-80 overflow-y-auto border border-gray-200">
                                                     </div>
+                                                    <p id="anexoError" class="text-red-600 text-sm hidden mt-1">Arquivo obrigatório faltando ou excede o tamanho máximo permitido. Por favor, preencha todos os anexos necessários.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,6 +197,9 @@
     <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="dropdown-backdrop"></div>
 
     <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-md transform transition-transform duration-300 ease-in-out translate-x-full"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <script>
         function showNotification(message, type = 'info', duration = 5000) {
@@ -288,6 +293,47 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // apply mask to celular (format: (00) 0 0000-0000)
+            const celularInput = document.getElementById('celular');
+            function applyCelularMask() {
+                if (window.jQuery && jQuery().mask) {
+                    try {
+                        jQuery(function($){
+                            $('#celular').mask('(00) 0 0000-0000');
+                        });
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            }
+            applyCelularMask();
+
+            function validateCelular() {
+                if (!celularInput) return true;
+                const raw = celularInput.value.replace(/\D/g, '');
+                const errorEl = document.getElementById('celularError');
+                if (raw.length !== 11) {
+                    celularInput.classList.add('border-red-500', 'ring-red-200');
+                    if (errorEl) {
+                        errorEl.classList.remove('hidden');
+                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (81) 9 8694-5453).';
+                    }
+                    return false;
+                }
+                celularInput.classList.remove('border-red-500', 'ring-red-200');
+                if (errorEl) errorEl.classList.add('hidden');
+                return true;
+            }
+
+            if (celularInput) {
+                celularInput.addEventListener('input', function() {
+                    // keep only digits for validation
+                    const pos = this.selectionStart;
+                    const before = this.value;
+                    applyCelularMask();
+                    validateCelular();
+                });
+            }
             const tipoRequisicao = document.getElementById('tipoRequisicao');
             const anexoDropdown = document.getElementById('anexoDropdown');
             const anexoDropdownMenu = document.getElementById('anexoDropdownMenu');
@@ -314,6 +360,7 @@
                         }
                     }, 100);
                 }
+                    refreshAnexoValidation();
             });
 
             if (isMobile) {
@@ -538,7 +585,7 @@
             function updateAnexoDropdown() {
                 const selectedType = Number(tipoRequisicao.value);
 
-                anexoDropdown.style.display = 'none';
+                anexoDropdown.classList.add('hidden');
                 anexoDropdownMenu.innerHTML = '';
                 anexoDropdownMenu.classList.add('hidden');
                 if (isMobile) {
@@ -546,7 +593,7 @@
                 }
 
                 if (tiposComAnexos.includes(selectedType)) {
-                    anexoDropdown.style.display = 'block';
+                    anexoDropdown.classList.remove('hidden');
 
                     const headerDiv = document.createElement('div');
                     headerDiv.className = 'text-gray-500 text-base font-medium pb-2 mb-3 border-b border-gray-200';
@@ -596,12 +643,14 @@
                                 fieldDiv.innerHTML = `
                                     <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
                                     <div class="flex flex-col sm:flex-row items-start">
-                                        <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png" required>
+                                        <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" required>
+                                        <p class="text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
                                         <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
                                             Escolher arquivo
                                         </button>
-                                        <span class="text-gray-500 text-sm mt-2 sm:mt-0 sm:ml-3 file-name">Nenhum arquivo selecionado</span>
+                                        <span id="file-name-${uniqueId}" class="text-gray-500 text-sm mt-2 sm:mt-0 sm:ml-3 file-name">Nenhum arquivo selecionado</span>
                                     </div>
+                                    <p id="error_${uniqueId}" class="text-red-600 text-sm hidden mt-1">Este arquivo é obrigatório.</p>
                                 `;
                             }
                             fieldsContainer.appendChild(fieldDiv);
@@ -617,7 +666,10 @@
                 fileInputs.forEach(input => {
                     const uniqueId = input.id;
                     const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
-                    const fileNameSpan = fileButton.nextElementSibling;
+                    const fileNameSpan = document.getElementById(`file-name-${uniqueId}`);
+                    const errorEl = document.getElementById(`error_${uniqueId}`);
+
+                    if (!fileButton) return;
 
                     fileButton.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -627,10 +679,13 @@
                     input.addEventListener('change', (e) => {
                         e.stopPropagation();
                         if (input.files && input.files.length > 0) {
-                            fileNameSpan.textContent = input.files[0].name;
+                            if (fileNameSpan) fileNameSpan.textContent = input.files[0].name;
+                            if (errorEl) errorEl.classList.add('hidden');
+                            fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
                         } else {
-                            fileNameSpan.textContent = 'Nenhum arquivo selecionado';
+                            if (fileNameSpan) fileNameSpan.textContent = 'Nenhum arquivo selecionado';
                         }
+                        refreshAnexoValidation();
                     });
 
                     input.addEventListener('click', (e) => {
@@ -648,6 +703,46 @@
                         e.stopPropagation();
                     });
                 });
+            }
+
+            function refreshAnexoValidation() {
+                const selectedType = Number(tipoRequisicao.value);
+                const anexoErrorEl = document.getElementById('anexoError');
+                const camposDoTipo = anexosPorTipo[selectedType] || [];
+                let missingRequired = false;
+
+                camposDoTipo.forEach((field, index) => {
+                    if (field.type !== 'file') {
+                        return;
+                    }
+
+                    const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
+                    const input = document.getElementById(uniqueId);
+                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
+                    const errorEl = document.getElementById(`error_${uniqueId}`);
+
+                    if (!input) return;
+
+                    const isMissing = !input.files || input.files.length === 0;
+                    if (isMissing) {
+                        missingRequired = true;
+                        if (fileButton) fileButton.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+                        if (errorEl) errorEl.classList.remove('hidden');
+                    } else {
+                        if (fileButton) fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
+                        if (errorEl) errorEl.classList.add('hidden');
+                    }
+                });
+
+                if (tiposComAnexos.includes(selectedType) && missingRequired) {
+                    anexoButton.classList.add('border-red-500', 'ring-red-200');
+                    if (anexoErrorEl) anexoErrorEl.classList.remove('hidden');
+                } else {
+                    anexoButton.classList.remove('border-red-500', 'ring-red-200');
+                    if (anexoErrorEl) anexoErrorEl.classList.add('hidden');
+                }
+
+                return missingRequired;
             }
 
             document.addEventListener('click', function(e) {
@@ -700,6 +795,7 @@
                 tipoRequisicao.addEventListener('change', () => {
                     updateAnexoDropdown();
                     checkRequiredFields();
+                    refreshAnexoValidation();
                 });
             }
 
@@ -735,54 +831,57 @@
                     }
                 });
 
-                // Validação dos campos dinâmicos no dropdown
-                const selectedType = Number(tipoRequisicao.value);
-                if (tiposComAnexos.includes(selectedType)) {
-                    anexosPorTipo[selectedType].forEach((field, index) => {
-                        const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
-                        const input = document.getElementById(uniqueId);
-                        if (input) {
-                            if (field.type === 'text' || field.type === 'select') {
-                                if (!input.value || input.value.trim() === '') {
-                                    hasEmpty = true;
-                                    input.classList.add('border-red-500', 'ring-red-200');
-                                } else {
-                                    input.classList.remove('border-red-500', 'ring-red-200');
-                                }
-                            } else if (field.type === 'file' && tiposComAnexosObrigatorios.includes(selectedType)) {
-                                if (!input.files || input.files.length === 0) {
-                                    hasEmpty = true;
-                                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
-                                    if (fileButton) {
-                                        fileButton.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
-                                    }
-                                } else {
-                                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
-                                    if (fileButton) {
-                                        fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
-                                    }
-                                }
-                            }
-                        }
-                    });
+                const anexosFaltando = refreshAnexoValidation();
+                hasEmpty = hasEmpty || anexosFaltando;
 
-                    // Aplica ou remove o contorno vermelho no botão do dropdown
-                    if (hasEmpty) {
-                        anexoButton.classList.add('border-red-500', 'ring-red-200');
-                    } else {
-                        anexoButton.classList.remove('border-red-500', 'ring-red-200');
+                // Validação do formato do celular (11 dígitos numéricos)
+                if (typeof validateCelular === 'function') {
+                    if (!validateCelular()) {
+                        hasEmpty = true;
                     }
-                } else {
-                    anexoButton.classList.remove('border-red-500', 'ring-red-200');
                 }
 
                 if (hasEmpty) {
                     e.preventDefault();
                     showNotification('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.', 'error');
+                    return;
+                }
+
+                // Se passou na validação, normalizar celular
+                try {
+                    if (celularInput) {
+                        celularInput.value = celularInput.value.replace(/\D/g, '');
+                    }
+                } catch (err) {
+                    // ignore
+                }
+
+                // Desabilitar botão de envio
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.setAttribute('disabled', 'disabled');
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+                    const buttonText = submitBtn.querySelector('.button-text');
+                    const buttonSpinner = submitBtn.querySelector('svg');
+
+                    if (buttonText && buttonSpinner) {
+                        buttonText.textContent = 'Enviando...';
+                        buttonSpinner.classList.remove('hidden');
+                    }
                 }
             });
 
             form.addEventListener('submit', function(event) {
+                // strip formatting from celular before final submit so backend receives only digits
+                try {
+                    if (celularInput) {
+                        celularInput.value = celularInput.value.replace(/\D/g, '');
+                    }
+                } catch (e) {
+                    // ignore
+                }
+
                 if (document.querySelectorAll('.border-red-500').length > 0) {
                     return;
                 }
@@ -818,12 +917,6 @@
                     loadingOverlay.remove();
                 }
             }
-
-            document.getElementById('applicationForm').addEventListener('submit', function(e) {
-                showLoading();
-                
-                hideLoading();
-            });
 
             updateAnexoDropdown();
             initializeFileInputs();

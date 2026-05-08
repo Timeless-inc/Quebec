@@ -11,11 +11,14 @@ use App\Events\ApplicationRequestCreated;
 use App\Events\ApplicationStatusChanged;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Rules\ValidateUploadFile;
+use App\Services\ImageProcessor;
 use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 use App\Models\UserLastRequisitionData;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
 {
@@ -162,11 +165,15 @@ public function create()
     {
         try {
             Log::info('Iniciando criação de requerimento');
+            // Normalize celular early so validation can require exactly 11 dígitos
+            if ($request->has('celular')) {
+                $request->merge(['celular' => preg_replace('/\D/', '', $request->input('celular', ''))]);
+            }
 
             $validatedData = $request->validate([
                 'nomeCompleto'     => 'required|string|max:255',
                 'cpf'              => 'required|string|max:14',
-                'celular'          => 'required|string|max:15',
+                'celular'          => 'required|digits:11',
                 'email'            => 'required|email|max:255',
                 'rg'               => 'required|string|max:20',
                 'orgaoExpedidor'   => 'required|string|max:50',
@@ -177,7 +184,7 @@ public function create()
                 'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
                 'turno'            => 'required|in:manhã,tarde',
                 'tipoRequisicao' => 'required|integer|in:' . implode(',', array_keys($this->tiposRequisicao)),
-                'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+                'anexarArquivos.*' => ['nullable','file', new ValidateUploadFile()],
                 'observacoes'      => 'nullable|string|max:1000',
                 'dadosExtra.ano' => 'required_if:tipoRequisicao,6,13,14,19|string|max:4',
                 'dadosExtra.semestre' => 'required_if:tipoRequisicao,6,13,14,19|in:1,2',
@@ -188,6 +195,11 @@ public function create()
                 'dadosExtra.unidade' => 'required_if:tipoRequisicao,30,31,32|in:1ª unidade,2ª unidade,3ª unidade,4ª unidade,Exame Final',
                 'dadosExtra.ano_semestre' => 'required_if:tipoRequisicao,30,31,32|string|max:50',
             ]);
+
+            // Normalize celular: store only digits so formatting (spaces, parens, hyphens) is ignored
+            if (isset($validatedData['celular'])) {
+                $validatedData['celular'] = preg_replace('/\D/', '', $validatedData['celular']);
+            }
 
             $tipoId = $validatedData['tipoRequisicao'];
             if (in_array($tipoId, $this->getTiposComEventos())) {
@@ -221,13 +233,12 @@ public function create()
 
             Log::info('Dados validados com sucesso, processando arquivos');
 
-            // Processar anexos
+            // Processar anexos (normalizar/imagens + armazenar)
             $attachmentPaths = [];
+            $processor = app(ImageProcessor::class);
             if ($request->hasFile('anexarArquivos')) {
                 foreach ($request->file('anexarArquivos') as $key => $file) {
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = "Doc_{$key}_" . time() . ".{$extension}";
-                    $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
+                    $path = $processor->processAndStore($file, 'requerimentos_arquivos');
                     $attachmentPaths[$key] = $path;
                 }
             }
@@ -309,15 +320,26 @@ public function create()
                     'message' => 'Requerimento enviado com sucesso!',
                     'type' => 'success'
                 ]);
-        } catch (\Exception $e) {
-            Log::error('Erro ao processar requerimento', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+        } catch (ValidationException $e) {
+            // Return validation errors so user sees specific messages (file too large, invalid mime, etc.)
+            Log::warning('Validação ao processar requerimento', [
+                'message' => $e->getMessage()
             ]);
 
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Erro ao processar requerimento. Por favor, tente novamente.']);
+                ->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            Log::error('Erro ao processar requerimento', [
+                'message' => $e->getMessage(),
+                'class' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Provide a slightly more informative message while avoiding leaking internals
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Erro ao processar requerimento: ' . ($e->getMessage() ?: 'Por favor, tente novamente.')]);
         }
     }
 
@@ -393,15 +415,21 @@ public function create()
     {
         $requerimento = ApplicationRequest::findOrFail($id);
 
+        if ($request->has('celular')) {
+            $request->merge(['celular' => preg_replace('/\D/', '', $request->input('celular', ''))]);
+        }
+
         $validatedData = $request->validate([
             'orgaoExpedidor'   => 'required|string|max:50',
             'campus'           => 'required|string|max:255',
+            'matricula'        => 'required|string|max:50',
+            'celular'          => 'required|digits:11',
             'situacao'         => 'required|in:1,2,3',
             'curso'            => 'required|in:1,2,3,4,5',
             'periodo'          => 'required|in:1,2,3,4,5,6,7,8',
             'turno'            => 'required|in:manhã,tarde',
             'observacoes'      => 'nullable|string|max:1000',
-            'anexarArquivos.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'anexarArquivos.*' => ['nullable','file', new ValidateUploadFile()],
             'dadosExtra.ano' => 'required_if:tipoRequisicao,6,13,14,19|string|max:4',
             'dadosExtra.semestre' => 'required_if:tipoRequisicao,6,13,14,19|in:1,2',
             'dadosExtra.via' => 'required_if:tipoRequisicao,14|in:1ª via,2ª via',
@@ -417,9 +445,14 @@ public function create()
             $validatedData['curso'] = $this->cursos[$validatedData['curso']];
         }
 
+        if (isset($validatedData['celular'])) {
+            $validatedData['celular'] = preg_replace('/\D/', '', $validatedData['celular']);
+        }
+
         $attachmentPaths = $requerimento->anexarArquivos ? json_decode($requerimento->anexarArquivos, true) : [];
 
         if ($request->hasFile('anexarArquivos')) {
+            $processor = app(ImageProcessor::class);
             $counter = 1;
             foreach ($request->file('anexarArquivos') as $key => $file) {
                 if ($file) {
@@ -427,9 +460,7 @@ public function create()
                         Storage::disk('public')->delete($attachmentPaths[$key]);
                     }
 
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = "Doc_{$counter}_" . time() . ".{$extension}";
-                    $path = $file->storeAs('requerimentos_arquivos', $fileName, 'public');
+                    $path = $processor->processAndStore($file, 'requerimentos_arquivos');
                     $attachmentPaths[$key] = $path;
                     $counter++;
                 }
@@ -520,9 +551,10 @@ public function create()
             }
 
             if ($request->hasFile('anexos_finalizacao')) {
+                $processor = app(ImageProcessor::class);
                 $anexosPaths = [];
                 foreach ($request->file('anexos_finalizacao') as $file) {
-                    $path = $file->store('anexos_finalizacao', 'public');
+                    $path = $processor->processAndStore($file, 'anexos_finalizacao');
                     $anexosPaths[] = $path;
                 }
                 $requerimento->anexos_finalizacao = json_encode($anexosPaths);
