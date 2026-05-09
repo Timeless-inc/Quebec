@@ -46,7 +46,7 @@ class RoleController extends Controller
             return back()->withInput()->withErrors(['label' => 'Já existe um cargo com este nome.']);
         }
 
-        $fixedRoles = ['aluno', 'cradt', 'manager', 'diretor geral'];
+        $fixedRoles = ['aluno', 'cradt', 'diretor geral'];
         if (in_array(strtolower($validated['label']), $fixedRoles)) {
             return back()->withInput()->withErrors(['label' => 'Este nome é reservado para cargos do sistema.']);
         }
@@ -84,7 +84,7 @@ class RoleController extends Controller
             return back()->withInput()->withErrors(['label' => 'Já existe um cargo com este nome.']);
         }
 
-        $fixedRoles = ['aluno', 'cradt', 'manager', 'diretor geral'];
+        $fixedRoles = ['aluno', 'cradt', 'diretor geral'];
         if (in_array(strtolower($validated['label']), $fixedRoles)) {
             return back()->withInput()->withErrors(['label' => 'Este nome é reservado para cargos do sistema.']);
         }

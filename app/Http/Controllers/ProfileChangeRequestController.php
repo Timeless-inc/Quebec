@@ -103,7 +103,7 @@ class ProfileChangeRequestController extends Controller
     public function approve(Request $request, ProfileChangeRequest $profileRequest)
     {
         $user = Auth::user();
-        if ($user->role !== 'Cradt' && $user->role !== 'Manager') {
+        if ($user->role !== 'Cradt') {
             abort(403, 'Acesso não autorizado.');
         }
         
@@ -126,7 +126,7 @@ class ProfileChangeRequestController extends Controller
     public function reject(Request $request, ProfileChangeRequest $profileRequest)
     {
         $user = Auth::user();
-        if ($user->role !== 'Cradt' && $user->role !== 'Manager') {
+        if ($user->role !== 'Cradt') {
             abort(403, 'Acesso não autorizado.');
         }
         
@@ -140,7 +140,7 @@ class ProfileChangeRequestController extends Controller
     public function pendency(Request $request, ProfileChangeRequest $profileRequest)
     {
         $user = Auth::user();
-        if ($user->role !== 'Cradt' && $user->role !== 'Manager') {
+        if ($user->role !== 'Cradt') {
             abort(403, 'Acesso não autorizado.');
         }
         
@@ -154,7 +154,7 @@ class ProfileChangeRequestController extends Controller
     public function comment(Request $request, ProfileChangeRequest $profileRequest)
     {
         $user = Auth::user();
-        if ($user->role !== 'Cradt' && $user->role !== 'Manager') {
+        if ($user->role !== 'Cradt') {
             abort(403, 'Acesso não autorizado.');
         }
         

@@ -39,17 +39,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'MANAGERuser',
-            'username' => 'MANAGERuser',
-            'email' => 'manager@manager.com',
-            'password' => '12345678',
-            'cpf' => '725.426.889-01',
-            'rg' => '9235527',
-            'matricula' => 'CRADT001',
-            'role'=> 'Manager',
-        ]);
-
-        User::factory()->create([
             'name' => 'Diretor Geral',
             'username' => 'diretor',
             'email' => 'diretor@diretor.com',

@@ -1,5 +1,5 @@
 <?php
-
+//orfão
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationRequest;

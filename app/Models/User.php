@@ -72,7 +72,7 @@ class User extends Authenticatable
 
     public function hasAdminAccess(): bool
     {
-        return in_array($this->role, ['Cradt', 'Manager', 'Diretor Geral']);
+        return in_array($this->role, ['Cradt', 'Diretor Geral']);
     }
 
     public function canReceiveForwardings(): bool
@@ -92,7 +92,7 @@ class User extends Authenticatable
 
     public function getDashboardRoute(): string
     {
-        if (in_array($this->role, ['Cradt', 'Manager'])) {
+        if (in_array($this->role, ['Cradt'])) {
             return route('cradt');
         }
         if ($this->isDiretorGeral()) {

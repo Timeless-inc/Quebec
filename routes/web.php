@@ -41,7 +41,7 @@ Route::get('/dashboard', function (Request $request) {
 
     $user = $request->user();
 
-    if (in_array($user->role, ['Cradt', 'Manager'])) {
+    if (in_array($user->role, ['Cradt'])) {
         return redirect()->route('cradt');
     }
 
@@ -132,7 +132,7 @@ Route::middleware(['auth', 'verified', 'role:Cradt,Diretor Geral'])->group(funct
 });
 
 // ─────────────────────────────────────────────
-//  Rotas específicas para CRADT e Manager
+//  Rotas específicas para CRADT
 // ─────────────────────────────────────────────
 Route::middleware(['auth', 'verified', 'role:Cradt'])->group(function () {
     Route::get('/cradt/dashboard', [CradtController::class, 'index'])->name('cradt');

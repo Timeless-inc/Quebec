@@ -48,7 +48,21 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">Requerimentos Encaminhados para Você</h3>
+                        <h3 class="font-semibold text-xl text-gray-800 leading-tight mb-2">Requerimentos Encaminhados para Você</h3>
+
+                    <div class="flex flex-wrap items-center space-x-2 filter-container">
+                        <a href="?status=todos" class="px-3 py-1 text-sm text-white border-gray-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'todos' ? 'bg-gray-800 shadow-md' : 'bg-gray-600 hover:bg-gray-300' }}" data-status="todos">
+                            Todos
+                        </a>
+                        <a href="?status=em_aberto" class="px-3 py-1 text-sm text-white border-blue-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'em_aberto' ? 'bg-blue-800 shadow-md' : 'bg-blue-600 hover:bg-blue-400' }}" data-status="em_aberto">
+                            Em Aberto
+                        </a>
+                        <a href="?status=processados" class="px-3 py-1 text-sm text-white border-green-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'processados' ? 'bg-green-800 shadow-md' : 'bg-green-600 hover:bg-green-200' }}" data-status="processados">
+                            Processados
+                        </a>
+                        <a href="?status=devolvidos" class="px-3 py-1 text-sm text-white border-pink-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'devolvidos' ? 'bg-pink-800 shadow-md' : 'bg-pink-600 hover:bg-pink-200' }}" data-status="devolvidos">
+                            Devolvidos
+                        </a>
                     </div>
 
                     @if ($forwardings->isEmpty())
