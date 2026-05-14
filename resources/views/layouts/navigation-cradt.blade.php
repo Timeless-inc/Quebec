@@ -35,7 +35,7 @@
                 </button> -->
 
                 <!-- User Dropdown Menu -->
-                <div x-data="{ open: false }" class="ml-3 relative">
+                <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
                     <div>
                         <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
                             Olá, <strong class="ml-1">{{ Auth::user()->username }}</strong>
@@ -52,7 +52,6 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        @click.away="open = false"
                         class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-50 border border-gray-200"
                         style="display: none;">
 

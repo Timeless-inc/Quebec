@@ -25,7 +25,7 @@ class RoleController extends Controller
     public function create()
     {
         $this->requireDiretorGeral();
-        return view('cargos.create');
+        return redirect()->route('cargos.index')->with('openCreateRoleModal', true);
     }
 
     public function store(Request $request)
