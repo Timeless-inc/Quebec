@@ -20,7 +20,7 @@ class DiretorGeralController extends Controller
     {
         switch ($status) {
             case 'em_aberto':
-                return ['encaminhado', 'reencaminhado', 'pendente'];
+                return ['em_andamento', 'encaminhado', 'pendente'];
             case 'processados':
                 return ['finalizado', 'indeferido'];
             case 'devolvidos':
@@ -46,7 +46,9 @@ class DiretorGeralController extends Controller
         // Aplicar filtro de status
         if ($status !== 'todos') {
             $statusList = $this->getStatusGroupFilter($status);
-            $query->whereIn('status', $statusList);
+            $query->whereHas('requerimento', function ($requerimentoQuery) use ($statusList) {
+                $requerimentoQuery->whereIn('status', $statusList);
+            });
         }
 
         $forwardings = $query->with(['requerimento', 'sender'])
@@ -82,7 +84,9 @@ class DiretorGeralController extends Controller
         // Aplicar filtro de status
         if ($status !== 'todos') {
             $statusList = $this->getStatusGroupFilter($status);
-            $query->whereIn('status', $statusList);
+            $query->whereHas('requerimento', function ($requerimentoQuery) use ($statusList) {
+                $requerimentoQuery->whereIn('status', $statusList);
+            });
         }
 
         $forwardings = $query->with(['requerimento', 'sender'])
@@ -98,7 +102,28 @@ class DiretorGeralController extends Controller
 
     public function reports()
     {
-        return view('diretor-geral.reports');
+        $user = Auth::user();
+
+        return view('diretor-geral.reports', [
+            'roleName' => $user->role,
+            'cargoSlug' => $user->getRouteSlug(),
+            'routePrefix' => 'diretor-geral',
+        ]);
+    }
+
+    public function dynamicReports(string $cargoSlug)
+    {
+        $user = Auth::user();
+
+        if ($cargoSlug !== $user->getRouteSlug()) {
+            abort(403, 'Voce nao tem acesso a estes relatorios.');
+        }
+
+        return view('diretor-geral.reports', [
+            'roleName' => $user->role,
+            'cargoSlug' => $cargoSlug,
+            'routePrefix' => 'painel',
+        ]);
     }
 
     public function getStatistics()

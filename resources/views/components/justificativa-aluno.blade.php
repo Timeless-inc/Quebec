@@ -18,6 +18,17 @@
 ])
 
 <div class="justificativa-item relative" id="justificativa-{{ $id }}" data-status="{{ $status }}">
+    @php
+        $visualStatus = in_array($status, ['encaminhado', 'devolvido']) ? 'em_andamento' : ($status ?? 'em_andamento');
+        $statusMeta = [
+            'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Andamento'],
+            'finalizado' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Finalizado'],
+            'indeferido' => ['dot' => 'bg-red-500', 'badge' => 'text-red-700 bg-red-100 border border-red-200', 'icon' => 'fa-times-circle', 'label' => 'Indeferido'],
+            'pendente' => ['dot' => 'bg-amber-500', 'badge' => 'text-amber-700 bg-amber-100 border border-amber-200', 'icon' => 'fa-exclamation-circle', 'label' => 'Pendente'],
+        ];
+        $currentStatusMeta = $statusMeta[$visualStatus] ?? ['dot' => 'bg-gray-500', 'badge' => 'text-gray-700 bg-gray-100 border border-gray-200', 'icon' => 'fa-question-circle', 'label' => ucfirst($visualStatus)];
+    @endphp
+
     @if(isset($requerimento) && now()->diffInDays($requerimento->created_at) < 7)
         <span class="absolute -top-2 -right-2 px-2 py-1 text-xs font-semibold text-white bg-emerald-500 rounded-lg shadow-lg z-10">Novo</span>
     @endif
@@ -29,11 +40,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <!-- Indicador de Status -->
-                    <div class="w-3 h-3 rounded-full {{ 
-                        $status === 'em_andamento' || $status === 'encaminhado' || $status === 'devolvido' ? 'bg-blue-500' :
-                        ($status === 'finalizado' ? 'bg-emerald-500' : 
-                        ($status === 'indeferido' ? 'bg-red-500' : 
-                        ($status === 'pendente' ? 'bg-amber-500' : 'bg-gray-500'))) }} shadow-sm"></div>
+                    <div class="w-3 h-3 rounded-full {{ $currentStatusMeta['dot'] }} shadow-sm"></div>
                     
                     <div>
                         <h3 class="text-md font-semibold text-gray-900 truncate max-w-xs">{{ $tipoRequisicao }}</h3>
@@ -42,38 +49,9 @@
 
                 <!-- Badge de Status -->
                 <div class="flex items-center space-x-2">
-                    @switch($status ?? 'em_andamento')
-                        @case('em_andamento')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
-                                <i class="fas fa-clock mr-1"></i>Em Andamento
-                            </span>
-                            @break
-                        @case('encaminhado')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
-                                <i class="fas fa-clock mr-1"></i>Em Andamento
-                            </span>
-                            @break
-                        @case('devolvido')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
-                                <i class="fas fa-redo mr-1"></i>Em Andamento
-                            </span>
-                            @break
-                        @case('finalizado')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full border border-emerald-200">
-                                <i class="fas fa-check-circle mr-1"></i>Finalizado
-                            </span>
-                            @break
-                        @case('indeferido')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full border border-red-200">
-                                <i class="fas fa-times-circle mr-1"></i>Indeferido
-                            </span>
-                            @break
-                        @case('pendente')
-                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full border border-amber-200">
-                                <i class="fas fa-exclamation-circle mr-1"></i>Pendente
-                            </span>
-                            @break
-                    @endswitch
+                    <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium {{ $currentStatusMeta['badge'] }} rounded-full">
+                        <i class="fas {{ $currentStatusMeta['icon'] }} mr-1"></i>{{ $currentStatusMeta['label'] }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -283,19 +261,9 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end space-y-2">
-                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm 
-                                {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'text-blue-700 bg-blue-100 border border-blue-200' : 
-                                ($status === 'finalizado' ? 'text-emerald-700 bg-emerald-100 border border-emerald-200' : 
-                                ($status === 'indeferido' ? 'text-red-700 bg-red-100 border border-red-200' : 
-                                ($status === 'pendente' ? 'text-amber-700 bg-amber-100 border border-amber-200' : 'text-gray-700 bg-gray-100 border border-gray-200'))) }}">
-                                    <i class="fas {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'fa-clock' : 
-                                    ($status === 'finalizado' ? 'fa-check-circle' : 
-                                    ($status === 'indeferido' ? 'fa-times-circle' : 
-                                    ($status === 'pendente' ? 'fa-exclamation-circle' : 'fa-question-circle'))) }} mr-2"></i>
-                                    {{ $status === 'em_andamento' || $status === 'encaminhado' ? 'Em Andamento' : 
-                                    ($status === 'finalizado' ? 'Finalizado' : 
-                                    ($status === 'indeferido' ? 'Indeferido' : 
-                                    ($status === 'pendente' ? 'Pendente' : 'Desconhecido'))) }}
+                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm {{ $currentStatusMeta['badge'] }}">
+                                    <i class="fas {{ $currentStatusMeta['icon'] }} mr-2"></i>
+                                    {{ $currentStatusMeta['label'] }}
                                 </span>
                             </div>
                         </div>
