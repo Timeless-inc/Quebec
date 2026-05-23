@@ -26,6 +26,27 @@
 
             <!-- User Actions -->
             <div x-data="{ openModal: false }" class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Notifications -->
+                <div id="notification-icon" class="relative mr-3 flex items-center">
+                    <button
+                        type="button"
+                        onclick="toggleNotifications()"
+                        id="notification-button"
+                        class="relative flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-orange-500 shadow-sm transition-colors hover:bg-gray-50"
+                        aria-label="Notificações">
+                        <span id="notification-icon-bell" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
+                        </span>
+                        <span id="notification-count" class="absolute -right-1 -top-1 rounded-full bg-red-500 px-1 text-xs font-bold text-white" style="display: none;">
+                            0
+                        </span>
+                    </button>
+                    <div id="notification-list" class="absolute right-0 top-full z-50 mt-2 hidden w-72 rounded-md border border-gray-300 bg-white shadow-lg sm:w-80" style="display: none;">
+                        <ul id="notifications" class="max-h-80 overflow-y-auto p-2 text-sm text-green-700"></ul>
+                    </div>
+                </div>
 
                 <!-- Botão verde com ícone (Trigger) 
                 <button @click="openModal = true" type="button" class="mr-4 w-10 h-10 bg-green-500 hover:bg-green-600 rounded-md transition-colors flex items-center justify-center">
@@ -153,8 +174,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('cradt')" :active="request()->routeIs('cradt')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('cradt-report')" :active="request()->routeIs('cradt-report')">
+                {{ __('Relatórios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Usuários') }}
             </x-responsive-nav-link>
         </div>
 
@@ -167,7 +194,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Perfil') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -177,7 +204,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                         onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Sair') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

@@ -31,8 +31,10 @@
                         id="notification-button"
                         class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span id="notification-icon-bell" class="text-orange-500">
-                            🔔
+                        <span id="notification-icon-bell" class="text-orange-500" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
                         </span>
                         <!-- Contador de Notificações -->
                         <span id="notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">
@@ -96,8 +98,10 @@
                         onclick="toggleNotificationsMobile()"
                         class="text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span class="text-orange-500">
-                            🔔
+                        <span class="text-orange-500" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
                         </span>
                         <!-- Contador de Notificações Mobile -->
                         <span id="mobile-notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">

@@ -12,182 +12,220 @@
     @vite('resources/css/app.css')
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-slate-100">
     <x-app-layout>
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Preencha o formulário:
-            </h2>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-col gap-1">
+                    <h2 class="text-xl font-semibold leading-tight text-slate-900">
+                        Novo requerimento
+                    </h2>
+                    <p class="text-sm text-slate-500">Preencha os dados abaixo para registrar sua solicitação.</p>
+                </div>
+                <div class="rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                    <span class="font-medium text-slate-800">Campos com *</span> são obrigatórios.
+                </div>
+            </div>
         </x-slot>
-        <div class="py-6 md:py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-4 md:p-6 text-gray-900">
-                        <div class="bg-blue-200 overflow-hidden shadow-sm sm:rounded-lg border border-blue-200">
-                            <div class="container mx-auto mt-3 md:mt-5">
-                                <div class="p-4 md:p-6">
-                                    @if ($errors->any())
-                                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
-                                        <ul class="list-disc pl-5">
-                                            @foreach ($errors->all() as $error)
-                                            <li class="text-red-700">{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
+        @php
+            $fieldClass = 'block h-10 w-full rounded-md border-slate-300 bg-white py-2 text-sm leading-5 text-slate-900 transition placeholder:text-slate-400 focus:border-green-600 focus:ring-green-600';
+            $readonlyClass = 'block h-10 w-full cursor-not-allowed rounded-md border-slate-200 bg-slate-50 py-2 text-sm leading-5 text-slate-500 transition focus:border-slate-300 focus:ring-0';
+            $textareaClass = 'block w-full min-h-28 rounded-md border-slate-300 bg-white text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-green-600 focus:ring-green-600';
+            $labelClass = 'mb-1.5 flex h-5 items-center text-xs font-semibold uppercase text-slate-600';
+            $sectionTitleClass = 'border-l-4 border-green-600 pl-3 text-sm font-semibold uppercase text-green-700';
+            $autoBadgeClass = 'ml-1 inline-flex h-4 items-center rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase text-slate-400';
+        @endphp
+
+        <div class="py-8 md:py-10">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                    <div class="text-slate-900">
+                        @if ($errors->any())
+                        <div class="mx-5 mt-5 rounded-md border border-red-200 bg-red-50 p-4 sm:mx-6">
+                            <p class="text-sm font-semibold text-red-800">Revise os pontos abaixo:</p>
+                            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" class="divide-y divide-slate-200" novalidate>
+                            @csrf
+
+                            <section class="px-5 py-6 sm:px-6">
+                                <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                        <h4 class="{{ $sectionTitleClass }}">Dados pessoais</h4>
+                                        <p class="mt-1 pl-4 text-xs text-slate-400">Informações principais vinculadas ao seu usuário.</p>
                                     </div>
-                                    @endif
+                                    <p class="text-xs text-slate-400">Preenchido automaticamente pelo sistema</p>
+                                </div>
 
-                                    <form method="POST" action="{{ route('application.store') }}" enctype="multipart/form-data" id="applicationForm" class="space-y-6" novalidate>
-                                        @csrf
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                            <div>
-                                                <label for="nomeCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo <span id="nomeCompletoRequired" class="text-red-500 hidden">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
-                                            </div>
-                                            <div>
-                                                <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF <span id="cpfRequired" class="text-red-500 hidden">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
-                                            </div>
-                                            <div>
-                                                <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular <span id="celularRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" required>
-                                                <p id="celularError" class="text-red-600 text-sm hidden mt-1">Informe um número de celular válido com 11 dígitos (somente números).</p>
-                                            </div>
-                                        </div>
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                    <div>
+                                        <label for="nomeCompleto" class="{{ $labelClass }}">Nome Completo <span class="{{ $autoBadgeClass }}">Auto</span> <span id="nomeCompletoRequired" class="hidden text-red-500">*</span></label>
+                                        <input type="text" class="{{ $readonlyClass }}" id="nomeCompleto" name="nomeCompleto" value="{{ Auth::user()->name }}" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="cpf" class="{{ $labelClass }}">CPF <span class="{{ $autoBadgeClass }}">Auto</span> <span id="cpfRequired" class="hidden text-red-500">*</span></label>
+                                        <input type="text" class="{{ $readonlyClass }}" id="cpf" name="cpf" value="{{ Auth::user()->cpf }}" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="celular" class="{{ $labelClass }}">Celular <span id="celularRequired" class="text-red-500">*</span></label>
+                                        <input type="text" class="{{ $fieldClass }}" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" placeholder="(81) 9 8694-5453" required>
+                                        <p id="celularError" class="mt-1 hidden text-sm text-red-600">Informe um número de celular válido com 11 dígitos (somente números).</p>
+                                    </div>
+                                    <div>
+                                        <label for="email" class="{{ $labelClass }}">E-mail <span class="{{ $autoBadgeClass }}">Auto</span> <span id="emailRequired" class="hidden text-red-500">*</span></label>
+                                        <input type="email" class="{{ $readonlyClass }}" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="rg" class="{{ $labelClass }}">RG <span class="{{ $autoBadgeClass }}">Auto</span> <span id="rgRequired" class="hidden text-red-500">*</span></label>
+                                        <input type="text" class="{{ $readonlyClass }}" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="orgaoExpedidor" class="{{ $labelClass }}">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
+                                        <input type="text" class="{{ $fieldClass }}" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ old('orgaoExpedidor', $orgaoExpedidor ?? '') }}" placeholder="ex: SSP/PE">
+                                    </div>
+                                </div>
+                            </section>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                            <div>
-                                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span id="emailRequired" class="text-red-500 hidden">*</span></label>
-                                                <input type="email" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
-                                            </div>
-                                            <div>
-                                                <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">RG <span id="rgRequired" class="text-red-500 hidden">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="rg" name="rg" value="{{ Auth::user()->rg }}" readonly>
-                                            </div>
-                                            <div>
-                                                <label for="orgaoExpedidor" class="block text-sm font-medium text-gray-700 mb-1">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ old('orgaoExpedidor', $orgaoExpedidor ?? '') }}">
-                                            </div>
-                                        </div>
+                            <section class="px-5 py-6 sm:px-6">
+                                <div class="mb-4">
+                                    <h4 class="{{ $sectionTitleClass }}">Dados acadêmicos</h4>
+                                    <p class="mt-1 pl-4 text-xs text-slate-400">Informe o vínculo acadêmico relacionado a este requerimento.</p>
+                                </div>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                            <div>
-                                                <label for="campus" class="block text-sm font-medium text-gray-700 mb-1">Campus <span id="campusRequired" class="text-red-500">*</span></label>
-                                                <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="campus" name="campus" value="{{ old('campus', $campus ?? '') }}">
-                                            </div>
-                                            <div>
-                                                <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula <span id="matriculaRequired" class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula" name="matricula">
-                                                    <option value="">Selecione uma matrícula</option>
-                                                    <option value="{{ Auth::user()->matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->matricula ? 'selected' : '' }}>{{ Auth::user()->matricula }}</option>
-                                                    @if(Auth::user()->second_matricula)
-                                                    <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
-                                                    @endif
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label for="situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="situacao" name="situacao">
-                                                    <option value="">Escolha</option>
-<option value="1" {{ old('situacao', $situacao ?? '') == 1 ? 'selected' : '' }}>Matriculado</option>
-<option value="2" {{ old('situacao', $situacao ?? '') == 2 ? 'selected' : '' }}>Graduado</option>
-<option value="3" {{ old('situacao', $situacao ?? '') == 3 ? 'selected' : '' }}>Desvinculado</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                    <div>
+                                        <label for="campus" class="{{ $labelClass }}">Campus <span id="campusRequired" class="text-red-500">*</span></label>
+                                        <input type="text" class="{{ $fieldClass }}" id="campus" name="campus" value="{{ old('campus', $campus ?? '') }}" placeholder="ex: Igarassu">
+                                    </div>
+                                    <div>
+                                        <label for="matricula" class="{{ $labelClass }}">Número de Matrícula <span id="matriculaRequired" class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="matricula" name="matricula">
+                                            <option value="">Selecione uma matrícula</option>
+                                            <option value="{{ Auth::user()->matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->matricula ? 'selected' : '' }}>{{ Auth::user()->matricula }}</option>
+                                            @if(Auth::user()->second_matricula)
+                                            <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="situacao" class="{{ $labelClass }}">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="situacao" name="situacao">
+                                            <option value="">Escolha</option>
+                                            <option value="1" {{ old('situacao', $situacao ?? '') == 1 ? 'selected' : '' }}>Matriculado</option>
+                                            <option value="2" {{ old('situacao', $situacao ?? '') == 2 ? 'selected' : '' }}>Graduado</option>
+                                            <option value="3" {{ old('situacao', $situacao ?? '') == 3 ? 'selected' : '' }}>Desvinculado</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="curso" class="{{ $labelClass }}">Curso <span id="cursoRequired" class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="curso" name="curso">
+                                            <option value="">Escolha</option>
+                                            <option value="1" {{ old('curso', $curso ?? '') == 1 ? 'selected' : '' }}>Administração</option>
+                                            <option value="2" {{ old('curso', $curso ?? '') == 2 ? 'selected' : '' }}>Sistemas para Internet</option>
+                                            <option value="3" {{ old('curso', $curso ?? '') == 3 ? 'selected' : '' }}>Logística</option>
+                                            <option value="4" {{ old('curso', $curso ?? '') == 4 ? 'selected' : '' }}>Gestão de Qualidade</option>
+                                            <option value="5" {{ old('curso', $curso ?? '') == 5 ? 'selected' : '' }}>Informática para Internet</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="periodo" class="{{ $labelClass }}">Período <span id="periodoRequired" class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="periodo" name="periodo">
+                                            <option value="">Escolha</option>
+                                            <option value="1" {{ old('periodo', $periodo ?? '') == 1 ? 'selected' : '' }}>1º</option>
+                                            <option value="2" {{ old('periodo', $periodo ?? '') == 2 ? 'selected' : '' }}>2º</option>
+                                            <option value="3" {{ old('periodo', $periodo ?? '') == 3 ? 'selected' : '' }}>3º</option>
+                                            <option value="4" {{ old('periodo', $periodo ?? '') == 4 ? 'selected' : '' }}>4º</option>
+                                            <option value="5" {{ old('periodo', $periodo ?? '') == 5 ? 'selected' : '' }}>5º</option>
+                                            <option value="6" {{ old('periodo', $periodo ?? '') == 6 ? 'selected' : '' }}>6º</option>
+                                            <option value="7" {{ old('periodo', $periodo ?? '') == 7 ? 'selected' : '' }}>7º</option>
+                                            <option value="8" {{ old('periodo', $periodo ?? '') == 8 ? 'selected' : '' }}>8º</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="turno" class="{{ $labelClass }}">Turno <span id="turnoRequired" class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="turno" name="turno">
+                                            <option value="">Escolha</option>
+                                            <option value="manhã" {{ old('turno', $turno ?? '') == 'manhã' ? 'selected' : '' }}>Manhã</option>
+                                            <option value="tarde" {{ old('turno', $turno ?? '') == 'tarde' ? 'selected' : '' }}>Tarde</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </section>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                            <div>
-                                                <label for="curso" class="block text-sm font-medium text-gray-700 mb-1">Curso <span id="cursoRequired" class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="curso" name="curso">
-                                                    <option value="">Escolha</option>
-<option value="1" {{ old('curso', $curso ?? '') == 1 ? 'selected' : '' }}>Administração</option>
-<option value="2" {{ old('curso', $curso ?? '') == 2 ? 'selected' : '' }}>Sistemas para Internet</option>
-<option value="3" {{ old('curso', $curso ?? '') == 3 ? 'selected' : '' }}>Logística</option>
-<option value="4" {{ old('curso', $curso ?? '') == 4 ? 'selected' : '' }}>Gestão de Qualidade</option>
-<option value="5" {{ old('curso', $curso ?? '') == 5 ? 'selected' : '' }}>Informática para Internet</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Período <span id="periodoRequired" class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="periodo" name="periodo">
-                                                    <option value="">Escolha</option>
-<option value="1" {{ old('periodo', $periodo ?? '') == 1 ? 'selected' : '' }}>1º</option>
-<option value="2" {{ old('periodo', $periodo ?? '') == 2 ? 'selected' : '' }}>2º</option>
-<option value="3" {{ old('periodo', $periodo ?? '') == 3 ? 'selected' : '' }}>3º</option>
-<option value="4" {{ old('periodo', $periodo ?? '') == 4 ? 'selected' : '' }}>4º</option>
-<option value="5" {{ old('periodo', $periodo ?? '') == 5 ? 'selected' : '' }}>5º</option>
-<option value="6" {{ old('periodo', $periodo ?? '') == 6 ? 'selected' : '' }}>6º</option>
-<option value="7" {{ old('periodo', $periodo ?? '') == 7 ? 'selected' : '' }}>7º</option>
-<option value="8" {{ old('periodo', $periodo ?? '') == 8 ? 'selected' : '' }}>8º</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label for="turno" class="block text-sm font-medium text-gray-700 mb-1">Turno <span id="turnoRequired" class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="turno" name="turno">
-                                                    <option value="">Escolha</option>
-                                                    <option value="manhã" {{ old('turno', $turno ?? '') == 'manhã' ? 'selected' : '' }}>Manhã</option>
-                                                    <option value="tarde" {{ old('turno', $turno ?? '') == 'tarde' ? 'selected' : '' }}>Tarde</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                            <section class="px-5 py-6 sm:px-6">
+                                <div class="mb-4">
+                                    <h4 class="{{ $sectionTitleClass }}">Detalhes do requerimento</h4>
+                                    <p class="mt-1 pl-4 text-xs text-slate-400">Escolha o tipo de solicitação e adicione documentos ou observações quando necessário.</p>
+                                </div>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                                            <div>
-                                                <label for="tipoRequisicao" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Requisição <span class="text-red-500">*</span></label>
-                                                <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="tipoRequisicao" name="tipoRequisicao" required>
-                                                    <option value="">Selecione o tipo de requisição</option>
+                                <div class="space-y-5">
+                                    <div>
+                                        <label for="tipoRequisicao" class="{{ $labelClass }}">Tipo de Requisição <span class="text-red-500">*</span></label>
+                                        <select class="{{ $fieldClass }}" id="tipoRequisicao" name="tipoRequisicao" required>
+                                            <option value="">Selecione o tipo de requisição</option>
 
-                                                    <!-- Tipos disponíveis -->
-                                                    @foreach($tiposRequisicao as $id => $tipo)
-                                                    <option value="{{ $id }}">{{ $tipo }}</option>
-                                                    @endforeach
+                                            <!-- Tipos disponíveis -->
+                                            @foreach($tiposRequisicao as $id => $tipo)
+                                            <option value="{{ $id }}">{{ $tipo }}</option>
+                                            @endforeach
 
-                                                    <!-- Tipos indisponíveis (em vermelho) -->
-                                                    @if(isset($tiposIndisponiveis) && count($tiposIndisponiveis) > 0)
-                                                    <optgroup label="Indisponíveis no momento">
-                                                        @foreach($tiposIndisponiveis as $id => $tipo)
-                                                        <option value="{{ $id }}" class="text-red-500 italic" disabled>
-                                                            {{ $tipo }} (Indisponível)
-                                                        </option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                    @endif
-                                                </select>
-                                                <p class="text-gray-500 text-xs mt-1">
-                                                    Nota: Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
-                                                </p>
-                                            </div>
-                                            <div class="relative">
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
-                                                <div class="relative hidden" id="anexoDropdown">
-                                                    <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                                                        Anexos/informações (clique para abrir)
-                                                    </button>
-                                                    <div id="anexoDropdownMenu" class="hidden absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg p-4 max-h-80 overflow-y-auto border border-gray-200">
-                                                    </div>
-                                                    <p id="anexoError" class="text-red-600 text-sm hidden mt-1">Arquivo obrigatório faltando ou excede o tamanho máximo permitido. Por favor, preencha todos os anexos necessários.</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            <!-- Tipos indisponíveis (em vermelho) -->
+                                            @if(isset($tiposIndisponiveis) && count($tiposIndisponiveis) > 0)
+                                            <optgroup label="Indisponíveis no momento">
+                                                @foreach($tiposIndisponiveis as $id => $tipo)
+                                                <option value="{{ $id }}" class="text-red-500 italic" disabled>
+                                                    {{ $tipo }} (Indisponível)
+                                                </option>
+                                                @endforeach
+                                            </optgroup>
+                                            @endif
+                                        </select>
+                                        <p class="mt-2 text-xs text-slate-500">
+                                            Alguns tipos de requerimento só estão disponíveis durante períodos específicos.
+                                        </p>
+                                    </div>
 
-                                        <div>
-                                            <label for="observacoes" class="block text-sm font-medium text-gray-700 mb-1">Observações</label>
-                                            <textarea class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="observacoes" name="observacoes" rows="3"></textarea>
-                                        </div>
-
-                                        <div class="flex justify-end py-3 md:py-4">
-                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200" id="submitBtn">
-                                                <span class="button-text">Enviar</span>
-                                                <svg class="hidden ml-2 -mr-1 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    <div class="relative">
+                                        <div class="hidden" id="anexoDropdown">
+                                            <label class="{{ $labelClass }}">Documentos e informações</label>
+                                            <button type="button" id="anexoButton" aria-expanded="false" class="flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-white px-4 text-left text-sm font-medium text-slate-700 transition hover:border-green-500 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+                                                <span>Anexos e informações</span>
+                                                <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                                                 </svg>
                                             </button>
+                                            <div id="anexoDropdownMenu" class="relative z-50 mt-3 hidden max-h-96 w-full overflow-y-auto rounded-md border border-slate-200 bg-white p-4">
+                                            </div>
+                                            <p id="anexoError" class="mt-2 hidden text-sm text-red-600">Arquivo obrigatório faltando ou excede o tamanho máximo permitido. Por favor, preencha todos os anexos necessários.</p>
                                         </div>
-                                    </form>
+                                    </div>
+
+                                    <div>
+                                        <label for="observacoes" class="{{ $labelClass }}">Observações</label>
+                                        <textarea class="{{ $textareaClass }}" id="observacoes" name="observacoes" rows="4">{{ old('observacoes') }}</textarea>
+                                    </div>
                                 </div>
+                            </section>
+
+                            <div class="flex flex-col-reverse gap-3 bg-slate-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-6">
+                                <a href="{{ route('dashboard') }}" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-transparent bg-green-600 px-5 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2" id="submitBtn">
+                                    <span class="button-text">Enviar requerimento</span>
+                                    <svg class="hidden h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -347,11 +385,8 @@
             anexoButton.addEventListener('click', function(e) {
                 e.stopPropagation(); 
                 anexoDropdownMenu.classList.toggle('hidden');
-                
-                if (!anexoDropdownMenu.classList.contains('hidden') && isMobile) {
-                    dropdownBackdrop.classList.remove('hidden');
-                }
-                
+                anexoButton.setAttribute('aria-expanded', anexoDropdownMenu.classList.contains('hidden') ? 'false' : 'true');
+
                 if (!anexoDropdownMenu.classList.contains('hidden')) {
                     setTimeout(() => {
                         const firstInteractive = anexoDropdownMenu.querySelector('input, select, button:not([aria-hidden="true"])');
@@ -362,13 +397,6 @@
                 }
                     refreshAnexoValidation();
             });
-
-            if (isMobile) {
-                dropdownBackdrop.addEventListener('click', function() {
-                    anexoDropdownMenu.classList.add('hidden');
-                    dropdownBackdrop.classList.add('hidden');
-                });
-            }
 
             // Tipos de requerimento que precisam de informações adicionais ou anexos
             const tiposComAnexos = [1, 10, 15, 20, 21, 28, 30, 31, 32, 6, 13, 14, 19, 24];
@@ -588,6 +616,7 @@
                 anexoDropdown.classList.add('hidden');
                 anexoDropdownMenu.innerHTML = '';
                 anexoDropdownMenu.classList.add('hidden');
+                anexoButton.setAttribute('aria-expanded', 'false');
                 if (isMobile) {
                     dropdownBackdrop.classList.add('hidden');
                 }
@@ -596,7 +625,7 @@
                     anexoDropdown.classList.remove('hidden');
 
                     const headerDiv = document.createElement('div');
-                    headerDiv.className = 'text-gray-500 text-base font-medium pb-2 mb-3 border-b border-gray-200';
+                    headerDiv.className = 'border-b border-slate-200 pb-3 text-sm font-semibold text-slate-900';
                     const tipoDescricao = tipoRequisicao.options[tipoRequisicao.selectedIndex].text;
                     headerDiv.textContent = tipoDescricao || 'Informações Adicionais';
                     anexoDropdownMenu.appendChild(headerDiv);
@@ -606,11 +635,12 @@
 
                     if (isMobile) {
                         const closeButton = document.createElement('button');
-                        closeButton.className = 'w-full py-2 px-4 bg-gray-200 text-gray-700 rounded mb-4 text-sm font-medium';
+                        closeButton.className = 'mb-4 inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700';
                         closeButton.textContent = 'Fechar';
                         closeButton.addEventListener('click', function(e) {
                             e.preventDefault();
                             anexoDropdownMenu.classList.add('hidden');
+                            anexoButton.setAttribute('aria-expanded', 'false');
                             dropdownBackdrop.classList.add('hidden');
                         });
                         fieldsContainer.appendChild(closeButton);
@@ -621,12 +651,12 @@
                         anexosPorTipo[selectedType].forEach((field, index) => {
                             const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
                             const fieldDiv = document.createElement('div');
-                            fieldDiv.className = 'mb-4';
+                            fieldDiv.className = 'rounded-md border border-slate-200 bg-slate-50 p-3';
 
                             if (field.type === 'text') {
                                 fieldDiv.innerHTML = `
-                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
-                                    <input type="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" required>
+                                    <label for="${uniqueId}" class="mb-1.5 flex h-5 items-center text-xs font-semibold uppercase text-slate-600">${field.label} <span class="text-red-500">*</span></label>
+                                    <input type="text" class="block h-10 w-full rounded-md border-slate-300 bg-white py-2 text-sm leading-5 text-slate-900 focus:border-green-600 focus:ring-green-600" id="${uniqueId}" name="${field.name}" required>
                                 `;
                             } else if (field.type === 'select') {
                                 let optionsHtml = '<option value="">Selecione</option>';
@@ -634,23 +664,25 @@
                                     optionsHtml += `<option value="${option}">${option}</option>`;
                                 });
                                 fieldDiv.innerHTML = `
-                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
-                                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" required>
+                                    <label for="${uniqueId}" class="mb-1.5 flex h-5 items-center text-xs font-semibold uppercase text-slate-600">${field.label} <span class="text-red-500">*</span></label>
+                                    <select class="block h-10 w-full rounded-md border-slate-300 bg-white py-2 text-sm leading-5 text-slate-900 focus:border-green-600 focus:ring-green-600" id="${uniqueId}" name="${field.name}" required>
                                         ${optionsHtml}
                                     </select>
                                 `;
                             } else if (field.type === 'file') {
                                 fieldDiv.innerHTML = `
-                                    <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
-                                    <div class="flex flex-col sm:flex-row items-start">
+                                    <label for="${uniqueId}" class="mb-1.5 flex h-5 items-center text-xs font-semibold uppercase text-slate-600">${field.label} <span class="text-red-500">*</span></label>
+                                    <div class="space-y-3">
                                         <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" required>
-                                        <p class="text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
-                                        <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
+                                        <p class="text-xs leading-5 text-slate-500">Imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
+                                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                        <button type="button" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 file-button" data-input-id="${uniqueId}">
                                             Escolher arquivo
                                         </button>
-                                        <span id="file-name-${uniqueId}" class="text-gray-500 text-sm mt-2 sm:mt-0 sm:ml-3 file-name">Nenhum arquivo selecionado</span>
+                                        <span id="file-name-${uniqueId}" class="min-w-0 break-words text-sm text-slate-500 file-name">Nenhum arquivo selecionado</span>
+                                        </div>
                                     </div>
-                                    <p id="error_${uniqueId}" class="text-red-600 text-sm hidden mt-1">Este arquivo é obrigatório.</p>
+                                    <p id="error_${uniqueId}" class="mt-2 hidden text-sm text-red-600">Este arquivo é obrigatório.</p>
                                 `;
                             }
                             fieldsContainer.appendChild(fieldDiv);
@@ -745,18 +777,6 @@
                 return missingRequired;
             }
 
-            document.addEventListener('click', function(e) {
-                if (!anexoDropdownMenu.classList.contains('hidden') && 
-                    !anexoDropdownMenu.contains(e.target) && 
-                    e.target !== anexoButton &&
-                    !anexoButton.contains(e.target)) {
-                    anexoDropdownMenu.classList.add('hidden');
-                    if (isMobile) {
-                        dropdownBackdrop.classList.add('hidden');
-                    }
-                }
-            });
-
             function checkRequiredFields() {
                 const requiredFields = [
                     'celular', 'orgaoExpedidor', 'campus', 'matricula', 'situacao',
@@ -767,13 +787,7 @@
                     const input = document.getElementById(field);
                     const requiredMark = document.getElementById(`${field}Required`);
                     if (input && requiredMark) {
-                        if (input.tagName === 'SELECT') {
-                            const isEmpty = !input.value || input.value === '';
-                            requiredMark.classList.toggle('hidden', !isEmpty);
-                        } else if (input.type === 'text' || input.type === 'email') {
-                            const isEmpty = !input.value || input.value.trim() === '';
-                            requiredMark.classList.toggle('hidden', !isEmpty);
-                        }
+                        requiredMark.classList.remove('hidden');
                     }
                 });
             }

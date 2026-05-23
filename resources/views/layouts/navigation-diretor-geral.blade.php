@@ -52,10 +52,27 @@
 
             <!-- User Actions -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Badge de cargo -->
-                <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full mr-4">
-                    {{ Auth::user()->role }}
-                </span>
+                <!-- Notifications -->
+                <div id="notification-icon" class="relative mr-3 flex items-center">
+                    <button
+                        type="button"
+                        onclick="toggleNotifications()"
+                        id="notification-button"
+                        class="relative flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-orange-500 shadow-sm transition-colors hover:bg-gray-50"
+                        aria-label="Notificações">
+                        <span id="notification-icon-bell" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
+                        </span>
+                        <span id="notification-count" class="absolute -right-1 -top-1 rounded-full bg-red-500 px-1 text-xs font-bold text-white" style="display: none;">
+                            0
+                        </span>
+                    </button>
+                    <div id="notification-list" class="absolute right-0 top-full z-50 mt-2 hidden w-72 rounded-md border border-gray-300 bg-white shadow-lg sm:w-80" style="display: none;">
+                        <ul id="notifications" class="max-h-80 overflow-y-auto p-2 text-sm text-green-700"></ul>
+                    </div>
+                </div>
 
                 <!-- User Dropdown Menu -->
                 <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
@@ -77,6 +94,12 @@
                         x-transition:leave-end="transform opacity-0 scale-95"
                         class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-50 border border-gray-200"
                         style="display: none;">
+
+                        <div class="px-4 py-2 text-xs font-semibold text-indigo-700">
+                            {{ Auth::user()->role }}
+                        </div>
+
+                        <div class="border-t border-gray-100 my-1"></div>
 
                         <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 border-l-4 border-transparent hover:border-blue-500">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
