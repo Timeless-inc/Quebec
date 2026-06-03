@@ -245,7 +245,26 @@
             }).join(', ');
             
             if (input.files.length > 0) {
-                fileNameElem.innerHTML = `✅ <strong>${input.files.length} arquivo(s)</strong> selecionado(s) - Total: <strong>${totalUploadKb} KB</strong><br><small>${details}</small>`;
+                fileNameElem.textContent = '';
+
+                fileNameElem.appendChild(document.createTextNode('✅ '));
+
+                const countStrong = document.createElement('strong');
+                countStrong.textContent = `${input.files.length} arquivo(s)`;
+                fileNameElem.appendChild(countStrong);
+
+                fileNameElem.appendChild(document.createTextNode(' selecionado(s) - Total: '));
+
+                const totalStrong = document.createElement('strong');
+                totalStrong.textContent = `${totalUploadKb} KB`;
+                fileNameElem.appendChild(totalStrong);
+
+                fileNameElem.appendChild(document.createElement('br'));
+
+                const detailsSmall = document.createElement('small');
+                detailsSmall.textContent = details;
+                fileNameElem.appendChild(detailsSmall);
+
                 fileNameElem.className = 'file-name text-sm text-green-600 mt-2';
             } else {
                 fileNameElem.textContent = 'Nenhum arquivo selecionado';
