@@ -10,28 +10,58 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Rules\ValidateUploadFile;
+use App\Services\ImageProcessor;
 
 class DiretorGeralController extends Controller
 {
 
+    private function getStatusGroupFilter($status): array
+    {
+        switch ($status) {
+            case 'em_aberto':
+                return ['em_andamento', 'encaminhado', 'pendente'];
+            case 'processados':
+                return ['finalizado', 'indeferido'];
+            case 'devolvidos':
+                return ['devolvido'];
+            default:
+                return []; // 'todos'
+        }
+    }
 
     public function dashboard()
     {
         $userId = Auth::id();
+        $status = request()->input('status', 'todos');
 
-        $forwardings = RequestForwarding::where('receiver_id', $userId)
-            ->whereIn('status', ['encaminhado', 'devolvido'])
-            ->with(['requerimento', 'sender'])
+        $query = RequestForwarding::where('receiver_id', $userId)
+            ->whereIn('id', function ($q) use ($userId) {
+                $q->selectRaw('MAX(id)')
+                    ->from('request_forwardings')
+                    ->where('receiver_id', $userId)
+                    ->groupBy('requerimento_id');
+            });
+
+        // Aplicar filtro de status
+        if ($status !== 'todos') {
+            $statusList = $this->getStatusGroupFilter($status);
+            $query->whereHas('requerimento', function ($requerimentoQuery) use ($statusList) {
+                $requerimentoQuery->whereIn('status', $statusList);
+            });
+        }
+
+        $forwardings = $query->with(['requerimento', 'sender'])
             ->latest()
             ->get();
 
         $roleName    = Auth::user()->role;
         $cargoSlug   = Auth::user()->getRouteSlug();
         $routePrefix = 'diretor-geral';
+        $currentStatus = $status;
 
-        return view('diretor-geral.dashboard', compact('forwardings', 'roleName', 'cargoSlug', 'routePrefix'));
+        return view('diretor-geral.dashboard', compact('forwardings', 'roleName', 'cargoSlug', 'routePrefix', 'currentStatus'));
     }
-
 
     public function dynamicDashboard(string $cargoSlug)
     {
@@ -41,16 +71,44 @@ class DiretorGeralController extends Controller
             abort(403, 'Você não tem acesso a este painel.');
         }
 
-        $forwardings = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['encaminhado', 'devolvido'])
-            ->with(['requerimento', 'sender'])
+        $status = request()->input('status', 'todos');
+
+        $query = RequestForwarding::where('receiver_id', $user->id)
+            ->whereIn('id', function ($q) use ($user) {
+                $q->selectRaw('MAX(id)')
+                    ->from('request_forwardings')
+                    ->where('receiver_id', $user->id)
+                    ->groupBy('requerimento_id');
+            });
+
+        // Aplicar filtro de status
+        if ($status !== 'todos') {
+            $statusList = $this->getStatusGroupFilter($status);
+            $query->whereHas('requerimento', function ($requerimentoQuery) use ($statusList) {
+                $requerimentoQuery->whereIn('status', $statusList);
+            });
+        }
+
+        $forwardings = $query->with(['requerimento', 'sender'])
             ->latest()
             ->get();
 
         $roleName    = $user->role;
         $routePrefix = 'painel';
+        $currentStatus = $status;
 
-        return view('diretor-geral.dashboard', compact('forwardings', 'roleName', 'cargoSlug', 'routePrefix'));
+        return view('diretor-geral.dashboard', compact('forwardings', 'roleName', 'cargoSlug', 'routePrefix', 'currentStatus'));
+    }
+
+    public function reports()
+    {
+        $user = Auth::user();
+
+        return view('diretor-geral.reports', [
+            'roleName' => $user->role,
+            'cargoSlug' => $user->getRouteSlug(),
+            'routePrefix' => 'diretor-geral',
+        ]);
     }
 
     public function dynamicReports(string $cargoSlug)
@@ -58,18 +116,14 @@ class DiretorGeralController extends Controller
         $user = Auth::user();
 
         if ($cargoSlug !== $user->getRouteSlug()) {
-            abort(403, 'Você não tem acesso a este painel.');
+            abort(403, 'Voce nao tem acesso a estes relatorios.');
         }
 
-        $roleName    = $user->role;
-        $routePrefix = 'painel';
-
-        return view('diretor-geral.reports', compact('roleName', 'cargoSlug', 'routePrefix'));
-    }
-
-    public function reports()
-    {
-        return view('diretor-geral.reports');
+        return view('diretor-geral.reports', [
+            'roleName' => $user->role,
+            'cargoSlug' => $cargoSlug,
+            'routePrefix' => 'painel',
+        ]);
     }
 
     public function getStatistics()
@@ -160,7 +214,7 @@ class DiretorGeralController extends Controller
     }
 
 
-    public function processRequest(Request $request)
+    public function processRequest(\App\Http\Requests\ValidateUploadsRequest $request)
     {
         $forwardingId = $request->route('forwarding');
         $forwarding   = RequestForwarding::findOrFail($forwardingId);
@@ -176,10 +230,16 @@ class DiretorGeralController extends Controller
             $requerimento->resposta = $request->resposta;
         }
 
+        // Validar anexos - permitir PDF até 5MB durante deferimento
+        $request->validate([
+            'anexos.*' => ['nullable','file', new ValidateUploadFile(['pdf' => config('validation.file_limits.pdf_process', 5120)])],
+        ]);
+
         if ($request->hasFile('anexos')) {
+            $processor = app(ImageProcessor::class);
             $anexos = [];
             foreach ($request->file('anexos') as $file) {
-                $path     = $file->store('requerimentos_arquivos', 'public');
+                $path     = $processor->processAndStore($file, 'anexos_finalizacao');
                 $anexos[] = $path;
             }
 

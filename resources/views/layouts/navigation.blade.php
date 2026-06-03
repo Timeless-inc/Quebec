@@ -31,8 +31,10 @@
                         id="notification-button"
                         class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span id="notification-icon-bell" class="text-orange-500">
-                            🔔
+                        <span id="notification-icon-bell" class="text-orange-500" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
                         </span>
                         <!-- Contador de Notificações -->
                         <span id="notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">
@@ -45,7 +47,7 @@
                     </div>
                 </div>
                 
-                <div x-data="{ open: false }" class="ml-3 relative">
+                <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
                     <div>
                         <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
                             Olá, <strong class="ml-1">{{ Auth::user()->username }}</strong>
@@ -62,7 +64,6 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        @click.away="open = false"
                         class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-50 border border-gray-200"
                         style="display: none;">
 
@@ -97,8 +98,10 @@
                         onclick="toggleNotificationsMobile()"
                         class="text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span class="text-orange-500">
-                            🔔
+                        <span class="text-orange-500" aria-hidden="true">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                            </svg>
                         </span>
                         <!-- Contador de Notificações Mobile -->
                         <span id="mobile-notification-count" class="absolute top-0 right-0 text-xs text-white bg-red-500 rounded-full px-1 font-bold" style="display: none;">

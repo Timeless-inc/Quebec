@@ -4,6 +4,16 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="upload-limits" content='{{ json_encode(array(
+            "image" => config("validation.file_limits.image_upload_max_kb"),
+            "pdf" => config("validation.file_limits.pdf"),
+            "total" => config("validation.file_limits.total_per_request_kb"),
+            "image_target_max_width" => config("validation.file_limits.image_target_max_width"),
+            "client_warning_kb" => config("validation.file_limits.client_warning_kb"),
+            "image_max_pixels" => config("validation.file_limits.image_max_pixels"),
+            "client_max_pixels" => config("validation.file_limits.client_max_pixels"),
+            "client_compress_trigger_kb" => config("validation.file_limits.client_compress_trigger_kb")
+        )) }}'>
         @auth
             <meta name="user-id" content="{{ auth()->id() }}">
             <meta name="user-role" content="{{ auth()->user()->role }}">
@@ -26,6 +36,40 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @stack('styles')
+        <style>
+            .modal-content {
+                background-color: #fff;
+            }
+            .modal-body {
+                background-color: #fff;
+            }
+            .bg-emerald-700 { background-color: #047857 !important; }
+            .bg-red-700 { background-color: #b91c1c !important; }
+            .bg-amber-600 { background-color: #d97706 !important; }
+            .bg-indigo-700 { background-color: #4338ca !important; }
+            .bg-purple-600 { background-color: #9333ea !important; }
+            .bg-gray-600 { background-color: #4b5563 !important; }
+            .text-white { color: #fff !important; }
+            .text-emerald-100 { color: #d1fae5 !important; }
+            .text-red-100 { color: #fee2e2 !important; }
+            .text-amber-50 { color: #fffbeb !important; }
+            .text-indigo-100 { color: #e0e7ff !important; }
+            .text-purple-100 { color: #f3e8ff !important; }
+            .text-purple-600 { color: #9333ea !important; }
+            .text-purple-800 { color: #6b21a8 !important; }
+            .bg-purple-50 { background-color: #faf5ff !important; }
+            .border-purple-100 { border-color: #f3e8ff !important; }
+            .bg-gradient-to-r.from-emerald-600.via-emerald-700.to-green-700,
+            .bg-gradient-to-r.from-emerald-600.to-emerald-700 { background: #047857 !important; }
+            .bg-gradient-to-r.from-red-600.via-red-700.to-pink-700,
+            .bg-gradient-to-r.from-red-600.to-red-700,
+            .bg-gradient-to-r.from-red-600.to-rose-600 { background: #b91c1c !important; }
+            .bg-gradient-to-r.from-pink-600.via-pink-700.to-rose-700,
+            .bg-gradient-to-r.from-pink-600.to-pink-700 { background: #be185d !important; }
+            .bg-gradient-to-r.from-amber-500.to-orange-600 { background: #d97706 !important; }
+            .bg-gradient-to-r.from-purple-600.to-indigo-600 { background: #9333ea !important; }
+            .bg-gradient-to-r.from-gray-500.to-gray-600 { background: #4b5563 !important; }
+        </style>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

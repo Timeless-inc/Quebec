@@ -29,6 +29,7 @@ class Kernel extends HttpKernel
         'web' => [
             // verifiquem as linhas abaixo, por favor
             \App\Http\Middleware\EncryptCookies::class,
+            \App\Http\Middleware\CheckUploadTotalSize::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,

@@ -27,7 +27,7 @@ class DashboardController extends Controller
         
         if ($status && $status !== 'todos') {
             if ($status === 'em_aberto') {
-                $query->whereIn('status', ['em_andamento', 'pendente']);
+                $query->whereIn('status', ['em_andamento', 'pendente', 'encaminhado', 'devolvido']);
             } else {
                 $query->where('status', $status);
             }
@@ -38,7 +38,7 @@ class DashboardController extends Controller
         
         $events = Event::orderBy('start_date')->get();
         
-        if ($user->role === 'Cradt' || $user->role === 'Manager') {
+        if ($user->role === 'Cradt') {
             $profileRequests = ProfileChangeRequest::with('user')
                 ->orderBy('created_at', 'desc')
                 ->get();

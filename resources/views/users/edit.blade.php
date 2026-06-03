@@ -1,10 +1,17 @@
-<x-app-diretor-geral-layout>
+@php
+    $isDiretorGeral = auth()->user()->isDiretorGeral();
+    $layoutComponent = $isDiretorGeral ? 'app-diretor-geral-layout' : 'app-cradt';
+    $indexRoute = $isDiretorGeral ? route('diretor-geral.users.index') : route('users.index');
+    $updateRoute = $isDiretorGeral ? route('diretor-geral.users.update', $user->id) : route('users.update', $user->id);
+@endphp
+
+<x-dynamic-component :component="$layoutComponent">
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Editar Usuário') }}
             </h2>
-            <a href="{{ route('users.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            <a href="{{ $indexRoute }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 Voltar
             </a>
         </div>
@@ -13,7 +20,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('users.update', $user->id) }}" method="POST">
+                <form action="{{ $updateRoute }}" method="POST">
                     @csrf
                     @method('PUT')
                     
@@ -116,12 +123,7 @@
                     </div>
                     <!-- Botões de ação -->
                     <div class="mt-6 flex justify-end">
-                        @php
-                            $backRoute = auth()->user()->isDiretorGeral()
-                                ? route('diretor-geral.users.index')
-                                : route('users.index');
-                        @endphp
-                        <a href="{{ $backRoute }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+                        <a href="{{ $indexRoute }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
                             Cancelar
                         </a>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -132,7 +134,7 @@
             </div>
         </div>
     </div>
-</x-app-diretor-geral-layout>
+</x-dynamic-component>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

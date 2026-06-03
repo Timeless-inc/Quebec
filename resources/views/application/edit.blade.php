@@ -48,7 +48,8 @@
                                         </div>
                                         <div>
                                             <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->celular }}" readonly>
+                                            <input type="text" id="celular" name="celular" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-white" value="{{ old('celular', $requerimento->celular ?? '') }}">
+                                            <p id="celularError" class="text-red-600 text-sm hidden mt-1">Informe um número de celular válido com 11 dígitos (somente números).</p>
                                         </div>
                                     </div>
 
@@ -74,13 +75,12 @@
                                         </div>
                                         <div>
                                             <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula</label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" id="matricula_view" disabled>
-                                                <option value="{{ $requerimento->matricula }}" selected>{{ $requerimento->matricula }}</option>
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula_view" name="matricula">
+                                                <option value="{{ $requerimento->matricula }}" {{ old('matricula', $requerimento->matricula) == $requerimento->matricula ? 'selected' : '' }}>{{ $requerimento->matricula }}</option>
                                                 @if(Auth::user()->second_matricula)
-                                                <option value="{{ Auth::user()->second_matricula }}" {{ $requerimento->matricula === Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
+                                                <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $requerimento->matricula) == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
                                                 @endif
                                             </select>
-                                            <input type="hidden" name="matricula" value="{{ $requerimento->matricula }}">
                                         </div>
                                         <div>
                                             <label for="situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
@@ -126,12 +126,13 @@
                                         </div>
                                         <div class="relative">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
-                                            <div class="relative" id="anexoDropdown" style="margin-top: 0.5rem;">
+                                            <div class="relative" id="anexoDropdown" style="margin-top: 0.5rem; display: none;">
                                                 <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                                                     Anexos/informações (clique para abrir)
                                                 </button>
                                                 <div id="anexoDropdownMenu" class="hidden absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg p-4 border border-gray-200 max-h-80 overflow-y-auto">
                                                 </div>
+                                                <p id="anexoError" class="text-red-600 text-sm hidden mt-1">Arquivo obrigatório faltando ou excede o tamanho máximo permitido. Por favor, preencha todos os anexos necessários.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -162,6 +163,7 @@
     <!-- Armazenar os dados em elementos ocultos -->
     <div id="dadosExtra" class="hidden">{{ json_encode($dadosExtra ?? []) }}</div>
     <div id="anexosAtuais" class="hidden">{{ json_encode($anexosAtuais ?? []) }}</div>
+    <div id="requerimentoStatus" class="hidden">{{ $requerimento->status ?? '' }}</div>
 
     <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="dropdown-backdrop"></div>
     <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-md transform transition-transform duration-300 ease-in-out translate-x-full"></div>
@@ -170,13 +172,16 @@
         // Carregar os dados dos elementos ocultos
         const dadosExtraElement = document.getElementById('dadosExtra');
         const anexosAtuaisElement = document.getElementById('anexosAtuais');
+        const statusElement = document.getElementById('requerimentoStatus');
 
         window.dadosExtra = dadosExtraElement ? JSON.parse(dadosExtraElement.textContent) : [];
         window.anexosAtuais = anexosAtuaisElement ? JSON.parse(anexosAtuaisElement.textContent) : [];
+        window.requerimentoStatus = statusElement ? statusElement.textContent : '';
 
         // Adicionar log para depuração
         console.log('dadosExtra:', window.dadosExtra);
         console.log('anexosAtuais:', window.anexosAtuais);
+        console.log('requerimentoStatus:', window.requerimentoStatus);
     </script>
 
     <script>
@@ -188,6 +193,57 @@
             const form = document.getElementById('applicationEditForm');
             const dropdownBackdrop = document.getElementById('dropdown-backdrop');
             const isMobile = window.innerWidth <= 768;
+
+            // Habilitar campo de matrícula apenas se status for 'pendente'
+            const matriculaSelect = document.getElementById('matricula_view');
+            if (matriculaSelect) {
+                if (window.requerimentoStatus === 'pendente') {
+                    matriculaSelect.classList.remove('bg-gray-50');
+                    matriculaSelect.removeAttribute('disabled');
+                } else {
+                    matriculaSelect.classList.add('bg-gray-50');
+                    matriculaSelect.setAttribute('disabled', 'disabled');
+                }
+            }
+
+            // Celular: aplicar máscara e validação (mesma lógica da view de criação)
+            const celularInput = document.getElementById('celular');
+            function applyCelularMask() {
+                if (window.jQuery && jQuery().mask && celularInput) {
+                    try {
+                        jQuery(function($){
+                            $('#celular').mask('(00) 9 0000-0000');
+                        });
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            }
+            applyCelularMask();
+
+            function validateCelular() {
+                if (!celularInput) return true;
+                const raw = celularInput.value.replace(/\D/g, '');
+                const errorEl = document.getElementById('celularError');
+                if (raw.length !== 11) {
+                    celularInput.classList.add('border-red-500', 'ring-red-200');
+                    if (errorEl) {
+                        errorEl.classList.remove('hidden');
+                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (00) 9 0000-0000).';
+                    }
+                    return false;
+                }
+                celularInput.classList.remove('border-red-500', 'ring-red-200');
+                if (errorEl) errorEl.classList.add('hidden');
+                return true;
+            }
+
+            if (celularInput) {
+                celularInput.addEventListener('input', function() {
+                    applyCelularMask();
+                    validateCelular();
+                });
+            }
 
             // Tipos de requerimento que precisam de informações adicionais ou anexos
             const tiposComAnexos = [1, 10, 15, 20, 21, 28, 30, 31, 32, 6, 13, 14, 19, 24];
@@ -413,7 +469,6 @@
 
             function updateAnexoDropdown() {
                 const selectedType = Number(tipoRequisicao.value);
-                anexoDropdown.style.display = 'none';
                 anexoDropdownMenu.innerHTML = '';
                 anexoDropdownMenu.classList.add('hidden');
                 if (isMobile) {
@@ -421,7 +476,7 @@
                 }
 
                 if (tiposComAnexos.includes(selectedType)) {
-                    anexoDropdown.style.display = 'block';
+                    anexoDropdown.style.display = '';
 
                     // Cabeçalho
                     const headerDiv = document.createElement('div');
@@ -483,7 +538,8 @@
                                         ` : ''}
                                         <div class="mt-1">
                                             <div class="flex flex-col sm:flex-row items-start">
-                                                <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.png">
+                                                <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
                                                 <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
                                                     Escolher arquivo
                                                 </button>
@@ -492,6 +548,7 @@
                                                 </span>
                                             </div>
                                         </div>
+                                        <p id="error_${uniqueId}" class="text-red-600 text-sm hidden mt-1">Este arquivo é obrigatório.</p>
                                     </div>
                                 `;
                             }
@@ -500,6 +557,8 @@
                     }
                     anexoDropdownMenu.appendChild(fieldsContainer);
                     initializeFileInputs();
+                } else {
+                    anexoDropdown.style.display = 'none';
                 }
             }
 
@@ -509,6 +568,9 @@
                     const uniqueId = input.id;
                     const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
                     const fileNameSpan = document.getElementById(`file-name-${uniqueId}`);
+                    const errorEl = document.getElementById(`error_${uniqueId}`);
+
+                    if (!fileButton) return;
 
                     fileButton.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -518,10 +580,13 @@
                     input.addEventListener('change', (e) => {
                         e.stopPropagation();
                         if (input.files && input.files.length > 0) {
-                            fileNameSpan.textContent = `Novo arquivo selecionado: ${input.files[0].name}`;
+                            if (fileNameSpan) fileNameSpan.textContent = `Novo arquivo selecionado: ${input.files[0].name}`;
+                            if (errorEl) errorEl.classList.add('hidden');
+                            fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
                         } else {
-                            fileNameSpan.textContent = 'Nenhum arquivo selecionado';
+                            if (fileNameSpan) fileNameSpan.textContent = 'Nenhum arquivo selecionado';
                         }
+                        refreshAnexoValidation();
                     });
 
                     input.addEventListener('click', (e) => {
@@ -534,6 +599,50 @@
                 });
             }
 
+            function refreshAnexoValidation() {
+                const selectedType = Number(tipoRequisicao.value);
+                const anexoErrorEl = document.getElementById('anexoError');
+                const camposDoTipo = anexosPorTipo[selectedType] || [];
+                let missingRequired = false;
+
+                camposDoTipo.forEach((field, index) => {
+                    if (field.type !== 'file') {
+                        return;
+                    }
+
+                    const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
+                    const input = document.getElementById(uniqueId);
+                    const fileButton = document.querySelector(`.file-button[data-input-id="${uniqueId}"]`);
+                    const errorEl = document.getElementById(`error_${uniqueId}`);
+
+                    if (!input) return;
+
+                    const fieldKey = field.name.split('[')[1].replace(']', '');
+                    const hasExistingAttachment = !!(anexosAtuais && anexosAtuais[fieldKey]);
+                    const hasNewFile = !!(input.files && input.files.length > 0);
+                    const isMissing = !hasExistingAttachment && !hasNewFile;
+
+                    if (isMissing) {
+                        missingRequired = true;
+                        if (fileButton) fileButton.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+                        if (errorEl) errorEl.classList.remove('hidden');
+                    } else {
+                        if (fileButton) fileButton.classList.remove('border-red-500', 'bg-red-50', 'text-red-700');
+                        if (errorEl) errorEl.classList.add('hidden');
+                    }
+                });
+
+                if (tiposComAnexos.includes(selectedType) && missingRequired) {
+                    anexoButton.classList.add('border-red-500', 'ring-red-200');
+                    if (anexoErrorEl) anexoErrorEl.classList.remove('hidden');
+                } else {
+                    anexoButton.classList.remove('border-red-500', 'ring-red-200');
+                    if (anexoErrorEl) anexoErrorEl.classList.add('hidden');
+                }
+
+                return missingRequired;
+            }
+
             document.addEventListener('click', function(e) {
                 if (!anexoDropdownMenu.classList.contains('hidden') && 
                     !anexoDropdownMenu.contains(e.target) && 
@@ -543,6 +652,7 @@
                     if (isMobile) {
                         dropdownBackdrop.classList.add('hidden');
                     }
+                    refreshAnexoValidation();
                 }
             });
 
@@ -576,24 +686,26 @@
                     }
                 });
 
-                const selectedType = Number(tipoRequisicao.value);
-                if (tiposComAnexos.includes(selectedType)) {
-                    anexosPorTipo[selectedType].forEach((field, index) => {
-                        const uniqueId = `${field.name.replace(/[\[\]]/g, '_')}_${index}`;
-                        const input = document.getElementById(uniqueId);
-                        if (input && (field.type === 'text' || field.type === 'select') && (!input.value || input.value.trim() === '')) {
-                            hasEmpty = true;
-                            input.classList.add('border-red-500', 'ring-red-200');
-                        } else if (input) {
-                            input.classList.remove('border-red-500', 'ring-red-200');
-                        }
-                    });
-                }
+                const anexosFaltando = refreshAnexoValidation();
+                hasEmpty = hasEmpty || anexosFaltando;
 
                 if (hasEmpty) {
                     e.preventDefault();
                     showNotification('Por favor, preencha todos os campos obrigatórios, incluindo os anexos ou informações adicionais, se aplicável.', 'error');
                 } else {
+                    // Validar celular antes de enviar e normalizar (manter apenas dígitos)
+                    if (!validateCelular()) {
+                        e.preventDefault();
+                        showNotification('Por favor, informe um número de celular válido com 11 dígitos.', 'error');
+                        if (celularInput) {
+                            celularInput.focus();
+                            celularInput.classList.add('border-red-500', 'ring-red-200');
+                        }
+                        return;
+                    }
+                    if (celularInput) {
+                        celularInput.value = celularInput.value.replace(/\D/g, '');
+                    }
                     const submitBtn = document.getElementById('submitEditBtn');
                     if (submitBtn) {
                         submitBtn.setAttribute('disabled', 'disabled');
@@ -624,6 +736,9 @@
             });
         });
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <script>
         function showNotification(message, type = 'info', duration = 5000) {

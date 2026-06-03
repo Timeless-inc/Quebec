@@ -25,13 +25,10 @@ class UserPolicy
         return $user->role === 'Cradt';
     }
 
+
     /**
-     * Determine if the user is a Manager (novo).
+     * Reavaliar uso daqui pra baixo.
      */
-    public function isManager(User $user): bool
-    {
-        return $user->role === 'Manager';
-    }
 
     public function isProfessor(User $user): bool
     {

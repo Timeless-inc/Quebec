@@ -199,22 +199,38 @@ function updateNotificationState(state, count = 0) {
     const bellIcon = document.getElementById('notification-icon-bell');
     const notificationCount = document.getElementById('notification-count');
 
+    if (!bellIcon || !notificationCount) {
+        return;
+    }
+
+    const bellSvg = `
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+        </svg>
+    `;
+
+    const mutedBellSvg = `
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 8a6 6 0 00-9.3-5M6 6.2A6 6 0 006 8v3.2a2 2 0 01-.6 1.4L4 14h10M9 17a3 3 0 006 0M3 3l18 18" />
+        </svg>
+    `;
+
     if (state === 'default') {
         // Estado padrão: Sino amarelo sem contador
-        bellIcon.innerText = '🔔';
+        bellIcon.innerHTML = bellSvg;
         bellIcon.classList.remove('text-gray-400');
         bellIcon.classList.add('text-orange-500');
         notificationCount.style.display = 'none';
     } else if (state === 'with-notifications') {
         // Estado com notificações: Sino amarelo com contador vermelho
-        bellIcon.innerText = '🔔';
+        bellIcon.innerHTML = bellSvg;
         bellIcon.classList.remove('text-gray-400');
         bellIcon.classList.add('text-orange-500');
         notificationCount.style.display = 'block';
         notificationCount.innerText = count;
     } else if (state === 'opt-out') {
         // Estado opt-out: Sino cortado
-        bellIcon.innerText = '🔕';
+        bellIcon.innerHTML = mutedBellSvg;
         bellIcon.classList.remove('text-orange-500');
         bellIcon.classList.add('text-gray-400');
         notificationCount.style.display = 'none';

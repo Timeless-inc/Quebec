@@ -207,11 +207,11 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitar</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anexo Comprobatório</th>
+                                        <th class="col-solicitar px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitar</th>
+                                        <th class="col-campo px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campo</th>
+                                        <th class="col-atual px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
+                                        <th class="col-novo px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Novo Valor</th>
+                                        <th class="col-anexo px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anexo Comprobatório</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -228,9 +228,9 @@
                                                 <input type="hidden" name="fields[name][current]" value="{{ Auth::user()->name }}">
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="name_document_fields">
-                                                <input id="name_document" name="fields[name][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        <td class="px-6 py-4"> <div class="change-field hidden" id="name_document_fields">
+                                                <input id="name_document" name="fields[name][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -248,9 +248,9 @@
                                                 <input type="hidden" name="fields[matricula][current]" value="{{ Auth::user()->matricula }}">
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="matricula_document_fields">
-                                                <input id="matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        <td class="px-6 py-4"> <div class="change-field hidden" id="matricula_document_fields">
+                                                <input id="matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -285,9 +285,10 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4">
                                             <div class="change-field hidden" id="second_matricula_document_fields">
-                                                <input id="second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                                <input id="second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -305,9 +306,9 @@
                                                 <input type="hidden" name="fields[cpf][current]" value="{{ Auth::user()->cpf }}">
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="cpf_document_fields">
-                                                <input id="cpf_document" name="fields[cpf][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        <td class="px-6 py-4"> <div class="change-field hidden" id="cpf_document_fields">
+                                                <input id="cpf_document" name="fields[cpf][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -325,9 +326,9 @@
                                                 <input type="hidden" name="fields[rg][current]" value="{{ Auth::user()->rg }}">
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="rg_document_fields">
-                                                <input id="rg_document" name="fields[rg][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                        <td class="px-6 py-4"> <div class="change-field hidden" id="rg_document_fields">
+                                                <input id="rg_document" name="fields[rg][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -357,7 +358,7 @@
                                         
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_name_document" name="fields[name][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="mobile_name_document" name="fields[name][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>
@@ -384,7 +385,7 @@
                                         
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="mobile_matricula_document" name="fields[matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>
@@ -424,7 +425,7 @@
                                         
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="mobile_second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>
@@ -451,7 +452,7 @@
                                         
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_cpf_document" name="fields[cpf][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="mobile_cpf_document" name="fields[cpf][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>
@@ -478,7 +479,7 @@
                                         
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_rg_document" name="fields[rg][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2">
+                                            <input id="mobile_rg_document" name="fields[rg][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>

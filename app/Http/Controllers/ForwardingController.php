@@ -11,6 +11,8 @@ use App\Events\ApplicationStatusChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Rules\ValidateUploadFile;
+use App\Services\ImageProcessor;
 
 class ForwardingController extends Controller
 {
@@ -196,7 +198,7 @@ class ForwardingController extends Controller
         return redirect()->back()->with('success', 'Requerimento reencaminhado com sucesso.');
     }
 
-    public function processRequest(Request $request, $forwardingId)
+    public function processRequest(\App\Http\Requests\ValidateUploadsRequest $request, $forwardingId)
     {
         $forwarding   = RequestForwarding::findOrFail($forwardingId);
         $requerimento = $forwarding->requerimento;
@@ -211,10 +213,16 @@ class ForwardingController extends Controller
             $requerimento->resposta = $request->resposta;
         }
 
+        // Validar anexos (se houver) - permitir PDF até 5MB durante deferimento
+        $request->validate([
+            'anexos.*' => ['nullable','file', new ValidateUploadFile(['pdf' => config('validation.file_limits.pdf_process', 5120)])],
+        ]);
+
         if ($request->hasFile('anexos')) {
+            $processor = app(ImageProcessor::class);
             $anexos = [];
             foreach ($request->file('anexos') as $file) {
-                $path     = $file->store('requerimentos_arquivos', 'public');
+                $path     = $processor->processAndStore($file, 'anexos_finalizacao');
                 $anexos[] = $path;
             }
             $anexosAntigos = $requerimento->anexos_finalizacao

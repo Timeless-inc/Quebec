@@ -20,6 +20,8 @@
                     <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
                     <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-600 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
                     <button onclick="filterJustificativas('em_aberto')" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
+                    <button onclick="filterJustificativas('encaminhado')" type="button" class="px-3 py-1 text-sm text-white bg-purple-600 border-purple-400 rounded-md hover:bg-purple-200 filter-btn" data-status="encaminhado">Encaminhado</button>
+                    <button onclick="filterJustificativas('devolvido')" type="button" class="px-3 py-1 text-sm text-white bg-pink-500 border-pink-400 rounded-md hover:bg-pink-200 filter-btn" data-status="devolvido">Devolvido</button>
                 </div>
             </div>
 

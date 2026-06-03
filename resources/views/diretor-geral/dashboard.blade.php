@@ -1,7 +1,5 @@
 <title>SRE - {{ $roleName ?? 'Diretor Geral' }}</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
@@ -36,28 +34,51 @@
 
 <x-app-diretor-geral-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard — ' . ($roleName ?? 'Diretor Geral')) }}
-            </h2>
+        <div class="flex flex-col gap-3">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Requerimentos Encaminhados para Você
+                </h2>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 filter-container">
+                <a href="?status=todos" class="px-3 py-1 text-sm text-white border-gray-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'todos' ? 'bg-gray-800 shadow-md' : 'bg-gray-600 hover:bg-gray-300' }}" data-status="todos">
+                    Todos
+                </a>
+                <a href="?status=em_aberto" class="px-3 py-1 text-sm text-white border-blue-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'em_aberto' ? 'bg-blue-800 shadow-md' : 'bg-blue-600 hover:bg-blue-400' }}" data-status="em_aberto">
+                    Em Aberto
+                </a>
+                <a href="?status=processados" class="px-3 py-1 text-sm text-white border-green-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'processados' ? 'bg-green-800 shadow-md' : 'bg-green-600 hover:bg-green-200' }}" data-status="processados">
+                    Processados
+                </a>
+                <a href="?status=devolvidos" class="px-3 py-1 text-sm text-white border-pink-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'devolvidos' ? 'bg-pink-800 shadow-md' : 'bg-pink-600 hover:bg-pink-200' }}" data-status="devolvidos">
+                    Devolvidos
+                </a>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-6">
+    <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">Requerimentos Encaminhados para Você</h3>
-                    </div>
-
-                    @if ($forwardings->isEmpty())
-                    <div class="bg-gray-50 p-4 rounded-md text-gray-500 text-center">
-                        <i class="fas fa-info-circle mr-2 text-blue-500"></i> Não há requerimentos encaminhados para você.
-                    </div>
-                    @else
-                    <div class="space-y-6">
+            @if ($forwardings->isEmpty())
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-500 text-center">
+                    <i class="fas fa-info-circle mr-2 text-blue-500"></i> Não há requerimentos encaminhados para você.
+                </div>
+            @else
+                <div class="space-y-6">
                         @foreach ($forwardings as $forwarding)
+                        @php
+                            $displayStatus = $forwarding->requerimento->status ?? $forwarding->status;
+                            $statusMeta = [
+                                'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Andamento'],
+                                'encaminhado' => ['dot' => 'bg-purple-500', 'badge' => 'text-purple-700 bg-purple-100 border border-purple-200', 'icon' => 'fa-share', 'label' => 'Encaminhado'],
+                                'finalizado' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Finalizado'],
+                                'indeferido' => ['dot' => 'bg-red-500', 'badge' => 'text-red-700 bg-red-100 border border-red-200', 'icon' => 'fa-times-circle', 'label' => 'Indeferido'],
+                                'pendente' => ['dot' => 'bg-amber-500', 'badge' => 'text-amber-700 bg-amber-100 border border-amber-200', 'icon' => 'fa-exclamation-circle', 'label' => 'Pendente'],
+                                'devolvido' => ['dot' => 'bg-pink-500', 'badge' => 'text-pink-700 bg-pink-100 border border-pink-200', 'icon' => 'fa-reply', 'label' => 'Devolvido'],
+                            ];
+                            $currentStatusMeta = $statusMeta[$displayStatus] ?? ['dot' => 'bg-gray-500', 'badge' => 'text-gray-700 bg-gray-100 border border-gray-200', 'icon' => 'fa-question-circle', 'label' => ucfirst($displayStatus)];
+                        @endphp
                         <!-- Card Principal Modernizado -->
                         <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200/50 mb-4 overflow-hidden group">
                             <!-- Header do Card -->
@@ -65,13 +86,7 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <!-- Indicador de Status -->
-                                        <div class="w-3 h-3 rounded-full {{ 
-                                            $forwarding->status === 'encaminhado' ? 'bg-purple-500' : 
-                                            ($forwarding->status === 'finalizado' ? 'bg-emerald-500' : 
-                                            ($forwarding->status === 'indeferido' ? 'bg-red-500' : 
-                                            ($forwarding->status === 'pendente' ? 'bg-amber-500' : 
-                                            ($forwarding->status === 'devolvido' ? 'bg-yellow-500' : 
-                                            ($forwarding->status === 'reencaminhado' ? 'bg-orange-500' : 'bg-gray-500'))))) }} shadow-sm"></div>
+                                        <div class="w-3 h-3 rounded-full {{ $currentStatusMeta['dot'] }} shadow-sm"></div>
                                         
                                         <div>
                                             <h3 class="text-md font-semibold text-gray-900 truncate max-w-xs">#{{ $forwarding->requerimento->id }} - {{ $forwarding->requerimento->tipoRequisicao }}</h3>
@@ -80,42 +95,9 @@
 
                                     <!-- Badge de Status -->
                                     <div class="flex items-center space-x-2">
-                                        @switch($forwarding->status)
-                                            @case('encaminhado')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full border border-purple-200">
-                                                    <i class="fas fa-share mr-1"></i>Encaminhado
-                                                </span>
-                                                @break
-                                            @case('reencaminhado')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-orange-700 bg-orange-100 rounded-full border border-orange-200">
-                                                    <i class="fas fa-share-square mr-1"></i>Reencaminhado
-                                                </span>
-                                                @break
-                                            @case('finalizado')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full border border-emerald-200">
-                                                    <i class="fas fa-check-circle mr-1"></i>Deferido
-                                                </span>
-                                                @break
-                                            @case('indeferido')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full border border-red-200">
-                                                    <i class="fas fa-times-circle mr-1"></i>Indeferido
-                                                </span>
-                                                @break
-                                            @case('pendente')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full border border-amber-200">
-                                                    <i class="fas fa-exclamation-circle mr-1"></i>Pendente
-                                                </span>
-                                                @break
-                                            @case('devolvido')
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-pink-700 bg-pink-100 rounded-full border border-pink-200">
-                                                    <i class="fas fa-reply mr-1"></i>Devolvido
-                                                </span>
-                                                @break
-                                            @default
-                                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full border border-gray-200">
-                                                    {{ ucfirst($forwarding->status) }}
-                                                </span>
-                                        @endswitch
+                                        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium {{ $currentStatusMeta['badge'] }} rounded-full">
+                                            <i class="fas {{ $currentStatusMeta['icon'] }} mr-1"></i>{{ $currentStatusMeta['label'] }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -158,9 +140,8 @@
                                 </div>
 
                                 <!-- Ações -->
-                                <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-                                    <div></div> <!-- Spacer para manter alinhamento à direita -->
-                                    <div class="flex items-center space-x-2">
+                                <div class="flex items-center justify-end pt-3 border-t border-gray-100">
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
                                         <!-- Botão Ver Detalhes -->
                                         <button type="button" class="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors ver-detalhes-btn" data-bs-toggle="modal" data-bs-target="#detalhesModal-{{ $forwarding->requerimento->id }}" title="Ver Detalhes" data-requerimento-id="{{ $forwarding->requerimento->id }}">
                                             <i class="fas fa-info-circle mr-1.5"></i>
@@ -169,7 +150,7 @@
 
                                         @if ($forwarding->status == 'encaminhado')
                                         <!-- Divisor vertical -->
-                                        <div class="w-px h-6 bg-gray-300 mx-2"></div>
+                                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
                                         <!-- Ações principais -->
                                         <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-white bg-emerald-600 border border-emerald-700 rounded-lg hover:bg-emerald-700 transition-colors" data-bs-toggle="modal" data-bs-target="#deferirModal-{{ $forwarding->id }}" title="Deferir">
@@ -189,7 +170,7 @@
                                         </button>
                                         @elseif ($forwarding->status == 'devolvido')
                                         <!-- Divisor vertical -->
-                                        <div class="w-px h-6 bg-gray-300 mx-2"></div>
+                                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
                                         
                                         <!-- Indicador de requerimento devolvido -->
                                         <div class="inline-flex items-center px-3 py-1 text-xs font-medium text-amber-700 bg-amber-100 rounded-full">
@@ -232,8 +213,8 @@
 
                                             <div class="mb-4">
                                                 <label for="anexos_{{ $forwarding->id }}" class="block text-sm font-semibold text-gray-700 mb-2">Anexar arquivos (opcional):</label>
-                                                <input type="file" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 form-control-sm transition-colors" id="anexos_{{ $forwarding->id }}" name="anexos[]" multiple>
-                                                <p class="text-xs text-gray-500 mt-2">Formatos aceitos: PDF, JPG, PNG (máx. 2MB por arquivo)</p>
+                                                <input type="file" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 form-control-sm transition-colors" id="anexos_{{ $forwarding->id }}" name="anexos[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="text-xs text-gray-500 mt-2">PDF até 5 MB. Imagens são otimizadas automaticamente quando necessário. Tipos permitidos: pdf, jpg, jpeg, png, webp.</p>
                                             </div>
                                         </div>
                                         <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
@@ -342,10 +323,8 @@
                             </div>
                         </div>
                         @endforeach
-                    </div>
-                    @endif
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -384,19 +363,9 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end space-y-2">
-                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm 
-                                {{ $forwarding->requerimento->status === 'encaminhado' ? 'text-purple-700 bg-purple-100 border border-purple-200' : 
-                                ($forwarding->requerimento->status === 'finalizado' ? 'text-emerald-700 bg-emerald-100 border border-emerald-200' : 
-                                ($forwarding->requerimento->status === 'indeferido' ? 'text-red-700 bg-red-100 border border-red-200' : 
-                                ($forwarding->requerimento->status === 'pendente' ? 'text-amber-700 bg-amber-100 border border-amber-200' : 'text-gray-700 bg-gray-100 border border-gray-200'))) }}">
-                                    <i class="fas {{ $forwarding->requerimento->status === 'encaminhado' ? 'fa-share' : 
-                                    ($forwarding->requerimento->status === 'finalizado' ? 'fa-check-circle' : 
-                                    ($forwarding->requerimento->status === 'indeferido' ? 'fa-times-circle' : 
-                                    ($forwarding->requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 'fa-question-circle'))) }} mr-2"></i>
-                                    {{ $forwarding->requerimento->status === 'encaminhado' ? 'Encaminhado' : 
-                                    ($forwarding->requerimento->status === 'finalizado' ? 'Deferido' : 
-                                    ($forwarding->requerimento->status === 'indeferido' ? 'Indeferido' : 
-                                    ($forwarding->requerimento->status === 'pendente' ? 'Pendente' : ucfirst($forwarding->requerimento->status)))) }}
+                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm {{ $currentStatusMeta['badge'] }}">
+                                    <i class="fas {{ $currentStatusMeta['icon'] }} mr-2"></i>
+                                    {{ $currentStatusMeta['label'] }}
                                 </span>
                             </div>
                         </div>
@@ -432,22 +401,9 @@
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Status atual</label>
                                                 <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
-                                                    @switch($forwarding->requerimento->status)
-                                                    @case('encaminhado')
-                                                    <span class="inline-block px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Encaminhado</span>
-                                                    @break
-                                                    @case('finalizado')
-                                                    <span class="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">Deferido</span>
-                                                    @break
-                                                    @case('indeferido')
-                                                    <span class="inline-block px-2 py-1 text-xs font-medium text-red-700 bg-red-100 rounded-full">Indeferido</span>
-                                                    @break
-                                                    @case('pendente')
-                                                    <span class="inline-block px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full">Pendente</span>
-                                                    @break
-                                                    @default
-                                                    <span class="inline-block px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">{{ ucfirst($forwarding->requerimento->status) }}</span>
-                                                    @endswitch
+                                                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium {{ $currentStatusMeta['badge'] }} rounded-full">
+                                                        <i class="fas {{ $currentStatusMeta['icon'] }} mr-1"></i>{{ $currentStatusMeta['label'] }}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
