@@ -32,8 +32,13 @@
                 input.parentElement.appendChild(errorElem);
             }
         }
-        // set HTML to allow multi-line messages
-        errorElem.innerHTML = `<strong class="font-semibold">${message}</strong>`;
+        let strongElem = errorElem.querySelector('strong.font-semibold');
+        if (!strongElem) {
+            strongElem = document.createElement('strong');
+            strongElem.className = 'font-semibold';
+            errorElem.replaceChildren(strongElem);
+        }
+        strongElem.textContent = message;
     }
 
     function showInlineWarning(input, message) {
@@ -46,7 +51,13 @@
             if (container) container.appendChild(warnElem);
             else input.parentElement.appendChild(warnElem);
         }
-        warnElem.innerHTML = `<strong class="font-semibold">${message}</strong>`;
+        let strongElem = warnElem.querySelector('strong.font-semibold');
+        if (!strongElem) {
+            strongElem = document.createElement('strong');
+            strongElem.className = 'font-semibold';
+            warnElem.replaceChildren(strongElem);
+        }
+        strongElem.textContent = message;
     }
 
     function clearInlineError(input) {
