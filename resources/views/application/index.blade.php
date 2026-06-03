@@ -74,7 +74,7 @@
                                     </div>
                                     <div>
                                         <label for="celular" class="{{ $labelClass }}">Celular <span id="celularRequired" class="text-red-500">*</span></label>
-                                        <input type="text" class="{{ $fieldClass }}" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" placeholder="(81) 9 8694-5453" required>
+                                        <input type="text" class="{{ $fieldClass }}" id="celular" name="celular" value="{{ old('celular', $celular ?? '') }}" placeholder="(00) 0 0000-0000" required>
                                         <p id="celularError" class="mt-1 hidden text-sm text-red-600">Informe um número de celular válido com 11 dígitos (somente números).</p>
                                     </div>
                                     <div>
@@ -87,7 +87,7 @@
                                     </div>
                                     <div>
                                         <label for="orgaoExpedidor" class="{{ $labelClass }}">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
-                                        <input type="text" class="{{ $fieldClass }}" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ old('orgaoExpedidor', $orgaoExpedidor ?? '') }}" placeholder="ex: SSP/PE">
+                                        <input type="text" class="{{ $fieldClass }}" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ old('orgaoExpedidor', $orgaoExpedidor ?? '') }}" placeholder="ex: SDS">
                                     </div>
                                 </div>
                             </section>
@@ -337,7 +337,7 @@
                 if (window.jQuery && jQuery().mask) {
                     try {
                         jQuery(function($){
-                            $('#celular').mask('(00) 0 0000-0000');
+                            $('#celular').mask('(00) 9 0000-0000');
                         });
                     } catch (e) {
                         // ignore
@@ -354,7 +354,7 @@
                     celularInput.classList.add('border-red-500', 'ring-red-200');
                     if (errorEl) {
                         errorEl.classList.remove('hidden');
-                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (81) 9 8694-5453).';
+                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (00) 9 0000-0000).';
                     }
                     return false;
                 }

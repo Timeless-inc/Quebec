@@ -212,7 +212,7 @@
                 if (window.jQuery && jQuery().mask && celularInput) {
                     try {
                         jQuery(function($){
-                            $('#celular').mask('(00) 0 0000-0000');
+                            $('#celular').mask('(00) 9 0000-0000');
                         });
                     } catch (e) {
                         // ignore
@@ -229,7 +229,7 @@
                     celularInput.classList.add('border-red-500', 'ring-red-200');
                     if (errorEl) {
                         errorEl.classList.remove('hidden');
-                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (81) 9 8694-5453).';
+                        errorEl.textContent = 'Informe um número de celular válido com 11 dígitos (ex: (00) 9 0000-0000).';
                     }
                     return false;
                 }
