@@ -304,7 +304,7 @@
     
     <div class="footer">
         <p>Este relatório contém informações sobre os requerimentos processados pelo coordenador.</p>
-        <p>SRE - Sistema de Requerimentos do Estudante | Gerado em {{ $dataGeracao }}</p>
+        <p>SRE - Sistema de Requerimento Estudantil | Gerado em {{ $dataGeracao }}</p>
     </div>
 </body>
 </html>

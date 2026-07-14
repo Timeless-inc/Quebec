@@ -435,7 +435,7 @@
     
     <div class="footer">
         <p>Este relatório contém informações personalizadas baseadas nos atendimentos realizados pelo servidor.</p>
-        <p>SRE - Sistema de Requerimentos do Estudante | Gerado em {{ $dataGeracao }}</p>
+        <p>SRE - Sistema de Requerimento Estudantil | Gerado em {{ $dataGeracao }}</p>
     </div>
 </body>
 </html>

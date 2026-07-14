@@ -39,7 +39,7 @@
         </div>
 
         <div class="border-t border-slate-100 bg-slate-50 px-6 py-5 text-center sm:px-10">
-            <p class="text-xs leading-6 text-slate-500">© {{ date('Y') }} Sistema de Requerimento do Estudante (SRE)</p>
+            <p class="text-xs leading-6 text-slate-500">© {{ date('Y') }} Sistema de Requerimento Estudantil (SRE)</p>
             <p class="text-xs leading-6 text-slate-500">Este e-mail foi enviado automaticamente. Por favor, não responda.</p>
         </div>
     </div>

@@ -27,7 +27,7 @@ class WelcomeStudentMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->subject('Bem-vindo ao Sistema de Requerimento do Estudante')
+        return $this->subject('Bem-vindo ao Sistema de Requerimento Estudantil')
                     ->view('emails.welcome-student');
     }
 }
