@@ -52,23 +52,7 @@ class EventController extends Controller
             $alunos = User::where('role', 'Aluno')->get();
 
             foreach ($alunos as $aluno) {
-                try {
-                    Notification::create([
-                        'user_id' => $aluno->id,
-                        'title' => 'Novo Evento Acadêmico',
-                        'message' => "Um novo evento foi cadastrado: {$event->title}. Data: " . 
-                         date('d/m/Y', strtotime($event->start_date)) . " a " . date('d/m/Y', strtotime($event->end_date)),
-                        'event_type' => 'event_created',
-                        'related_id' => $event->id,
-                        'is_read' => false
-                    ]);
-                } catch (\Exception $notificationError) {
-                    Log::error('Erro ao criar notificação de novo evento para aluno', [
-                        'user_id' => $aluno->id,
-                        'event_id' => $event->id,
-                        'message' => $notificationError->getMessage()
-                    ]);
-                }
+                \App\Services\NotificationService::notifyEventCreated($event);
             }
 
             Log::info('Disparando evento EventCreated para processamento assíncrono');

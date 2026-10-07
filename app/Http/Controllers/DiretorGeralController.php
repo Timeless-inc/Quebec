@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Rules\ValidateUploadFile;
 use App\Services\ImageProcessor;
+use App\Services\NotificationService;
 
 class DiretorGeralController extends Controller
 {
@@ -264,26 +265,7 @@ class DiretorGeralController extends Controller
             ->first();
 
         if ($aluno && $aluno->role === 'Aluno') {
-            try {
-                $statusText = $request->action === 'finalizado' ? 'Aprovado' : 'Indeferido';
-                \App\Models\Notification::create([
-                    'user_id' => $aluno->id,
-                    'title' => $statusText === 'Aprovado' ? 'Requerimento Deferido ✓' : 'Requerimento Indeferido ✗',
-                    'message' => "Seu requerimento #" . $requerimento->id . " foi " . ($statusText === 'Aprovado' ? 'DEFERIDO' : 'INDEFERIDO') . ".",
-                    'event_type' => 'status_' . $request->action,
-                    'related_id' => $requerimento->id,
-                    'is_read' => false
-                ]);
-                \Illuminate\Support\Facades\Log::info('Notificação pop-up criada com sucesso para aluno (Diretor Geral)', [
-                    'user_id' => $aluno->id,
-                    'request_id' => $requerimento->id,
-                    'status' => $request->action
-                ]);
-            } catch (\Exception $notificationError) {
-                \Illuminate\Support\Facades\Log::error('Erro ao criar notificação pop-up', [
-                    'message' => $notificationError->getMessage()
-                ]);
-            }
+            \App\Services\NotificationService::notifyStatusChange($requerimento, $request->action);
         }
     }
 
@@ -312,24 +294,7 @@ class DiretorGeralController extends Controller
         ->first();
 
     if ($aluno && $aluno->role === 'Aluno') {
-        try {
-            \App\Models\Notification::create([
-                'user_id' => $aluno->id,
-                'title' => 'Requerimento Devolvido',
-                'message' => 'Seu requerimento #' . $requerimento->id . ' foi devolvido  à CRADT. Você será notificado quando houver uma atualização.',
-                'is_read' => false,
-                'event_type' => 'request_returned',
-                'related_id' => $requerimento->id,
-            ]);
-            \Illuminate\Support\Facades\Log::info('Notificação de devolução criada para aluno', [
-                'user_id' => $aluno->id,
-                'request_id' => $requerimento->id
-            ]);
-        } catch (\Exception $notificationError) {
-            \Illuminate\Support\Facades\Log::error('Erro ao criar notificação de devolução', [
-                'message' => $notificationError->getMessage()
-            ]);
-        }
+        \App\Services\NotificationService::notifyReturned($requerimento);
     }
 
         event(new \App\Events\ApplicationStatusChanged($requerimento, $oldStatus, 'devolvido'));

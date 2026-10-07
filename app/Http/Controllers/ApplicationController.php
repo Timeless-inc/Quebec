@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ValidateUploadFile;
 use App\Services\ImageProcessor;
+use App\Services\NotificationService;
 use Ramsey\Uuid\Guid\Guid;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -295,22 +296,9 @@ public function create()
             );
             Log::info('Dados de última requisição atualizados com sucesso');
 
-            Log::info('Criando notificação pop-up de confirmação (síncrono)');
-            try {
-                Notification::create([
-                    'user_id' => Auth::id(),
-                    'title' => 'Requerimento Criado',
-                    'message' => 'Seu requerimento #' . $applicationRequest->id . ' foi enviado com sucesso! Em breve ele será revisado e você será notificado sobre a atualização.',
-                    'is_read' => false,
-                    'event_type' => 'request_created',
-                    'related_id' => $applicationRequest->id,
-                ]);
-                Log::info('Notificação pop-up criada com sucesso (síncrono)');
-            } catch (\Exception $notificationError) {
-                Log::error('Erro ao criar notificação pop-up', [
-                    'message' => $notificationError->getMessage()
-                ]);
-            }
+            Log::info('Criando notificação pop-up via NotificationService (síncrono)');
+            NotificationService::notifyNewRequest($applicationRequest);
+
             Log::info('Disparando evento ApplicationRequestCreated para processamento assíncrono');
             event(new ApplicationRequestCreated($applicationRequest));
             Log::info('Evento disparado com sucesso');
@@ -568,48 +556,28 @@ public function create()
         if ($olderStatus !== $newStatus) {
             $user = \App\Models\User::where('email', $requerimento->email)->first();
 
-            if ($user && $user->role === 'Aluno') {
-                try {
-                    $statusText = $this->getStatusText($newStatus);
-                    Notification::create([
-                        'user_id' => $user->id,
-                        'title' => 'Status Atualizado',
-                        'message' => "Seu requerimento #" . $requerimento->id . " teve o status atualizado para: {$statusText}",
-                        'event_type' => 'status_changed',
-                        'related_id' => $requerimento->id,
-                        'is_read' => false
-                    ]);
-                    Log::info('Notificação pop-up de status criada com sucesso (síncrono)', [
-                        'user_id' => $user->id,
-                        'request_id' => $requerimento->id,
-                        'status' => $newStatus
-                    ]);
-                } catch (\Exception $notificationError) {
-                    Log::error('Erro ao criar notificação pop-up de status', [
-                        'message' => $notificationError->getMessage()
-                    ]);
-                }
-            }
+            Log::info('Disparando notificação de alteração de status via NotificationService');
+            NotificationService::notifyStatusChange($requerimento, $newStatus);
+
             Log::info('Disparando evento ApplicationStatusChanged para envio de email');
             event(new ApplicationStatusChanged($requerimento, $oldStatus, $request->status));
-            Log::info('Evento disparado com sucesso');
         }
 
         return redirect()->back()
             ->with('success', 'Status atualizado com sucesso!');
     }
 
-    private function getStatusText($status)
-    {
-        $statusMap = [
-            'pendente' => 'Pendente',
-            'em_andamento' => 'Em Análise',
-            'finalizado' => 'Aprovado',
-            'indeferido' => 'Indeferido'
-        ];
+    // private function getStatusText($status) -- IGNORAR POR HORA --
+    // {
+    //     $statusMap = [
+    //         'pendente' => 'Pendente',
+    //         'em_andamento' => 'Em Análise',
+    //         'finalizado' => 'Aprovado',
+    //         'indeferido' => 'Indeferido'
+    //     ];
 
-        return $statusMap[$status] ?? $status;
-    }
+    //     return $statusMap[$status] ?? $status;
+    // }
 
     public function getTiposRequisicao()
     {
