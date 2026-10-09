@@ -11,6 +11,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Middleware\EnsureRequerimentoAccess;
 use App\Http\Controllers\ProfileChangeRequestController;
 use App\Http\Controllers\ForwardingController;
 use App\Http\Controllers\DiretorGeralController;
@@ -110,17 +111,17 @@ Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Diretor Geral'])->group
     Route::get('/requerimentos', [ApplicationController::class, 'index'])->name('application.index');
     Route::post('/requerimentos/store', [ApplicationController::class, 'store'])->name('application.store');
     Route::get('/requerimentos/success', [ApplicationController::class, 'success'])->name('application.success');
-    Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->name('application.show');
-    Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->name('requerimento.pdf');
+    Route::get('/requerimentos/{id}', [ApplicationController::class, 'show'])->middleware(EnsureRequerimentoAccess::class)->name('application.show');
+    Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->middleware(EnsureRequerimentoAccess::class)->name('requerimento.pdf');
 });
 
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
     Route::get('/aluno/novo-requerimento', [ApplicationController::class, 'create'])->name('application');
-    Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->name('application.edit');
-    Route::put('/application/{id}', [ApplicationController::class, 'update'])->name('application.update');
-    Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->name('application.destroy');
+    Route::get('/application/{id}/edit', [ApplicationController::class, 'edit'])->middleware(EnsureRequerimentoAccess::class)->name('application.edit');
+    Route::put('/application/{id}', [ApplicationController::class, 'update'])->middleware(EnsureRequerimentoAccess::class)->name('application.update');
+    Route::delete('/requerimentos/{id}', [ApplicationController::class, 'destroy'])->middleware(EnsureRequerimentoAccess::class)->name('application.destroy');
 });
 
 // Justificativas e status — Cradt, Diretor Geral (+ cargos dinâmicos via super-acesso do middleware)
@@ -259,7 +260,9 @@ Route::middleware(['auth'])->prefix('profile-requests')->name('profile-requests.
 });
 
 // Rota compartilhada para visualização de justificativa de aluno
-Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])->name('justificativa-aluno.show');
+Route::get('/justificativa-aluno/{cpf}', [JustificativaAlunoController::class, 'show'])
+    ->middleware(['auth', 'verified', EnsureRequerimentoAccess::class . ':cpf'])
+    ->name('justificativa-aluno.show');
 
 // Preview local de templates de e-mail para ajustes visuais.
 if (app()->environment('local')) {

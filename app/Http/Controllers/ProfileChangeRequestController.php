@@ -168,6 +168,8 @@ class ProfileChangeRequestController extends Controller
 
     public function approveGroup($groupId)
     {
+        abort_unless(Auth::user()->role === 'Cradt', 403, 'Acesso não autorizado.');
+
         $requests = ProfileChangeRequest::where('request_group_id', $groupId)
             ->whereIn('status', ['pending', 'needs_review'])
             ->get();
@@ -193,6 +195,8 @@ class ProfileChangeRequestController extends Controller
 
     public function rejectGroup($groupId)
     {
+        abort_unless(Auth::user()->role === 'Cradt', 403, 'Acesso não autorizado.');
+
         $requests = ProfileChangeRequest::where('request_group_id', $groupId)
             ->whereIn('status', ['pending', 'needs_review'])
             ->get();

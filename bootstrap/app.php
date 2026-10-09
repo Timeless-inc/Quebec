@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -32,6 +33,16 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->call(function () {
+            \App\Models\Event::where('end_date', '<', \Carbon\Carbon::today())->delete();
+        })->dailyAt('00:00')->name('events:delete-expired');
+
+        $schedule->command('events:check-expiring')->dailyAt('00:00');
+
+        // Executar diariamente às 9:00 para notificar eventos que terminam em breve aos alunos
+        $schedule->command('events:notify-ending')->dailyAt('09:00');
+    })
     ->withMiddleware(function (Middleware $middleware) {
         // Middleware global que é executado em todas as requisições
         $middleware->use([

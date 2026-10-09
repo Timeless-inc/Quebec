@@ -26,6 +26,9 @@ class ProfileChangeRequest extends Model
     const STATUS_REJECTED = 'rejected';
     const STATUS_NEEDS_REVIEW = 'needs_review';
 
+    // Únicos campos do usuário que um pedido de alteração pode modificar
+    const CAMPOS_ALTERAVEIS = ['name', 'matricula', 'matricula_adicional', 'cpf', 'rg'];
+
 
     public function user()
     {
@@ -37,6 +40,8 @@ class ProfileChangeRequest extends Model
      */
     public function aplicar(): void
     {
+        abort_unless(in_array($this->field, self::CAMPOS_ALTERAVEIS, true), 422, 'Campo não permitido para alteração de perfil.');
+
         $user = $this->user;
 
         if ($this->field !== 'matricula_adicional') {

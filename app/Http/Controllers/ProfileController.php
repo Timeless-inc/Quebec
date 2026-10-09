@@ -103,6 +103,13 @@ class ProfileController extends Controller
 
         $fields = $request->input('fields');
         $user = Auth::user();
+
+        // O nome do campo vem do formulário e é gravado no usuário na aprovação
+        foreach (array_keys($fields) as $fieldName) {
+            $campo = str_starts_with($fieldName, 'matricula_adicional') ? 'matricula_adicional' : $fieldName;
+
+            abort_unless(in_array($campo, ProfileChangeRequest::CAMPOS_ALTERAVEIS, true), 422, 'Campo não permitido para alteração de perfil.');
+        }
         
         $fieldLabels = [
             'name' => 'Nome',
