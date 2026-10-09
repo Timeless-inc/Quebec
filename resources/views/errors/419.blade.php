@@ -2,9 +2,19 @@
 
 @section('code', '419')
 @section('title', 'Sessão expirada')
-@section('message', 'Sua sessão expirou por inatividade. Volte, atualize a página e envie o formulário novamente.')
+@section('caption', 'Você ficou um tempo sem atividade')
+@section('message', 'Por segurança, sua sessão expirou antes de o formulário ser enviado.')
+
+@section('icon')
+    <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+@endsection
+
+@section('tips')
+    <li>Volte, atualize a página e envie o formulário novamente.</li>
+    <li>Se o problema continuar, entre de novo no sistema.</li>
+@endsection
 
 @section('actions')
-    <button type="button" class="button secondary" onclick="history.back()">Voltar</button>
-    <a href="{{ url('/login') }}" class="button">Fazer login</a>
+    <button type="button" class="button" onclick="history.back()">Voltar e corrigir</button>
+    <a href="{{ url('/login') }}" class="button secondary">Fazer login</a>
 @endsection

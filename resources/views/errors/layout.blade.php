@@ -22,76 +22,192 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 1.5rem 1rem;
             font-family: Figtree, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: #f3f4f6;
             color: #1f2937;
+            background-color: #f3f4f6;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.16), transparent 38%),
+                radial-gradient(circle at 88% 82%, rgba(5, 150, 105, 0.14), transparent 42%);
         }
 
         .card {
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            max-width: 32rem;
-            padding: 2.5rem 2rem;
-            text-align: center;
+            max-width: 54rem;
+            overflow: hidden;
             background-color: #ffffff;
-            border-radius: 0.75rem;
-            border-top: 4px solid #059669;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18);
+            animation: surgir 0.45s ease-out both;
         }
 
-        .logo {
-            height: 3rem;
-            width: auto;
-            margin-bottom: 1.5rem;
+        .hero {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2.25rem 1.5rem;
+            overflow: hidden;
+            text-align: center;
+            color: #ffffff;
+            background: linear-gradient(140deg, #065f46 0%, #059669 55%, #34d399 100%);
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.09);
+        }
+
+        .hero::before {
+            width: 14rem;
+            height: 14rem;
+            top: -5rem;
+            right: -5rem;
+        }
+
+        .hero::after {
+            width: 9rem;
+            height: 9rem;
+            bottom: -3.5rem;
+            left: -3rem;
+        }
+
+        .icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.16);
+            animation: flutuar 3.5s ease-in-out infinite;
+        }
+
+        .icon svg {
+            width: 2.25rem;
+            height: 2.25rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .code {
+            position: relative;
             margin: 0;
-            font-size: 4.5rem;
-            font-weight: 700;
+            font-size: 5rem;
+            font-weight: 800;
             line-height: 1;
-            color: #059669;
+            letter-spacing: -0.03em;
+        }
+
+        .caption {
+            position: relative;
+            margin: 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.85;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem 1.5rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .brand img {
+            height: 2rem;
+            width: auto;
         }
 
         h1 {
-            margin: 1rem 0 0.5rem;
-            font-size: 1.5rem;
-            font-weight: 600;
+            margin: 1.5rem 0 0.5rem;
+            font-size: 1.625rem;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #111827;
         }
 
         .message {
-            margin: 0 auto;
-            max-width: 26rem;
-            font-size: 0.95rem;
+            margin: 0;
+            font-size: 1rem;
             line-height: 1.6;
-            color: #6b7280;
+            color: #4b5563;
+        }
+
+        .tips {
+            margin: 1.5rem 0 0;
+            padding: 1rem 1.125rem;
+            border-radius: 0.625rem;
+            border: 1px solid #d1fae5;
+            background-color: #ecfdf5;
+        }
+
+        .tips p {
+            margin: 0 0 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .tips ul {
+            margin: 0;
+            padding-left: 1.125rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #047857;
         }
 
         .actions {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
             gap: 0.75rem;
-            margin-top: 2rem;
+            margin-top: 1.75rem;
         }
 
         .button {
             display: inline-block;
-            padding: 0.625rem 1.25rem;
+            padding: 0.6875rem 1.375rem;
             font: inherit;
             font-size: 0.875rem;
             font-weight: 600;
             text-decoration: none;
-            border-radius: 0.375rem;
+            border-radius: 0.5rem;
             border: 1px solid #059669;
             background-color: #059669;
             color: #ffffff;
             cursor: pointer;
+            transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
         }
 
         .button:hover {
             background-color: #047857;
             border-color: #047857;
+            transform: translateY(-1px);
+        }
+
+        .button:focus-visible {
+            outline: 3px solid rgba(16, 185, 129, 0.45);
+            outline-offset: 2px;
         }
 
         .button.secondary {
@@ -102,40 +218,114 @@
 
         .button.secondary:hover {
             background-color: #f9fafb;
+            border-color: #9ca3af;
         }
 
         .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
             margin-top: 2rem;
-            padding-top: 1.5rem;
+            padding-top: 1.25rem;
             border-top: 1px solid #f3f4f6;
+            font-size: 0.75rem;
+            color: #9ca3af;
         }
 
         .footer img {
-            height: 2rem;
+            height: 1.75rem;
             width: auto;
+        }
+
+        @keyframes surgir {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+        }
+
+        @keyframes flutuar {
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                flex-direction: row;
+            }
+
+            .hero {
+                flex: 0 0 38%;
+                padding: 3rem 1.5rem;
+            }
+
+            .code {
+                font-size: 6rem;
+            }
+
+            .content {
+                padding: 2.75rem 2.5rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card,
+            .icon {
+                animation: none;
+            }
         }
     </style>
 </head>
 
 <body>
     <main class="card">
-        <img src="{{ asset('img/logo-sre.png') }}" alt="SRE" class="logo">
-
-        <p class="code">@yield('code')</p>
-        <h1>@yield('title')</h1>
-        <p class="message">@yield('message')</p>
-
-        <div class="actions">
-            @hasSection('actions')
-                @yield('actions')
-            @else
-                <button type="button" class="button secondary" onclick="history.back()">Voltar</button>
-                <a href="{{ url('/') }}" class="button">Página inicial</a>
-            @endif
+        <div class="hero">
+            <div class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    @hasSection('icon')
+                        @yield('icon')
+                    @else
+                        <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    @endif
+                </svg>
+            </div>
+            <p class="code">@yield('code')</p>
+            <p class="caption">@yield('caption', 'Algo não saiu como esperado')</p>
         </div>
 
-        <div class="footer">
-            <img src="{{ asset('img/ifpe.png') }}" alt="Instituto Federal de Pernambuco">
+        <div class="content">
+            <div class="brand">
+                <img src="{{ asset('img/logo-sre.png') }}" alt="">
+                Sistema de Requerimentos
+            </div>
+
+            <h1>@yield('title')</h1>
+            <p class="message">@yield('message')</p>
+
+            @hasSection('tips')
+                <div class="tips">
+                    <p>O que você pode fazer</p>
+                    <ul>
+                        @yield('tips')
+                    </ul>
+                </div>
+            @endif
+
+            <div class="actions">
+                @hasSection('actions')
+                    @yield('actions')
+                @else
+                    <a href="{{ url('/') }}" class="button">Página inicial</a>
+                    <button type="button" class="button secondary" onclick="history.back()">Voltar</button>
+                @endif
+            </div>
+
+            <div class="footer">
+                <img src="{{ asset('img/ifpe.png') }}" alt="Instituto Federal de Pernambuco">
+                <span>Erro @yield('code')</span>
+            </div>
         </div>
     </main>
 </body>
