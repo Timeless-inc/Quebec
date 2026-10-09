@@ -32,16 +32,18 @@ class RegisteredUserController extends Controller
         $inputRg = $this->normalizeRg($request->input('rg'));
         $inputRgUf = strtoupper(trim((string) $request->input('rg_uf')));
         $inputMatricula = trim((string) $request->input('matricula'));
-        $hasSecondMatricula = $request->boolean('has_second_matricula');
-        $inputSecondMatricula = $hasSecondMatricula ? trim((string) $request->input('second_matricula')) : null;
+        $inputMatriculasAdicionais = collect((array) $request->input('matriculas_adicionais', []))
+            ->map(fn ($matricula) => trim((string) $matricula))
+            ->filter()
+            ->values()
+            ->all();
 
         $request->merge([
             'username' => trim((string) $request->input('username')),
             'name' => trim((string) $request->input('name')),
             'email' => strtolower(trim((string) $request->input('email'))),
             'matricula' => $inputMatricula,
-            'second_matricula' => $inputSecondMatricula,
-            'has_second_matricula' => $hasSecondMatricula ? 1 : 0,
+            'matriculas_adicionais' => $inputMatriculasAdicionais,
             'rg_uf' => $inputRgUf,
             'rg' => $inputRg,
             'cpf' => $inputCpf,
@@ -61,11 +63,11 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($cradtPending?->id)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'matricula' => ['required', 'string', 'max:255'],
-            'second_matricula' => ['nullable', 'required_if:has_second_matricula,1', 'string', 'max:255'],
+            'matriculas_adicionais' => ['array'],
+            'matriculas_adicionais.*' => ['string', 'max:255', 'distinct', 'different:matricula'],
             'rg' => ['bail', 'required', 'string', 'min:7', 'max:11', 'regex:/^[0-9A-Za-z]+$/', new ValidRgOrCin($inputCpf)],
             'rg_uf' => ['nullable', 'string', 'size:2', Rule::in(array_keys($this->brazilStates()))],
             'cpf' => ['required', 'string', 'size:11', new ValidCpf(), Rule::unique('users', 'cpf')->ignore($cradtPending?->id)],
-            'has_second_matricula' => ['sometimes', 'boolean'],
         ];
 
         $errorMessages = [
@@ -75,7 +77,8 @@ class RegisteredUserController extends Controller
             'password.confirmed' => 'A confirmação de senha não corresponde.',
             'password.min' => 'A senha deve ter pelo menos :min caracteres.',
             'password.required' => 'A senha é obrigatória.',
-            'second_matricula.required_if' => 'Informe a segunda matrícula ou desmarque a opção de segunda matrícula.',
+            'matriculas_adicionais.*.distinct' => 'As matrículas adicionais não podem se repetir.',
+            'matriculas_adicionais.*.different' => 'A matrícula adicional deve ser diferente da matrícula principal.',
             'rg.min' => 'O RG deve ter entre 7 e 11 caracteres.',
             'rg.max' => 'O RG deve ter entre 7 e 11 caracteres.',
             'rg.regex' => 'O RG deve conter apenas letras e números.',
@@ -85,7 +88,7 @@ class RegisteredUserController extends Controller
 
         $validator = Validator::make($request->all(), $validationRules, $errorMessages);
 
-        $validator->after(function ($validator) use ($cradtPending, $inputMatricula, $inputSecondMatricula, $inputRg, $inputRgUf, $isCinDocument) {
+        $validator->after(function ($validator) use ($cradtPending, $inputMatricula, $inputMatriculasAdicionais, $inputRg, $inputRgUf, $isCinDocument) {
             if ($cradtPending) {
                 return;
             }
@@ -105,34 +108,14 @@ class RegisteredUserController extends Controller
                 }
             }
 
-            $matriculaExists = User::query()
-                ->where(function ($query) use ($inputMatricula) {
-                    $query->where('matricula', $inputMatricula)
-                        ->orWhere('second_matricula', $inputMatricula);
-                })
-                ->exists();
-
-            if ($matriculaExists) {
-                $validator->errors()->add('matricula', 'Esta matrícula já está cadastrada em nosso sistema (como matrícula principal ou secundária).');
+            if (User::matriculaEmUso($inputMatricula)) {
+                $validator->errors()->add('matricula', 'Esta matrícula já está cadastrada em nosso sistema (como matrícula principal ou adicional).');
             }
 
-            if (empty($inputSecondMatricula)) {
-                return;
-            }
-
-            $secondMatriculaExists = User::query()
-                ->where(function ($query) use ($inputSecondMatricula) {
-                    $query->where('matricula', $inputSecondMatricula)
-                        ->orWhere('second_matricula', $inputSecondMatricula);
-                })
-                ->exists();
-
-            if ($secondMatriculaExists) {
-                $validator->errors()->add('second_matricula', 'Esta matrícula secundária já está cadastrada em nosso sistema.');
-            }
-
-            if ($inputMatricula === $inputSecondMatricula) {
-                $validator->errors()->add('second_matricula', 'A matrícula secundária deve ser diferente da matrícula principal.');
+            foreach ($inputMatriculasAdicionais as $indice => $matriculaAdicional) {
+                if (User::matriculaEmUso($matriculaAdicional)) {
+                    $validator->errors()->add("matriculas_adicionais.{$indice}", "A matrícula {$matriculaAdicional} já está cadastrada em nosso sistema.");
+                }
             }
         });
 
@@ -148,7 +131,6 @@ class RegisteredUserController extends Controller
                 'rg' => $validated['rg'],
                 'rg_uf' => $isCinDocument ? null : $validated['rg_uf'],
                 'cpf' => $inputCpf,
-                'second_matricula' => $hasSecondMatricula ? $validated['second_matricula'] : null,
             ]);
         } else {
             $user = User::create([
@@ -157,13 +139,14 @@ class RegisteredUserController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'matricula' => $validated['matricula'],
-                'second_matricula' => $hasSecondMatricula ? $validated['second_matricula'] : null,
                 'rg' => $validated['rg'],
                 'rg_uf' => $isCinDocument ? null : $validated['rg_uf'],
                 'cpf' => $inputCpf,
                 'role' => 'Aluno'
             ]);
         }
+
+        $user->sincronizarMatriculasAdicionais($inputMatriculasAdicionais);
 
         event(new Registered($user));
         event(new UserRegistered($user));

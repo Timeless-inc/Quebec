@@ -71,27 +71,13 @@
                             @enderror
                         </div>
 
-                        <!-- Segunda Matrícula -->
+                        <!-- Matrículas adicionais -->
                         <div>
-                            <label for="second_matricula" class="block text-sm font-medium text-gray-700">
-                                Segunda Matrícula 
+                            <span class="block text-sm font-medium text-gray-700 mb-1">
+                                Matrículas adicionais
                                 <span class="text-xs text-gray-500">(opcional)</span>
-                            </label>
-                            <div class="flex mt-1">
-                                <input type="text" name="second_matricula" id="second_matricula" 
-                                       value="{{ old('second_matricula', $user->second_matricula) }}"
-                                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                
-                                @if($user->second_matricula)
-                                    <button type="button" id="clear_second_matricula" 
-                                            class="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                        Remover
-                                    </button>
-                                @endif
-                            </div>
-                            @error('second_matricula')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            </span>
+                            <x-matriculas-adicionais :values="$user->matriculasAdicionais->pluck('matricula')->all()" />
                         </div>
                         
                         <!-- RG -->
@@ -138,16 +124,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const clearButton = document.getElementById('clear_second_matricula');
-        const secondMatriculaInput = document.getElementById('second_matricula');
-        
-        if (clearButton && secondMatriculaInput) {
-            clearButton.addEventListener('click', function() {
-                secondMatriculaInput.value = '';
-                alert('A segunda matrícula será removida quando você salvar as alterações.');
-            });
-        }
-        
         const cpfInput = document.getElementById('cpf');
         if (cpfInput) {
             cpfInput.addEventListener('input', function(e) {

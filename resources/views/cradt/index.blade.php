@@ -196,6 +196,7 @@
                                                 <span class="font-medium">
                                                     @if($request->field == 'name') Nome
                                                     @elseif($request->field == 'matricula') Matrícula
+                                                    @elseif($request->field == 'matricula_adicional') Matrícula Adicional
                                                     @elseif($request->field == 'cpf') CPF
                                                     @elseif($request->field == 'rg') RG
                                                     @endif
@@ -204,7 +205,7 @@
                                                     <span class="text-gray-500 mr-1">Atual:</span> {{ $request->current_value }}
                                                 </div>
                                                 <div class="flex text-sm">
-                                                    <span class="text-gray-500 mr-1">Novo:</span> {{ $request->new_value }}
+                                                    <span class="text-gray-500 mr-1">Novo:</span> {{ $request->new_value !== '' ? $request->new_value : 'Remover matrícula' }}
                                                 </div>
                                                 <a href="{{ Storage::temporaryUrl($request->document_path, now()->addMinutes(30)) }}" target="_blank" class="text-blue-600 hover:underline text-xs mt-1">Ver documento</a>
                                             </div>

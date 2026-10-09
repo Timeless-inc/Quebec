@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use App\Rules\MatriculaDisponivel;
 
 class UserManagementController extends Controller
 {
@@ -27,7 +28,8 @@ class UserManagementController extends Controller
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('username', 'like', "%{$search}%")
                   ->orWhere('cpf', 'like', "%{$search}%")
-                  ->orWhere('matricula', 'like', "%{$search}%");
+                  ->orWhere('matricula', 'like', "%{$search}%")
+                  ->orWhereHas('matriculasAdicionais', fn ($matriculas) => $matriculas->where('matricula', 'like', "%{$search}%"));
             });
         }
 
@@ -35,7 +37,7 @@ class UserManagementController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->orderBy('name')->paginate(15);
+        $users = $query->with('matriculasAdicionais')->orderBy('name')->paginate(15);
 
         return view('users.index', compact('users', 'roles'));
     }
@@ -59,13 +61,18 @@ class UserManagementController extends Controller
             'username'         => 'required|string|max:255|unique:users,username,' . $user->id,
             'email'            => 'required|email|max:255|unique:users,email,' . $user->id,
             'cpf'              => 'required|string|max:14|unique:users,cpf,' . $user->id,
-            'matricula'        => 'required|string|max:255|unique:users,matricula,' . $user->id,
-            'second_matricula' => 'nullable|string|max:255|unique:users,second_matricula,' . $user->id,
+            'matricula'        => ['required', 'string', 'max:255', new MatriculaDisponivel($user->id)],
+            'matriculas_adicionais'   => ['nullable', 'array'],
+            'matriculas_adicionais.*' => ['nullable', 'string', 'max:255', 'distinct', 'different:matricula', new MatriculaDisponivel($user->id)],
             'rg'               => 'required|string|max:12|unique:users,rg,' . $user->id,
             'role'             => ['required', 'string', Rule::in($allowedRoles)],
+        ], [
+            'matriculas_adicionais.*.distinct'  => 'As matrículas adicionais não podem se repetir.',
+            'matriculas_adicionais.*.different' => 'A matrícula adicional deve ser diferente da matrícula principal.',
         ]);
 
-        $user->update($validatedData);
+        $user->update(collect($validatedData)->except('matriculas_adicionais')->all());
+        $user->sincronizarMatriculasAdicionais($validatedData['matriculas_adicionais'] ?? []);
 
         $indexRoute = Auth::user()->isDiretorGeral() ? 'diretor-geral.users.index' : 'users.index';
         return redirect()->route($indexRoute)->with('success', 'Usuário atualizado com sucesso!');

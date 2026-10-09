@@ -139,11 +139,13 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user->email }}</td>
                                         <td class="px-6 py-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $user->matricula }}</div>
-                                            @if($user->second_matricula)
-                                                <div class="mt-1">
-                                                    <span class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                                                        Segunda: {{ $user->second_matricula }}
-                                                    </span>
+                                            @if($user->matriculasAdicionais->isNotEmpty())
+                                                <div class="mt-1 flex flex-wrap gap-1">
+                                                    @foreach($user->matriculasAdicionais as $matriculaAdicional)
+                                                        <span class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                                                            {{ $matriculaAdicional->matricula }}
+                                                        </span>
+                                                    @endforeach
                                                 </div>
                                             @endif
                                         </td>

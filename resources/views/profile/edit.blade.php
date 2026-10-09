@@ -235,6 +235,12 @@
                                         </td>
                                     </tr>
 
+                                    @php
+                                        $matriculasAdicionais = Auth::user()->matriculasAdicionais
+                                            ->map(fn ($item) => ['campo' => 'matricula_adicional_' . $item->id, 'atual' => $item->matricula])
+                                            ->push(['campo' => 'matricula_adicional_nova', 'atual' => null]);
+                                    @endphp
+
                                     <!-- Matrícula Principal -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -255,43 +261,37 @@
                                         </td>
                                     </tr>
 
-                                    <!-- Segunda Matrícula -->
+                                    <!-- Matrículas adicionais: uma linha por matrícula e uma para incluir outra -->
+                                    @foreach($matriculasAdicionais as $item)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_second_matricula" name="fields[second_matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="second_matricula">
+                                            <input type="checkbox" id="change_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="{{ $item['campo'] }}">
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">Segunda Matrícula</td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $item['atual'] ? 'Matrícula Adicional' : 'Nova Matrícula' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ $item['atual'] ?? 'Adicionar outra matrícula' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ Auth::user()->second_matricula ?? 'Não cadastrada' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="second_matricula_fields">
-                                                @if(Auth::user()->second_matricula)
-                                                    <!-- Se já tem segunda matrícula, exibe campos normais de alteração -->
-                                                    <input id="second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ Auth::user()->second_matricula }}" placeholder="Nova segunda matrícula">
-                                                    <input type="hidden" name="fields[second_matricula][current]" value="{{ Auth::user()->second_matricula }}">
-                                                    
+                                            <div class="change-field hidden" id="{{ $item['campo'] }}_fields">
+                                                <input id="{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ $item['atual'] }}" placeholder="{{ $item['atual'] ? 'Nova matrícula' : 'Matrícula a adicionar' }}">
+                                                <input type="hidden" name="fields[{{ $item['campo'] }}][current]" value="{{ $item['atual'] }}">
+
+                                                @if($item['atual'])
                                                     <div class="mt-2">
                                                         <label class="flex items-center">
-                                                            <input type="checkbox" id="remove_second_matricula" name="fields[second_matricula][remove]" class="w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
-                                                            <span class="text-sm text-red-600">Remover segunda matrícula</span>
+                                                            <input type="checkbox" name="fields[{{ $item['campo'] }}][remove]" class="remove-matricula w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
+                                                            <span class="text-sm text-red-600">Remover esta matrícula</span>
                                                         </label>
                                                     </div>
-                                                @else
-                                                    <!-- Se não tem segunda matrícula, exibe apenas campo para adição -->
-                                                    <input id="second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Adicionar segunda matrícula">
-                                                    <input type="hidden" name="fields[second_matricula][current]" value="">
-                                                    <p class="text-sm text-gray-500 mt-1">Você adicionará uma segunda matrícula.</p>
                                                 @endif
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="change-field hidden" id="second_matricula_document_fields">
-                                                <input id="second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
-                                                                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
+                                            <div class="change-field hidden" id="{{ $item['campo'] }}_document_fields">
+                                                <input id="{{ $item['campo'] }}_document" name="fields[{{ $item['campo'] }}][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
                                             </div>
                                         </td>
                                     </tr>
+                                    @endforeach
 
                                     <!-- CPF -->
                                     <tr>
@@ -391,46 +391,44 @@
                                 </div>
                             </div>
                             
-                            <!-- Card da Segunda Matrícula -->
+                            <!-- Cards das matrículas adicionais -->
+                            @foreach($matriculasAdicionais as $item)
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
-                                    <div class="font-medium">Segunda Matrícula</div>
-                                    <input type="checkbox" id="mobile_change_second_matricula" name="fields[second_matricula][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="second_matricula">
+                                    <div class="font-medium">{{ $item['atual'] ? 'Matrícula Adicional' : 'Nova Matrícula' }}</div>
+                                    <input type="checkbox" id="mobile_change_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="{{ $item['campo'] }}">
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
                                         <div class="data-item-label">Valor Atual:</div>
-                                        <div>{{ Auth::user()->second_matricula ?? 'Não cadastrada' }}</div>
+                                        <div>{{ $item['atual'] ?? 'Adicionar outra matrícula' }}</div>
                                     </div>
-                                    
-                                    <div class="change-field hidden" id="mobile_second_matricula_fields">
+
+                                    <div class="change-field hidden" id="mobile_{{ $item['campo'] }}_fields">
                                         <div class="data-item">
                                             <div class="data-item-label">Novo Valor:</div>
-                                            @if(Auth::user()->second_matricula)
-                                                <input id="mobile_second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ Auth::user()->second_matricula }}" placeholder="Nova segunda matrícula">
-                                                <input type="hidden" name="fields[second_matricula][current]" value="{{ Auth::user()->second_matricula }}">
-                                                
+                                            <input id="mobile_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ $item['atual'] }}" placeholder="{{ $item['atual'] ? 'Nova matrícula' : 'Matrícula a adicionar' }}">
+                                            <input type="hidden" name="fields[{{ $item['campo'] }}][current]" value="{{ $item['atual'] }}">
+
+                                            @if($item['atual'])
                                                 <div class="mt-2">
                                                     <label class="flex items-center">
-                                                        <input type="checkbox" id="mobile_remove_second_matricula" name="fields[second_matricula][remove]" class="w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
-                                                        <span class="text-sm text-red-600">Remover segunda matrícula</span>
+                                                        <input type="checkbox" name="fields[{{ $item['campo'] }}][remove]" class="remove-matricula w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
+                                                        <span class="text-sm text-red-600">Remover esta matrícula</span>
                                                     </label>
                                                 </div>
-                                            @else
-                                                <input id="mobile_second_matricula" name="fields[second_matricula][value]" type="text" class="block w-full border rounded-md px-3 py-2" placeholder="Adicionar segunda matrícula">
-                                                <input type="hidden" name="fields[second_matricula][current]" value="">
-                                                <p class="text-sm text-gray-500 mt-1">Você adicionará uma segunda matrícula.</p>
                                             @endif
                                         </div>
-                                        
+
                                         <div class="data-item">
                                             <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_second_matricula_document" name="fields[second_matricula][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+                                            <input id="mobile_{{ $item['campo'] }}_document" name="fields[{{ $item['campo'] }}][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+                            @endforeach
+
                             <!-- Card do CPF -->
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
@@ -540,12 +538,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($request->field == 'name') Nome
                                     @elseif($request->field == 'matricula') Matrícula
+                                    @elseif($request->field == 'matricula_adicional') Matrícula Adicional
                                     @elseif($request->field == 'cpf') CPF
                                     @elseif($request->field == 'rg') RG
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $request->current_value }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $request->new_value !== '' ? $request->new_value : 'Remover matrícula' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($request->status == 'pending')
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
@@ -578,6 +577,7 @@
                             <div class="font-medium">
                                 @if($request->field == 'name') Nome
                                 @elseif($request->field == 'matricula') Matrícula
+                                @elseif($request->field == 'matricula_adicional') Matrícula Adicional
                                 @elseif($request->field == 'cpf') CPF
                                 @elseif($request->field == 'rg') RG
                                 @endif
@@ -606,7 +606,7 @@
                         
                         <div class="history-field">
                             <div class="text-sm text-gray-500">Novo Valor:</div>
-                            <div class="text-sm font-medium">{{ $request->new_value }}</div>
+                            <div class="text-sm font-medium">{{ $request->new_value !== '' ? $request->new_value : 'Remover matrícula' }}</div>
                         </div>
                         
                         @if($request->admin_comment)
@@ -714,7 +714,7 @@
                 }
             }
 
-            const fieldsToSync = ['name', 'matricula', 'second_matricula', 'cpf', 'rg'];
+            const fieldsToSync = [...new Set(Array.from(toggles).map(toggle => toggle.getAttribute('data-field')))];
             
             fieldsToSync.forEach(field => {
                 const desktopInput = document.getElementById(field);
@@ -839,33 +839,14 @@
                 });
             }
 
-            const addSecondMatriculaCheckbox = document.getElementById('add_second_matricula');
-            const addSecondMatriculaContainer = document.getElementById('add_second_matricula_container');
-            const removeSecondMatriculaCheckbox = document.getElementById('remove_second_matricula');
-            
-            if (addSecondMatriculaCheckbox && addSecondMatriculaContainer) {
-                addSecondMatriculaCheckbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        addSecondMatriculaContainer.classList.remove('hidden');
-                    } else {
-                        addSecondMatriculaContainer.classList.add('hidden');
-                        document.getElementById('second_matricula').value = '';
-                    }
+            // Ao marcar a remoção, o campo de novo valor deixa de ser enviado
+            document.querySelectorAll('.remove-matricula').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const input = this.closest('.change-field').querySelector('input[type="text"]');
+                    input.disabled = this.checked;
+                    input.classList.toggle('bg-gray-100', this.checked);
                 });
-            }
-            
-            if (removeSecondMatriculaCheckbox) {
-                removeSecondMatriculaCheckbox.addEventListener('change', function() {
-                    const secondMatriculaInput = document.getElementById('second_matricula');
-                    if (this.checked) {
-                        secondMatriculaInput.setAttribute('disabled', 'disabled');
-                        secondMatriculaInput.classList.add('bg-gray-100');
-                    } else {
-                        secondMatriculaInput.removeAttribute('disabled');
-                        secondMatriculaInput.classList.remove('bg-gray-100');
-                    }
-                });
-            }
+            });
         });
     </script>
     @endif

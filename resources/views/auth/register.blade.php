@@ -128,29 +128,10 @@
                             <x-input-error :messages="$errors->get('matricula')" class="mt-1 text-xs" />
                         </div>
 
-                        <!-- Checkbox para segunda matrícula -->
-                        <div class="mt-2">
-                            <div class="flex items-center">
-                                <input id="has_second_matricula" type="checkbox" name="has_second_matricula" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" {{ old('has_second_matricula') ? 'checked' : '' }}>
-                                <label for="has_second_matricula" class="ml-2 block text-sm text-gray-700">
-                                    {{ __('Possuo uma segunda matrícula') }}
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Segunda Matrícula (condicional) -->
-                        <div id="second_matricula_container" class="{{ old('has_second_matricula') ? '' : 'hidden' }} mt-4">
-                            <label for="second_matricula" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Segunda Matrícula') }}</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input id="second_matricula" type="text" name="second_matricula" value="{{ old('second_matricula') }}" placeholder="2025IFPEI0002" {{ old('has_second_matricula') ? 'required' : '' }}
-                                    class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
-                            </div>
-                            <x-input-error :messages="$errors->get('second_matricula')" class="mt-1 text-xs" />
+                        <!-- Matrículas adicionais -->
+                        <div>
+                            <span class="block text-sm font-medium text-gray-700 mb-1">{{ __('Outras matrículas') }} <span class="text-xs text-gray-500">(opcional)</span></span>
+                            <x-matriculas-adicionais input-class="py-3 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full" />
                         </div>
 
                         <!-- RG e CPF lado a lado -->
@@ -313,31 +294,6 @@
                 });
             }
 
-            const hasSecondMatriculaCheckbox = document.getElementById('has_second_matricula');
-            const secondMatriculaContainer = document.getElementById('second_matricula_container');
-            const secondMatriculaInput = document.getElementById('second_matricula');
-
-            function syncSecondMatriculaVisibility() {
-                if (!hasSecondMatriculaCheckbox || !secondMatriculaContainer || !secondMatriculaInput) {
-                    return;
-                }
-
-                if (hasSecondMatriculaCheckbox.checked) {
-                    secondMatriculaContainer.classList.remove('hidden');
-                    secondMatriculaInput.setAttribute('required', 'required');
-                    return;
-                }
-
-                secondMatriculaContainer.classList.add('hidden');
-                secondMatriculaInput.removeAttribute('required');
-                secondMatriculaInput.value = '';
-            }
-
-            if (hasSecondMatriculaCheckbox && secondMatriculaContainer) {
-                syncSecondMatriculaVisibility();
-                hasSecondMatriculaCheckbox.addEventListener('change', syncSecondMatriculaVisibility);
-            }
-
             const passwordToggles = document.querySelectorAll('.password-toggle');
             passwordToggles.forEach(toggle => {
                 toggle.addEventListener('click', function() {
@@ -414,14 +370,6 @@
                         valid = false;
                     }
                 });
-
-                // Segunda matrícula obrigatória quando checkbox estiver marcado
-                if (hasSecondMatriculaCheckbox && hasSecondMatriculaCheckbox.checked && secondMatriculaInput) {
-                    if (!secondMatriculaInput.value.trim()) {
-                        showError(secondMatriculaInput, 'O campo Segunda Matrícula é obrigatório.');
-                        valid = false;
-                    }
-                }
 
                 // Senha igual confirmação
                 const password = document.getElementById('password');

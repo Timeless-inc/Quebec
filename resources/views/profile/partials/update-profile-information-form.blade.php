@@ -66,9 +66,10 @@
         </div>
 
         <div>
-            <x-input-label for="second_matricula" value="Segunda Matrícula (Opcional)" />
-            <x-text-input id="second_matricula" name="second_matricula" type="text" class="mt-1 block w-full" :value="old('second_matricula', $user->second_matricula)" autocomplete="second_matricula" />
-            <x-input-error class="mt-2" :messages="$errors->get('second_matricula')" />
+            <x-input-label value="Matrículas adicionais (opcional)" />
+            <div class="mt-1">
+                <x-matriculas-adicionais :values="$user->matriculasAdicionais->pluck('matricula')->all()" />
+            </div>
         </div>
 
         <div class="flex items-center gap-4">

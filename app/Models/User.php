@@ -22,7 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'matricula',
-        'second_matricula',
         'rg_uf',
         'cpf',
         'rg',
@@ -63,6 +62,51 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    public function matriculasAdicionais()
+    {
+        return $this->hasMany(UserMatricula::class);
+    }
+
+    /**
+     * Matrícula principal seguida das adicionais.
+     */
+    public function todasMatriculas(): array
+    {
+        return array_values(array_filter([
+            $this->matricula,
+            ...$this->matriculasAdicionais->pluck('matricula'),
+        ]));
+    }
+
+    /**
+     * Indica se a matrícula já pertence a algum usuário, como principal ou adicional.
+     */
+    public static function matriculaEmUso(string $matricula, ?int $ignorarUserId = null): bool
+    {
+        return static::where('matricula', $matricula)
+                ->when($ignorarUserId, fn ($query) => $query->where('id', '!=', $ignorarUserId))
+                ->exists()
+            || UserMatricula::where('matricula', $matricula)
+                ->when($ignorarUserId, fn ($query) => $query->where('user_id', '!=', $ignorarUserId))
+                ->exists();
+    }
+
+    /**
+     * Substitui as matrículas adicionais do usuário pela lista informada.
+     */
+    public function sincronizarMatriculasAdicionais(array $matriculas): void
+    {
+        $matriculas = array_values(array_unique(array_filter(array_map('trim', $matriculas))));
+
+        $this->matriculasAdicionais()->whereNotIn('matricula', $matriculas)->delete();
+
+        foreach ($matriculas as $matricula) {
+            $this->matriculasAdicionais()->firstOrCreate(['matricula' => $matricula]);
+        }
+
+        $this->unsetRelation('matriculasAdicionais');
     }
 
     public function isDiretorGeral(): bool

@@ -107,10 +107,9 @@
                                         <label for="matricula" class="{{ $labelClass }}">Número de Matrícula <span id="matriculaRequired" class="text-red-500">*</span></label>
                                         <select class="{{ $fieldClass }}" id="matricula" name="matricula">
                                             <option value="">Selecione uma matrícula</option>
-                                            <option value="{{ Auth::user()->matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->matricula ? 'selected' : '' }}>{{ Auth::user()->matricula }}</option>
-                                            @if(Auth::user()->second_matricula)
-                                            <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $matricula ?? '') == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
-                                            @endif
+                                            @foreach(Auth::user()->todasMatriculas() as $matriculaDoUsuario)
+                                            <option value="{{ $matriculaDoUsuario }}" {{ old('matricula', $matricula ?? '') == $matriculaDoUsuario ? 'selected' : '' }}>{{ $matriculaDoUsuario }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div>

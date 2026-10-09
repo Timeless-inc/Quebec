@@ -31,4 +31,28 @@ class ProfileChangeRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Grava no usuário a alteração solicitada.
+     */
+    public function aplicar(): void
+    {
+        $user = $this->user;
+
+        if ($this->field !== 'matricula_adicional') {
+            $user->{$this->field} = $this->new_value;
+            $user->save();
+
+            return;
+        }
+
+        // Sem valor atual é inclusão; sem valor novo é remoção; com os dois é troca
+        if ($this->current_value) {
+            $user->matriculasAdicionais()->where('matricula', $this->current_value)->delete();
+        }
+
+        if ($this->new_value) {
+            $user->matriculasAdicionais()->firstOrCreate(['matricula' => $this->new_value]);
+        }
+    }
 }

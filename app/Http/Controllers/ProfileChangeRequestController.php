@@ -112,9 +112,7 @@ class ProfileChangeRequestController extends Controller
             return redirect()->back()->with('error', 'Usuário não encontrado.');
         }
         
-        $field = $profileRequest->field;
-        $targetUser->$field = $profileRequest->new_value;
-        $targetUser->save();
+        $profileRequest->aplicar();
         
         $profileRequest->status = 'approved';
         $profileRequest->admin_comment = $request->comment ?? 'Aprovado';
@@ -186,12 +184,7 @@ class ProfileChangeRequestController extends Controller
             $request->admin_comment = $comment;
             $request->save();
             
-            $requestUser = $request->user;
-            $field = $request->field;
-            $newValue = $request->new_value;
-            
-            $requestUser->$field = $newValue;
-            $requestUser->save();
+            $request->aplicar();
             
         }
         

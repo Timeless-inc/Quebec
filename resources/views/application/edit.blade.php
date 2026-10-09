@@ -77,9 +77,11 @@
                                             <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula</label>
                                             <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula_view" name="matricula">
                                                 <option value="{{ $requerimento->matricula }}" {{ old('matricula', $requerimento->matricula) == $requerimento->matricula ? 'selected' : '' }}>{{ $requerimento->matricula }}</option>
-                                                @if(Auth::user()->second_matricula)
-                                                <option value="{{ Auth::user()->second_matricula }}" {{ old('matricula', $requerimento->matricula) == Auth::user()->second_matricula ? 'selected' : '' }}>{{ Auth::user()->second_matricula }}</option>
+                                                @foreach(Auth::user()->todasMatriculas() as $matriculaDoUsuario)
+                                                @if($matriculaDoUsuario != $requerimento->matricula)
+                                                <option value="{{ $matriculaDoUsuario }}" {{ old('matricula', $requerimento->matricula) == $matriculaDoUsuario ? 'selected' : '' }}>{{ $matriculaDoUsuario }}</option>
                                                 @endif
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div>
