@@ -39,6 +39,9 @@
                     <x-nav-link :href="$reportsUrl" :active="$reportsActive">
                         {{ __('Relatórios') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('assinatura.verificar')" :active="request()->routeIs('assinatura.*')">
+                        {{ __('Verificar Assinatura') }}
+                    </x-nav-link>
                     @if($isDiretorGeral)
                     <x-nav-link :href="route('diretor-geral.users.index')" :active="request()->routeIs('diretor-geral.users.*')">
                         {{ __('Usuários') }}
@@ -144,6 +147,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="$reportsUrl" :active="$reportsActive">
                 {{ __('Relatórios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('assinatura.verificar')" :active="request()->routeIs('assinatura.*')">
+                {{ __('Verificar Assinatura') }}
             </x-responsive-nav-link>
             @if($isDiretorGeral)
             <x-responsive-nav-link :href="route('diretor-geral.users.index')" :active="request()->routeIs('diretor-geral.users.*')">

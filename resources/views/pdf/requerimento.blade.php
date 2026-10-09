@@ -595,6 +595,7 @@
     <div class="signature">
         <p><strong>Assinatura Digital:</strong> {{ $assinatura }}</p>
         <p>Este documento foi autenticado automaticamente e é válido para comprovação.</p>
+        <p>Confira a autenticidade em {{ route('assinatura.verificar') }} informando o código acima.</p>
     </div>
 
 </body>
