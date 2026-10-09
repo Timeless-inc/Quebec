@@ -24,6 +24,8 @@ class User extends Authenticatable
         'matricula',
         'rg_uf',
         'cpf',
+        'data_nascimento',
+        'telefone',
         'rg',
         'password',
         'role',
@@ -49,6 +51,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'data_nascimento' => 'date',
             'password' => 'hashed',
         ];
     }

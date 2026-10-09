@@ -36,8 +36,8 @@
 
                     <!-- Welcome Text -->
                     <div class="z-10">
-                        <h1 class="text-3xl font-bold text-white mb-3">Crie sua conta</h1>
-                        <p class="text-white/80 text-sm md:text-base">Preencha seus dados para ter acesso ao sistema.</p>
+                        <h1 class="text-3xl font-bold text-white mb-3">Primeiro acesso</h1>
+                        <p class="text-white/80 text-sm md:text-base">Seu cadastro é aberto pela CRADT. Complete seus dados para ativar o acesso.</p>
                     </div>
                 </div>
 
@@ -56,7 +56,8 @@
                         </a>
                     </div>
 
-                    <h2 class="text-2xl font-bold text-left md:text-left text-gray-800 mb-6">Cadastre-se</h2>
+                    <h2 class="text-2xl font-bold text-left md:text-left text-gray-800 mb-2">Primeiro acesso</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o CPF e a matrícula cadastrados pela CRADT e complete os demais dados.</p>
 
                     <!-- Session Status -->
                     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -64,8 +65,8 @@
                     <form method="POST" action="{{ route('register') }}" class="space-y-4" novalidate>
                         @csrf
 
-                        <!-- Nome de Usuário e Nome Completo lado a lado -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Nome de Usuário -->
+                        <div>
                             <!-- Username -->
                             <div>
                                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Nome de Usuário') }}</label>
@@ -81,20 +82,6 @@
                                 <x-input-error :messages="$errors->get('username')" class="mt-1 text-xs" />
                             </div>
 
-                            <!-- Name -->
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Nome Completo') }}</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                    </div>
-                                    <input id="name" type="text" name="name" value="{{ old('name') }}" autocomplete="name" placeholder="Fulano da Silva"
-                                        class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
-                                </div>
-                                <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs" />
-                            </div>
                         </div>
 
                         <!-- Email Address -->
@@ -126,12 +113,6 @@
                                     class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                             </div>
                             <x-input-error :messages="$errors->get('matricula')" class="mt-1 text-xs" />
-                        </div>
-
-                        <!-- Matrículas adicionais -->
-                        <div>
-                            <span class="block text-sm font-medium text-gray-700 mb-1">{{ __('Outras matrículas') }} <span class="text-xs text-gray-500">(opcional)</span></span>
-                            <x-matriculas-adicionais input-class="py-3 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full" />
                         </div>
 
                         <!-- RG e CPF lado a lado -->
@@ -177,6 +158,23 @@
                                         class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
                                 </div>
                                 <x-input-error :messages="$errors->get('cpf')" class="mt-1 text-xs" />
+                            </div>
+                        </div>
+
+                        <!-- Data de nascimento e telefone lado a lado -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Data de Nascimento') }}</label>
+                                <input id="data_nascimento" type="date" name="data_nascimento" value="{{ old('data_nascimento') }}" max="{{ now()->subDay()->toDateString() }}"
+                                    class="py-3 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
+                                <x-input-error :messages="$errors->get('data_nascimento')" class="mt-1 text-xs" />
+                            </div>
+
+                            <div>
+                                <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Telefone') }}</label>
+                                <input id="telefone" type="tel" name="telefone" value="{{ old('telefone') }}" inputmode="numeric" maxlength="15" autocomplete="tel" placeholder="(81) 99999-9999"
+                                    class="py-3 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
+                                <x-input-error :messages="$errors->get('telefone')" class="mt-1 text-xs" />
                             </div>
                         </div>
 
@@ -354,12 +352,13 @@
                 // Campos obrigatórios
                 const requiredFields = [
                     {id: 'username', label: 'Nome de Usuário'},
-                    {id: 'name', label: 'Nome Completo'},
                     {id: 'email', label: 'E-mail'},
                     {id: 'matricula', label: 'Matrícula'},
                     {id: 'rg_uf', label: 'UF'},
                     {id: 'rg', label: 'RG'},
                     {id: 'cpf', label: 'CPF'},
+                    {id: 'data_nascimento', label: 'Data de Nascimento'},
+                    {id: 'telefone', label: 'Telefone'},
                     {id: 'password', label: 'Senha'},
                     {id: 'password_confirmation', label: 'Confirmação de Senha'}
                 ];

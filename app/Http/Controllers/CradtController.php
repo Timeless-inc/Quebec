@@ -10,6 +10,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use App\Rules\MatriculaDisponivel;
+use App\Rules\ValidCpf;
 
 class CradtController extends Controller
 {
@@ -69,21 +72,43 @@ class CradtController extends Controller
         return view('cradt.register');
     }
 
+    /**
+     * A CRADT abre o cadastro com os dados essenciais; a pessoa completa o restante no primeiro acesso.
+     */
     public function register(Request $request)
     {
+        $request->merge([
+            'name' => trim((string) $request->input('name')),
+            'cpf' => preg_replace('/\D/', '', (string) $request->input('cpf')),
+            'matricula' => trim((string) $request->input('matricula')),
+        ]);
+
         $validated = $request->validate([
-            'cpf' => 'required|string|max:14|unique:users',
-            'matricula' => 'required|string|max:255|unique:users',
+            'role' => ['required', Rule::in(['Aluno', 'Cradt'])],
+            'name' => ['required', 'string', 'max:255'],
+            'cpf' => ['required', 'string', 'size:11', new ValidCpf(), 'unique:users,cpf'],
+            'matricula' => ['required', 'string', 'max:255', new MatriculaDisponivel()],
+            'matriculas_adicionais' => ['nullable', 'array'],
+            'matriculas_adicionais.*' => ['nullable', 'string', 'max:255', 'distinct', 'different:matricula', new MatriculaDisponivel()],
+        ], [
+            'cpf.unique' => 'Este CPF já está cadastrado.',
+            'cpf.size' => 'Informe um CPF válido.',
+            'matriculas_adicionais.*.distinct' => 'As matrículas adicionais não podem se repetir.',
+            'matriculas_adicionais.*.different' => 'A matrícula adicional deve ser diferente da matrícula principal.',
         ]);
 
         $user = User::create([
+            'name' => $validated['name'],
             'cpf' => $validated['cpf'],
             'matricula' => $validated['matricula'],
-            'role' => 'Cradt',
+            'role' => $validated['role'],
             'username' => null,
-            'name' => null,
-            'email' => null
+            'email' => null,
         ]);
-        return redirect()->route('cradt')->with('success', 'Pré-cadastro CRADT realizado com sucesso!');
+
+        $user->sincronizarMatriculasAdicionais($validated['matriculas_adicionais'] ?? []);
+
+        return redirect()->route('cradt.register')
+            ->with('success', "Pré-cadastro de {$user->name} realizado. O primeiro acesso é feito com o CPF e a matrícula.");
     }
 }

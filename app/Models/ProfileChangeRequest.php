@@ -27,7 +27,7 @@ class ProfileChangeRequest extends Model
     const STATUS_NEEDS_REVIEW = 'needs_review';
 
     // Únicos campos do usuário que um pedido de alteração pode modificar
-    const CAMPOS_ALTERAVEIS = ['name', 'matricula', 'matricula_adicional', 'cpf', 'rg'];
+    const CAMPOS_ALTERAVEIS = ['name', 'matricula', 'cpf', 'rg'];
 
 
     public function user()
@@ -43,21 +43,7 @@ class ProfileChangeRequest extends Model
         abort_unless(in_array($this->field, self::CAMPOS_ALTERAVEIS, true), 422, 'Campo não permitido para alteração de perfil.');
 
         $user = $this->user;
-
-        if ($this->field !== 'matricula_adicional') {
-            $user->{$this->field} = $this->new_value;
-            $user->save();
-
-            return;
-        }
-
-        // Sem valor atual é inclusão; sem valor novo é remoção; com os dois é troca
-        if ($this->current_value) {
-            $user->matriculasAdicionais()->where('matricula', $this->current_value)->delete();
-        }
-
-        if ($this->new_value) {
-            $user->matriculasAdicionais()->firstOrCreate(['matricula' => $this->new_value]);
-        }
+        $user->{$this->field} = $this->new_value;
+        $user->save();
     }
 }

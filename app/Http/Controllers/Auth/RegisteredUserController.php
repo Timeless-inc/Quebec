@@ -32,18 +32,12 @@ class RegisteredUserController extends Controller
         $inputRg = $this->normalizeRg($request->input('rg'));
         $inputRgUf = strtoupper(trim((string) $request->input('rg_uf')));
         $inputMatricula = trim((string) $request->input('matricula'));
-        $inputMatriculasAdicionais = collect((array) $request->input('matriculas_adicionais', []))
-            ->map(fn ($matricula) => trim((string) $matricula))
-            ->filter()
-            ->values()
-            ->all();
 
         $request->merge([
             'username' => trim((string) $request->input('username')),
-            'name' => trim((string) $request->input('name')),
             'email' => strtolower(trim((string) $request->input('email'))),
             'matricula' => $inputMatricula,
-            'matriculas_adicionais' => $inputMatriculasAdicionais,
+            'telefone' => preg_replace('/\D/', '', (string) $request->input('telefone')),
             'rg_uf' => $inputRgUf,
             'rg' => $inputRg,
             'cpf' => $inputCpf,
@@ -51,45 +45,48 @@ class RegisteredUserController extends Controller
 
         $isCinDocument = $this->isCinDocument($inputRg, $inputCpf);
 
-        $cradtPending = User::where('cpf', $inputCpf)
+        // A CRADT abre o cadastro (CPF, nome e matrícula); aqui a pessoa só completa o primeiro acesso
+        $preCadastro = User::where('cpf', $inputCpf)
             ->where('matricula', $inputMatricula)
-            ->where('role', 'Cradt')
             ->whereNull('email')
             ->first();
 
         $validationRules = [
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($cradtPending?->id)],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($cradtPending?->id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($preCadastro?->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($preCadastro?->id)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'matricula' => ['required', 'string', 'max:255'],
-            'matriculas_adicionais' => ['array'],
-            'matriculas_adicionais.*' => ['string', 'max:255', 'distinct', 'different:matricula'],
             'rg' => ['bail', 'required', 'string', 'min:7', 'max:11', 'regex:/^[0-9A-Za-z]+$/', new ValidRgOrCin($inputCpf)],
             'rg_uf' => ['nullable', 'string', 'size:2', Rule::in(array_keys($this->brazilStates()))],
-            'cpf' => ['required', 'string', 'size:11', new ValidCpf(), Rule::unique('users', 'cpf')->ignore($cradtPending?->id)],
+            'cpf' => ['required', 'string', 'size:11', new ValidCpf()],
+            'data_nascimento' => ['required', 'date', 'before:today', 'after:1900-01-01'],
+            'telefone' => ['required', 'string', 'min:10', 'max:11'],
         ];
 
         $errorMessages = [
             'username.unique' => 'Este nome de usuário já está em uso.',
             'email.unique' => 'Este e-mail já está em uso.',
-            'cpf.unique' => 'Este CPF já está cadastrado em nosso sistema.',
             'password.confirmed' => 'A confirmação de senha não corresponde.',
             'password.min' => 'A senha deve ter pelo menos :min caracteres.',
             'password.required' => 'A senha é obrigatória.',
-            'matriculas_adicionais.*.distinct' => 'As matrículas adicionais não podem se repetir.',
-            'matriculas_adicionais.*.different' => 'A matrícula adicional deve ser diferente da matrícula principal.',
             'rg.min' => 'O RG deve ter entre 7 e 11 caracteres.',
             'rg.max' => 'O RG deve ter entre 7 e 11 caracteres.',
             'rg.regex' => 'O RG deve conter apenas letras e números.',
             'rg_uf.size' => 'A UF deve conter 2 letras.',
             'rg_uf.in' => 'Selecione uma UF válida.',
+            'data_nascimento.required' => 'Informe a data de nascimento.',
+            'data_nascimento.before' => 'Informe uma data de nascimento válida.',
+            'data_nascimento.after' => 'Informe uma data de nascimento válida.',
+            'telefone.required' => 'Informe o telefone.',
+            'telefone.min' => 'Informe o telefone com DDD.',
+            'telefone.max' => 'Informe o telefone com DDD.',
         ];
 
         $validator = Validator::make($request->all(), $validationRules, $errorMessages);
 
-        $validator->after(function ($validator) use ($cradtPending, $inputMatricula, $inputMatriculasAdicionais, $inputRg, $inputRgUf, $isCinDocument) {
-            if ($cradtPending) {
+        $validator->after(function ($validator) use ($preCadastro, $inputRg, $inputRgUf, $isCinDocument) {
+            if (!$preCadastro) {
+                $validator->errors()->add('cpf', 'Não encontramos um pré-cadastro com este CPF e matrícula. Procure a CRADT para liberar o seu acesso.');
                 return;
             }
 
@@ -101,52 +98,27 @@ class RegisteredUserController extends Controller
                 $rgExists = User::query()
                     ->where('rg', $inputRg)
                     ->where('rg_uf', $inputRgUf)
+                    ->where('id', '!=', $preCadastro->id)
                     ->exists();
 
                 if ($rgExists) {
                     $validator->errors()->add('rg', 'Este RG já está cadastrado em nosso sistema para a UF selecionada.');
                 }
             }
-
-            if (User::matriculaEmUso($inputMatricula)) {
-                $validator->errors()->add('matricula', 'Esta matrícula já está cadastrada em nosso sistema (como matrícula principal ou adicional).');
-            }
-
-            foreach ($inputMatriculasAdicionais as $indice => $matriculaAdicional) {
-                if (User::matriculaEmUso($matriculaAdicional)) {
-                    $validator->errors()->add("matriculas_adicionais.{$indice}", "A matrícula {$matriculaAdicional} já está cadastrada em nosso sistema.");
-                }
-            }
         });
 
         $validated = $validator->validate();
 
-        if ($cradtPending) {
-            $user = $cradtPending;
-            $user->update([
-                'username' => $validated['username'],
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'rg' => $validated['rg'],
-                'rg_uf' => $isCinDocument ? null : $validated['rg_uf'],
-                'cpf' => $inputCpf,
-            ]);
-        } else {
-            $user = User::create([
-                'username' => $validated['username'],
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'matricula' => $validated['matricula'],
-                'rg' => $validated['rg'],
-                'rg_uf' => $isCinDocument ? null : $validated['rg_uf'],
-                'cpf' => $inputCpf,
-                'role' => 'Aluno'
-            ]);
-        }
-
-        $user->sincronizarMatriculasAdicionais($inputMatriculasAdicionais);
+        $user = $preCadastro;
+        $user->update([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'rg' => $validated['rg'],
+            'rg_uf' => $isCinDocument ? null : $validated['rg_uf'],
+            'data_nascimento' => $validated['data_nascimento'],
+            'telefone' => $validated['telefone'],
+        ]);
 
         event(new Registered($user));
         event(new UserRegistered($user));

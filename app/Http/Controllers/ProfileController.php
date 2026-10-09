@@ -106,9 +106,7 @@ class ProfileController extends Controller
 
         // O nome do campo vem do formulário e é gravado no usuário na aprovação
         foreach (array_keys($fields) as $fieldName) {
-            $campo = str_starts_with($fieldName, 'matricula_adicional') ? 'matricula_adicional' : $fieldName;
-
-            abort_unless(in_array($campo, ProfileChangeRequest::CAMPOS_ALTERAVEIS, true), 422, 'Campo não permitido para alteração de perfil.');
+            abort_unless(in_array($fieldName, ProfileChangeRequest::CAMPOS_ALTERAVEIS, true), 422, 'Campo não permitido para alteração de perfil.');
         }
         
         $fieldLabels = [
@@ -125,22 +123,11 @@ class ProfileController extends Controller
             
             $label = $fieldLabels[$fieldName] ?? $fieldName;
             
-            // Cada matrícula adicional vem do formulário com um sufixo próprio (id ou "nova")
-            $isMatriculaAdicional = str_starts_with($fieldName, 'matricula_adicional');
-
-            if ($isMatriculaAdicional) {
-                $label = 'Matrícula Adicional';
-
-                if (!empty($fieldData['remove'])) {
-                    continue;
-                }
-            }
-
             if (!isset($fieldData['value']) || !$fieldData['value']) {
                 return back()->withErrors(["O valor para o campo <b>'{$label}'</b> é obrigatório."])->withInput();
             }
             
-            if ($fieldName === 'matricula' || $isMatriculaAdicional) {
+            if ($fieldName === 'matricula') {
                 if (User::matriculaEmUso($fieldData['value'], $user->id) || in_array($fieldData['value'], $user->todasMatriculas())) {
                     return back()
                         ->withInput()
@@ -170,8 +157,7 @@ class ProfileController extends Controller
             }
 
             $hasSelectedField = true;
-            $isMatriculaAdicional = str_starts_with($fieldName, 'matricula_adicional');
-            $label = $isMatriculaAdicional ? 'Matrícula Adicional' : ($fieldLabels[$fieldName] ?? $fieldName);
+            $label = $fieldLabels[$fieldName] ?? $fieldName;
 
             if (!$request->hasFile("fields.{$fieldName}.document")) {
                 return back()->withErrors(["O documento comprobatório para o campo <b>'{$label}'</b> é obrigatório."])->withInput();
@@ -183,9 +169,9 @@ class ProfileController extends Controller
                 
                 $changeRequest = ProfileChangeRequest::create([
                     'user_id' => $user->id,
-                    'field' => $isMatriculaAdicional ? 'matricula_adicional' : $fieldName,
+                    'field' => $fieldName,
                     'current_value' => $fieldData['current'] ?? null,
-                    'new_value' => $isMatriculaAdicional && !empty($fieldData['remove']) ? '' : $fieldData['value'],
+                    'new_value' => $fieldData['value'],
                     'document_path' => $path,
                     'status' => 'pending',
                     'request_group_id' => $requestGroupId,

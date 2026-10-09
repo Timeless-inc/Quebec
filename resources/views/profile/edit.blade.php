@@ -235,12 +235,6 @@
                                         </td>
                                     </tr>
 
-                                    @php
-                                        $matriculasAdicionais = Auth::user()->matriculasAdicionais
-                                            ->map(fn ($item) => ['campo' => 'matricula_adicional_' . $item->id, 'atual' => $item->matricula])
-                                            ->push(['campo' => 'matricula_adicional_nova', 'atual' => null]);
-                                    @endphp
-
                                     <!-- Matrícula Principal -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -261,37 +255,15 @@
                                         </td>
                                     </tr>
 
-                                    <!-- Matrículas adicionais: uma linha por matrícula e uma para incluir outra -->
-                                    @foreach($matriculasAdicionais as $item)
+                                    <!-- Matrículas adicionais: atribuídas pela CRADT, só para consulta -->
+                                    @if(Auth::user()->matriculasAdicionais->isNotEmpty())
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="{{ $item['campo'] }}">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $item['atual'] ? 'Matrícula Adicional' : 'Nova Matrícula' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ $item['atual'] ?? 'Adicionar outra matrícula' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="change-field hidden" id="{{ $item['campo'] }}_fields">
-                                                <input id="{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ $item['atual'] }}" placeholder="{{ $item['atual'] ? 'Nova matrícula' : 'Matrícula a adicionar' }}">
-                                                <input type="hidden" name="fields[{{ $item['campo'] }}][current]" value="{{ $item['atual'] }}">
-
-                                                @if($item['atual'])
-                                                    <div class="mt-2">
-                                                        <label class="flex items-center">
-                                                            <input type="checkbox" name="fields[{{ $item['campo'] }}][remove]" class="remove-matricula w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
-                                                            <span class="text-sm text-red-600">Remover esta matrícula</span>
-                                                        </label>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="change-field hidden" id="{{ $item['campo'] }}_document_fields">
-                                                <input id="{{ $item['campo'] }}_document" name="fields[{{ $item['campo'] }}][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
-                                                <p class="attachment-help-text text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB.</p>
-                                            </div>
-                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap"></td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">Matrículas Adicionais</td>
+                                        <td class="px-6 py-4">{{ Auth::user()->matriculasAdicionais->pluck('matricula')->implode(', ') }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500" colspan="2">Incluídas pela CRADT. Para corrigir, procure o setor.</td>
                                     </tr>
-                                    @endforeach
+                                    @endif
 
                                     <!-- CPF -->
                                     <tr>
@@ -391,43 +363,21 @@
                                 </div>
                             </div>
                             
-                            <!-- Cards das matrículas adicionais -->
-                            @foreach($matriculasAdicionais as $item)
+                            <!-- Matrículas adicionais: atribuídas pela CRADT, só para consulta -->
+                            @if(Auth::user()->matriculasAdicionais->isNotEmpty())
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
-                                    <div class="font-medium">{{ $item['atual'] ? 'Matrícula Adicional' : 'Nova Matrícula' }}</div>
-                                    <input type="checkbox" id="mobile_change_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="{{ $item['campo'] }}">
+                                    <div class="font-medium">Matrículas Adicionais</div>
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
                                         <div class="data-item-label">Valor Atual:</div>
-                                        <div>{{ $item['atual'] ?? 'Adicionar outra matrícula' }}</div>
+                                        <div>{{ Auth::user()->matriculasAdicionais->pluck('matricula')->implode(', ') }}</div>
                                     </div>
-
-                                    <div class="change-field hidden" id="mobile_{{ $item['campo'] }}_fields">
-                                        <div class="data-item">
-                                            <div class="data-item-label">Novo Valor:</div>
-                                            <input id="mobile_{{ $item['campo'] }}" name="fields[{{ $item['campo'] }}][value]" type="text" class="block w-full border rounded-md px-3 py-2" value="{{ $item['atual'] }}" placeholder="{{ $item['atual'] ? 'Nova matrícula' : 'Matrícula a adicionar' }}">
-                                            <input type="hidden" name="fields[{{ $item['campo'] }}][current]" value="{{ $item['atual'] }}">
-
-                                            @if($item['atual'])
-                                                <div class="mt-2">
-                                                    <label class="flex items-center">
-                                                        <input type="checkbox" name="fields[{{ $item['campo'] }}][remove]" class="remove-matricula w-4 h-4 text-red-600 rounded focus:ring-red-500 mr-2">
-                                                        <span class="text-sm text-red-600">Remover esta matrícula</span>
-                                                    </label>
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="data-item">
-                                            <div class="data-item-label">Anexo Comprobatório:</div>
-                                            <input id="mobile_{{ $item['campo'] }}_document" name="fields[{{ $item['campo'] }}][document]" type="file" class="block w-full text-sm border rounded-md px-3 py-2" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
-                                        </div>
-                                    </div>
+                                    <p class="text-sm text-gray-500 mt-2">Incluídas pela CRADT. Para corrigir, procure o setor.</p>
                                 </div>
                             </div>
-                            @endforeach
+                            @endif
 
                             <!-- Card do CPF -->
                             <div class="mobile-card">
@@ -839,14 +789,6 @@
                 });
             }
 
-            // Ao marcar a remoção, o campo de novo valor deixa de ser enviado
-            document.querySelectorAll('.remove-matricula').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const input = this.closest('.change-field').querySelector('input[type="text"]');
-                    input.disabled = this.checked;
-                    input.classList.toggle('bg-gray-100', this.checked);
-                });
-            });
         });
     </script>
     @endif
