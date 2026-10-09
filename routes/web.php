@@ -386,3 +386,10 @@ if (app()->environment('local')) {
 }
 
 require __DIR__ . '/auth.php';
+
+// Preview local das telas de erro para ajustes visuais.
+if (app()->environment('local')) {
+    Route::get('/dev/erros/{codigo}', fn (int $codigo) => abort($codigo))
+        ->where('codigo', '[45][0-9]{2}')
+        ->name('dev.erros');
+}
