@@ -49,8 +49,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            padding: 2.25rem 1.5rem;
+            gap: 0.5rem;
+            padding: 1.75rem 1.5rem 2rem;
             overflow: hidden;
             text-align: center;
             color: #ffffff;
@@ -79,26 +79,30 @@
             left: -3rem;
         }
 
-        .icon {
+        .mascote {
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 4.5rem;
-            height: 4.5rem;
-            border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.16);
-            animation: flutuar 3.5s ease-in-out infinite;
+            width: 11rem;
+            height: 11rem;
+            animation: flutuar 4s ease-in-out infinite;
         }
 
-        .icon svg {
-            width: 2.25rem;
-            height: 2.25rem;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        .mascote svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mascote .cocando {
+            transform-origin: 80px 150px;
+            animation: cocar 0.45s ease-in-out infinite alternate;
+        }
+
+        .mascote .duvida {
+            animation: duvidar 2.4s ease-in-out infinite;
+        }
+
+        .mascote .duvida-menor {
+            animation-delay: 0.6s;
         }
 
         .code {
@@ -251,6 +255,23 @@
             }
         }
 
+        @keyframes cocar {
+            from {
+                transform: rotate(-3deg);
+            }
+
+            to {
+                transform: rotate(4deg);
+            }
+        }
+
+        @keyframes duvidar {
+            50% {
+                transform: translateY(-5px);
+                opacity: 0.55;
+            }
+        }
+
         @media (min-width: 768px) {
             .card {
                 flex-direction: row;
@@ -272,7 +293,9 @@
 
         @media (prefers-reduced-motion: reduce) {
             .card,
-            .icon {
+            .mascote,
+            .mascote .cocando,
+            .mascote .duvida {
                 animation: none;
             }
         }
@@ -282,14 +305,8 @@
 <body>
     <main class="card">
         <div class="hero">
-            <div class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                    @hasSection('icon')
-                        @yield('icon')
-                    @else
-                        <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                    @endif
-                </svg>
+            <div class="mascote">
+                @include('errors.mascote')
             </div>
             <p class="code">@yield('code')</p>
             <p class="caption">@yield('caption', 'Algo não saiu como esperado')</p>
