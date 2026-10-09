@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('code', $exception->getStatusCode())
-@section('title', 'Serviço indisponível')
-@section('caption', 'O problema é do nosso lado')
+@section('title', 'Ops! Algo deu errado')
+@section('caption', 'Ops!')
 @section('message', 'O sistema encontrou um problema e não conseguiu responder agora.')
 
 @section('icon')
