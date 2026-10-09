@@ -18,9 +18,16 @@
                     Pesquise, filtre e mantenha os perfis de acesso do sistema.
                 </p>
             </div>
-            <span class="inline-flex w-fit items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm">
-                <i class="fas fa-users mr-2 text-indigo-600"></i>{{ $users->total() }} usuário(s)
-            </span>
+            <div class="flex flex-wrap items-center gap-2">
+                @if($isDiretorGeral)
+                    <a href="{{ route('diretor-geral.users.duplicados') }}" class="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 shadow-sm hover:bg-amber-100">
+                        <i class="fas fa-clone mr-2"></i>Alunos duplicados
+                    </a>
+                @endif
+                <span class="inline-flex w-fit items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm">
+                    <i class="fas fa-users mr-2 text-indigo-600"></i>{{ $users->total() }} usuário(s)
+                </span>
+            </div>
         </div>
     </x-slot>
 

@@ -192,6 +192,7 @@ Route::middleware(['auth', 'role:Diretor Geral'])->prefix('diretor-geral')->grou
 
     // Gerenciamento de usuários
     Route::get('/users', [UserManagementController::class, 'index'])->name('diretor-geral.users.index');
+    Route::get('/users/duplicados', [UserManagementController::class, 'duplicados'])->name('diretor-geral.users.duplicados');
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('diretor-geral.users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('diretor-geral.users.update');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('diretor-geral.users.destroy');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApplicationRequest;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Rules\MatriculaDisponivel;
 
 class UserManagementController extends Controller
@@ -40,6 +42,43 @@ class UserManagementController extends Controller
         $users = $query->with('matriculasAdicionais')->orderBy('name')->paginate(15);
 
         return view('users.index', compact('users', 'roles'));
+    }
+
+    /**
+     * Lista, para o Diretor Geral, os alunos cujos cadastros parecem ser da mesma pessoa.
+     */
+    public function duplicados()
+    {
+        // O middleware de cargo libera estas rotas também para a CRADT e cargos dinâmicos
+        abort_unless(Auth::user()->isDiretorGeral(), 403, 'Apenas o Diretor Geral pode consultar alunos duplicados.');
+
+        $alunos = User::where('role', 'Aluno')->with('matriculasAdicionais')->orderBy('created_at')->get();
+
+        // A comparação ignora máscara, acentos e maiúsculas, que é como os duplicados escapam das chaves únicas
+        $criterios = [
+            'CPF'  => fn (User $user) => preg_replace('/\D/', '', (string) $user->cpf),
+            'nome' => fn (User $user) => Str::of((string) $user->name)->ascii()->lower()->squish()->value(),
+            'RG'   => fn (User $user) => Str::upper(preg_replace('/[^0-9A-Za-z]/', '', (string) $user->rg)),
+        ];
+
+        $grupos = collect();
+
+        foreach ($criterios as $criterio => $normalizar) {
+            $alunos->groupBy($normalizar)
+                ->filter(fn ($usuarios, $valor) => $valor !== '' && $usuarios->count() > 1)
+                ->each(fn ($usuarios, $valor) => $grupos->push([
+                    'criterio' => $criterio,
+                    'valor'    => $valor,
+                    'usuarios' => $usuarios,
+                ]));
+        }
+
+        $requerimentosPorUsuario = $grupos->pluck('usuarios')->flatten()->unique('id')
+            ->mapWithKeys(fn (User $user) => [
+                $user->id => ApplicationRequest::where('cpf', $user->cpf)->orWhere('email', $user->email)->count(),
+            ]);
+
+        return view('users.duplicados', compact('grupos', 'requerimentosPorUsuario'));
     }
 
     public function edit(User $user)
@@ -87,6 +126,11 @@ class UserManagementController extends Controller
         }
 
         $user->delete();
+
+        if (request('voltar_para') === 'duplicados' && Auth::user()->isDiretorGeral()) {
+            $indexRoute = 'diretor-geral.users.duplicados';
+        }
+
         return redirect()->route($indexRoute)->with('success', 'Usuário excluído com sucesso!');
     }
 }
