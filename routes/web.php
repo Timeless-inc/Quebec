@@ -115,6 +115,12 @@ Route::middleware(['auth', 'verified', 'role:Aluno,Cradt,Diretor Geral'])->group
     Route::get('/requerimento/{id}/pdf', [PDFController::class, 'gerarPDF'])->middleware(EnsureRequerimentoAccess::class)->name('requerimento.pdf');
 });
 
+// Verificação da assinatura digital dos requerimentos (qualquer usuário autenticado)
+Route::middleware(['auth', 'verified', 'throttle:30,1'])->group(function () {
+    Route::get('/assinatura/verificar', [PDFController::class, 'verificarAssinatura'])->name('assinatura.verificar');
+    Route::get('/assinatura/{chave}/pdf', [PDFController::class, 'pdfPorAssinatura'])->whereUuid('chave')->name('assinatura.pdf');
+});
+
 // Rotas específicas para Alunos
 Route::middleware(['auth', 'verified', 'role:Aluno'])->group(function () {
     Route::get('/aluno/dashboard', [DashboardController::class, 'index'])->name('aluno.dashboard');
