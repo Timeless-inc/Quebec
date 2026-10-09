@@ -37,7 +37,7 @@
                     <!-- Welcome Text -->
                     <div class="z-10">
                         <h1 class="text-3xl font-bold text-white mb-3">Primeiro acesso</h1>
-                        <p class="text-white/80 text-sm md:text-base">Seu cadastro é aberto pela CRADT. Complete seus dados para ativar o acesso.</p>
+                        <p class="text-white/80 text-sm md:text-base">E-mail confirmado. Agora defina sua senha e complete seus dados.</p>
                     </div>
                 </div>
 
@@ -56,13 +56,20 @@
                         </a>
                     </div>
 
-                    <h2 class="text-2xl font-bold text-left md:text-left text-gray-800 mb-2">Primeiro acesso</h2>
-                    <p class="text-sm text-gray-500 mb-6">Informe o CPF e a matrícula cadastrados pela CRADT e complete os demais dados.</p>
+                    <h2 class="text-2xl font-bold text-left md:text-left text-gray-800 mb-2">Complete seu cadastro</h2>
+                    <p class="text-sm text-gray-500 mb-4">Defina sua senha e preencha os dados que faltam.</p>
+
+                    <dl class="mb-6 grid grid-cols-1 gap-x-6 gap-y-2 rounded-lg border border-emerald-100 bg-emerald-50/60 p-4 text-sm sm:grid-cols-2">
+                        <div><dt class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Nome</dt><dd class="text-gray-800">{{ $user->name }}</dd></div>
+                        <div><dt class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Matrícula</dt><dd class="text-gray-800">{{ $user->matricula }}</dd></div>
+                        <div><dt class="text-xs font-semibold uppercase tracking-wide text-emerald-700">E-mail</dt><dd class="text-gray-800 break-all">{{ $user->email }}</dd></div>
+                        <div><dt class="text-xs font-semibold uppercase tracking-wide text-emerald-700">CPF</dt><dd class="text-gray-800">{{ preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $user->cpf) }}</dd></div>
+                    </dl>
 
                     <!-- Session Status -->
                     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                    <form method="POST" action="{{ route('register') }}" class="space-y-4" novalidate>
+                    <form method="POST" action="{{ route('primeiro-acesso.concluir') }}" class="space-y-4" novalidate>
                         @csrf
 
                         <!-- Nome de Usuário -->
@@ -84,38 +91,7 @@
 
                         </div>
 
-                        <!-- Email Address -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">{{ __('E-mail') }}</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                    </svg>
-                                </div>
-                                <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" placeholder="seuemail@gmail.com"
-                                    class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
-                            </div>
-                            <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs" />
-                        </div>
-
-                        <!-- Matrícula -->
-                        <div>
-                            <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Matrícula') }}</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input id="matricula" type="text" name="matricula" value="{{ old('matricula') }}" placeholder="2025IFPEI0001"
-                                    class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
-                            </div>
-                            <x-input-error :messages="$errors->get('matricula')" class="mt-1 text-xs" />
-                        </div>
-
-                        <!-- RG e CPF lado a lado -->
+                        <!-- RG / UF -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- RG / UF -->
                             <div>
@@ -145,20 +121,6 @@
                                 <x-input-error :messages="$errors->get('rg')" class="mt-1 text-xs" />
                             </div>
 
-                            <!-- CPF -->
-                            <div>
-                                <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">{{ __('CPF') }}</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <input id="cpf" type="text" name="cpf" value="{{ old('cpf') }}" placeholder="000.000.000-00"
-                                        class="py-3 px-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full">
-                                </div>
-                                <x-input-error :messages="$errors->get('cpf')" class="mt-1 text-xs" />
-                            </div>
                         </div>
 
                         <!-- Data de nascimento e telefone lado a lado -->
@@ -352,11 +314,8 @@
                 // Campos obrigatórios
                 const requiredFields = [
                     {id: 'username', label: 'Nome de Usuário'},
-                    {id: 'email', label: 'E-mail'},
-                    {id: 'matricula', label: 'Matrícula'},
                     {id: 'rg_uf', label: 'UF'},
                     {id: 'rg', label: 'RG'},
-                    {id: 'cpf', label: 'CPF'},
                     {id: 'data_nascimento', label: 'Data de Nascimento'},
                     {id: 'telefone', label: 'Telefone'},
                     {id: 'password', label: 'Senha'},

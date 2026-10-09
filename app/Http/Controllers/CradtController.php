@@ -79,6 +79,7 @@ class CradtController extends Controller
     {
         $request->merge([
             'name' => trim((string) $request->input('name')),
+            'email' => strtolower(trim((string) $request->input('email'))),
             'cpf' => preg_replace('/\D/', '', (string) $request->input('cpf')),
             'matricula' => trim((string) $request->input('matricula')),
         ]);
@@ -86,12 +87,14 @@ class CradtController extends Controller
         $validated = $request->validate([
             'role' => ['required', Rule::in(['Aluno', 'Cradt'])],
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'cpf' => ['required', 'string', 'size:11', new ValidCpf(), 'unique:users,cpf'],
             'matricula' => ['required', 'string', 'max:255', new MatriculaDisponivel()],
             'matriculas_adicionais' => ['nullable', 'array'],
             'matriculas_adicionais.*' => ['nullable', 'string', 'max:255', 'distinct', 'different:matricula', new MatriculaDisponivel()],
         ], [
             'cpf.unique' => 'Este CPF já está cadastrado.',
+            'email.unique' => 'Este e-mail já está cadastrado.',
             'cpf.size' => 'Informe um CPF válido.',
             'matriculas_adicionais.*.distinct' => 'As matrículas adicionais não podem se repetir.',
             'matriculas_adicionais.*.different' => 'A matrícula adicional deve ser diferente da matrícula principal.',
@@ -102,13 +105,13 @@ class CradtController extends Controller
             'cpf' => $validated['cpf'],
             'matricula' => $validated['matricula'],
             'role' => $validated['role'],
+            'email' => $validated['email'],
             'username' => null,
-            'email' => null,
         ]);
 
         $user->sincronizarMatriculasAdicionais($validated['matriculas_adicionais'] ?? []);
 
         return redirect()->route('cradt.register')
-            ->with('success', "Pré-cadastro de {$user->name} realizado. O primeiro acesso é feito com o CPF e a matrícula.");
+            ->with('success', "Pré-cadastro de {$user->name} realizado. No primeiro acesso, um código será enviado para {$user->email}.");
     }
 }

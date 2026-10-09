@@ -15,7 +15,14 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store'])->middleware('throttle:30,1,primeiro-acesso');
+
+    // Primeiro acesso: código enviado por e-mail e, depois, senha e demais dados
+    Route::get('primeiro-acesso/codigo', [RegisteredUserController::class, 'showCodeForm'])->name('primeiro-acesso.codigo');
+    Route::post('primeiro-acesso/codigo', [RegisteredUserController::class, 'verifyCode'])->middleware('throttle:30,1,primeiro-acesso')->name('primeiro-acesso.verificar');
+    Route::post('primeiro-acesso/codigo/reenviar', [RegisteredUserController::class, 'resendCode'])->middleware('throttle:30,1,primeiro-acesso')->name('primeiro-acesso.reenviar');
+    Route::get('primeiro-acesso/dados', [RegisteredUserController::class, 'showDataForm'])->name('primeiro-acesso.dados');
+    Route::post('primeiro-acesso/dados', [RegisteredUserController::class, 'complete'])->name('primeiro-acesso.concluir');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

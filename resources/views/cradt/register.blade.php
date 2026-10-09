@@ -10,7 +10,7 @@
         <div>
             <h2 class="font-semibold text-xl text-gray-900 leading-tight">Pré-cadastro de usuário</h2>
             <p class="mt-1 text-sm text-gray-500">
-                Informe os dados essenciais. O restante (e-mail, senha, RG, data de nascimento e telefone) é preenchido pela própria pessoa no primeiro acesso.
+                Informe os dados essenciais. No primeiro acesso a pessoa confirma o e-mail com um código e preenche o restante (senha, RG, data de nascimento e telefone).
             </p>
         </div>
     </x-slot>
@@ -42,6 +42,15 @@
                         <label for="name" class="block text-sm font-medium text-gray-700">Nome completo</label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus class="{{ $fieldClass }}">
                         @error('name')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">E-mail institucional</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="nome@discente.ifpe.edu.br" class="{{ $fieldClass }}">
+                        <p class="mt-1 text-xs text-gray-500">O código de primeiro acesso será enviado para este endereço.</p>
+                        @error('email')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>

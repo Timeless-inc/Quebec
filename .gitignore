@@ -22,6 +22,7 @@ yarn-error.log
 /.vscode
 /.zed
 
+secret
 storage/
 RESUMO_UPLOADS.md
 ANALISE_UPLOADS.md
