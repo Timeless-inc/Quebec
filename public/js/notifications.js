@@ -337,5 +337,16 @@ function showTypedPopupNotification(message, type = 'success', duration = 5000) 
 // Inicializa o sistema de notificações ao carregar a página
 document.addEventListener('DOMContentLoaded', fetchNotifications);
 
-// Polling periódico a cada 5 segundos para verificar novas notificações
-setInterval(fetchNotifications, 5000);
+// Polling periódico a cada 5 segundos para verificar novas notificações.
+// Abas em segundo plano não consultam o servidor; atualizam ao voltar para o foco.
+setInterval(() => {
+    if (!document.hidden) {
+        fetchNotifications();
+    }
+}, 5000);
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        fetchNotifications();
+    }
+});
