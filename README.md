@@ -115,6 +115,39 @@ Se preferir iniciar manualmente, você também pode usar `php artisan serve` e `
 
 Aqui é apenas caso queira testar o envio de emails e notificações, caso contrário, não é necessário. (Faltando setar apenas um Sandbox de email para testes, como Mailtrap ou Mailhog no .env).
 
+## Backup do banco de dados
+
+O comando `php artisan db:backup` gera um dump compactado do banco (`mysqldump`) em `storage/app/private/backups` e o envia para um remoto do [rclone](https://rclone.org/), como o Google Drive. Ele já está agendado para rodar todos os dias às 02:00 pelo scheduler do Laravel.
+
+1. Instale o `mysqldump` (cliente do MySQL) e o `rclone` no servidor.
+2. Configure o remoto do Google Drive uma única vez, com o mesmo usuário que executa o Laravel:
+
+    ```bash
+    rclone config
+    ```
+
+    Crie um remoto do tipo `drive` (por exemplo, com o nome `gdrive`) e autorize a conta do Drive.
+
+3. Informe o destino no `.env`:
+
+    ```env
+    BACKUP_RCLONE_REMOTE=gdrive:SRE/backups
+    BACKUP_KEEP_DAYS=7
+    BACKUP_RCLONE_KEEP_DAYS=30
+    ```
+
+4. Teste manualmente e garanta que o scheduler está no cron do servidor:
+
+    ```bash
+    php artisan db:backup
+    ```
+
+    ```cron
+    * * * * * cd /caminho/do/projeto && php artisan schedule:run >> /dev/null 2>&1
+    ```
+
+Use `php artisan db:backup --no-upload` para gerar apenas o dump local. Para restaurar: `gunzip < sre-AAAAMMDD-HHMMSS.sql.gz | mysql -u usuario -p banco`.
+
 ## Contribuição
 
 Contribuições são bem-vindas. Se você quiser colaborar, siga este fluxo:
