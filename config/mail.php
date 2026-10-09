@@ -37,6 +37,11 @@ return [
 
     'mailers' => [
 
+        // API do Gmail (ver App\Mail\Transport\GmailApiTransport e "php artisan gmail:authorize")
+        'gmail' => [
+            'transport' => 'gmail',
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),

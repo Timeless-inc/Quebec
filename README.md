@@ -148,6 +148,31 @@ O comando `php artisan db:backup` gera um dump compactado do banco (`mysqldump`)
 
 Use `php artisan db:backup --no-upload` para gerar apenas o dump local. Para restaurar: `gunzip < sre-AAAAMMDD-HHMMSS.sql.gz | mysql -u usuario -p banco`.
 
+## Envio de e-mails pela API do Gmail
+
+Além do SMTP, o sistema envia e-mails pela API do Gmail (mailer `gmail`), usando OAuth em vez de senha.
+
+1. No Google Cloud, ative a **Gmail API** e crie uma credencial OAuth do tipo "App para computador". Baixe o JSON e guarde-o fora do Git (a pasta `secret/` já é ignorada).
+2. Informe os caminhos no `.env`:
+
+    ```env
+    GMAIL_CREDENTIALS_PATH=secret/client_secret.json
+    GMAIL_TOKEN_PATH=secret/gmail-token.json
+    MAIL_FROM_ADDRESS="conta-que-envia@gmail.com"
+    ```
+
+3. Autorize a conta que vai enviar os e-mails (uma única vez por servidor):
+
+    ```bash
+    php artisan gmail:authorize --test=seu-email@exemplo.com
+    ```
+
+    O comando mostra um endereço para abrir no navegador. Depois de permitir, copie o endereço para onde o navegador foi redirecionado (`http://localhost/?code=...`) e cole no terminal. O refresh token fica salvo em `GMAIL_TOKEN_PATH`.
+
+4. Ative o mailer: `MAIL_MAILER=gmail`.
+
+Enquanto o app do Google Cloud estiver em modo de teste, só as contas cadastradas como usuários de teste conseguem autorizar, e o refresh token expira em 7 dias. Publique o app (ou use uma conta do Google Workspace da instituição) para o acesso não expirar. O `MAIL_FROM_ADDRESS` precisa ser a conta autorizada ou um alias dela.
+
 ## Contribuição
 
 Contribuições são bem-vindas. Se você quiser colaborar, siga este fluxo:

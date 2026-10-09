@@ -28,6 +28,12 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    // Caminhos (absolutos ou relativos à raiz do projeto) dos arquivos da API do Gmail, fora do Git
+    'gmail' => [
+        'credentials' => env('GMAIL_CREDENTIALS_PATH'),
+        'token' => env('GMAIL_TOKEN_PATH', 'secret/gmail-token.json'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
