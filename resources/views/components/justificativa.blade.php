@@ -50,7 +50,7 @@
                 <div class="flex items-center space-x-3">
                     <!-- Indicador de Status -->
                     <div class="w-3 h-3 rounded-full {{ $requerimento->status === 'em_andamento' ? 'bg-blue-500' : 
-                        ($requerimento->status === 'finalizado' ? 'bg-emerald-500' : 
+                        ($requerimento->status === 'deferido' ? 'bg-emerald-500' : 
                         ($requerimento->status === 'indeferido' ? 'bg-red-500' : 
                         ($requerimento->status === 'pendente' ? 'bg-amber-500' : 
                         ($requerimento->status === 'encaminhado' ? 'bg-purple-500' : 
@@ -66,12 +66,12 @@
                     @switch($requerimento->status ?? 'em_andamento')
                         @case('em_andamento')
                             <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full border border-blue-200">
-                                <i class="fas fa-clock mr-1"></i>Em Andamento
+                                <i class="fas fa-clock mr-1"></i>Em Aberto
                             </span>
                             @break
-                        @case('finalizado')
+                        @case('deferido')
                             <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full border border-emerald-200">
-                                <i class="fas fa-check-circle mr-1"></i>Finalizado
+                                <i class="fas fa-check-circle mr-1"></i>Deferido
                             </span>
                             @break
                         @case('indeferido')
@@ -102,7 +102,7 @@
          <!-- Conteúdo Principal -->
         <div class="p-4">
             <!-- Informações do Usuário -->
-            @if(in_array($requerimento->status, ['finalizado', 'indeferido', 'pendente']) && isset($requerimento->finalizado_por))
+            @if(in_array($requerimento->status, ['deferido', 'indeferido', 'pendente']) && isset($requerimento->finalizado_por))
                 <!-- Grid com 4 colunas quando há responsável -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -122,7 +122,7 @@
                     </div>
 
                     <div class="flex items-center space-x-3 p-3 
-                    @if($requerimento->status === 'finalizado') 
+                    @if($requerimento->status === 'deferido') 
                         bg-emerald-50 border-emerald-200 
                     @elseif($requerimento->status === 'indeferido') 
                         bg-red-50 border-red-200 
@@ -137,7 +137,7 @@
                     @endif 
                     rounded-lg border">
                         <i class="fas fa-user-tie w-5 h-5 
-                        @if($requerimento->status === 'finalizado') 
+                        @if($requerimento->status === 'deferido') 
                             text-emerald-600 
                         @elseif($requerimento->status === 'indeferido') 
                             text-red-600 
@@ -153,7 +153,7 @@
                         flex-shrink-0"></i>
                         <div class="min-w-0 flex-1">
                             <p class="text-xs 
-                            @if($requerimento->status === 'finalizado') 
+                            @if($requerimento->status === 'deferido') 
                                 text-emerald-600 
                             @elseif($requerimento->status === 'indeferido') 
                                 text-red-600 
@@ -299,19 +299,19 @@
                             <div class="flex flex-col items-end space-y-2">
                                 <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm 
                                 {{ $requerimento->status === 'em_andamento' ? 'text-blue-700 bg-blue-100 border border-blue-200' : 
-                                ($requerimento->status === 'finalizado' ? 'text-emerald-700 bg-emerald-100 border border-emerald-200' : 
+                                ($requerimento->status === 'deferido' ? 'text-emerald-700 bg-emerald-100 border border-emerald-200' : 
                                 ($requerimento->status === 'indeferido' ? 'text-red-700 bg-red-100 border border-red-200' : 
                                 ($requerimento->status === 'pendente' ? 'text-amber-700 bg-amber-100 border border-amber-200' :
                                 ($requerimento->status === 'encaminhado' ? 'text-purple-700 bg-purple-100 border border-purple-200' :
                                 ($requerimento->status === 'devolvido' ? 'text-pink-700 bg-pink-100 border border-pink-200' : 'text-gray-700 bg-gray-100 border border-gray-200'))))) }}">
                                     <i class="fas {{ $requerimento->status === 'em_andamento' ? 'fa-clock' : 
-                                    ($requerimento->status === 'finalizado' ? 'fa-check-circle' : 
+                                    ($requerimento->status === 'deferido' ? 'fa-check-circle' : 
                                     ($requerimento->status === 'indeferido' ? 'fa-times-circle' : 
                                     ($requerimento->status === 'pendente' ? 'fa-exclamation-circle' : 
                                     ($requerimento->status === 'encaminhado' ? 'fa-share' :
                                     ($requerimento->status === 'devolvido' ? 'fa-reply' : 'fa-question-circle'))))) }} mr-2"></i>
-                                    {{ $requerimento->status === 'em_andamento' ? 'Em Andamento' : 
-                                    ($requerimento->status === 'finalizado' ? 'Finalizado' : 
+                                    {{ $requerimento->status === 'em_andamento' ? 'Em Aberto' : 
+                                    ($requerimento->status === 'deferido' ? 'Deferido' : 
                                     ($requerimento->status === 'indeferido' ? 'Indeferido' : 
                                     ($requerimento->status === 'pendente' ? 'Pendente' :
                                     ($requerimento->status === 'encaminhado' ? 'Encaminhado' : 
@@ -394,15 +394,15 @@
                                 </div>
 
                                 <!-- RESPOSTAS MOVIDAS PARA CÁ -->
-                                <!-- Resposta Finalizado -->
-                                @if($requerimento->status === 'finalizado' && isset($requerimento->resposta) && !empty($requerimento->resposta))
+                                <!-- Resposta Deferido -->
+                                @if($requerimento->status === 'deferido' && isset($requerimento->resposta) && !empty($requerimento->resposta))
                                 <div class="bg-white rounded-2xl border border-emerald-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="bg-gradient-to-r from-emerald-50 to-green-50 px-6 py-4 border-b border-emerald-100">
                                         <h6 class="text-lg font-bold text-emerald-900 flex items-center">
                                             <div class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-check-circle text-emerald-600"></i>
                                             </div>
-                                            Resposta - Finalizado
+                                            Resposta - Deferido
                                         </h6>
                                     </div>
                                     <div class="p-6">
@@ -662,7 +662,7 @@
                                 </div>
 
                                 <!-- Anexos da Finalização Modernizado -->
-                                @if($requerimento->status === 'finalizado' && isset($requerimento->anexos_finalizacao) && !empty($requerimento->anexos_finalizacao))
+                                @if($requerimento->status === 'deferido' && isset($requerimento->anexos_finalizacao) && !empty($requerimento->anexos_finalizacao))
                                 <div class="bg-white rounded-2xl border border-emerald-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="bg-gradient-to-r from-emerald-50 to-green-50 px-6 py-4 border-b border-emerald-100">
                                         <h6 class="text-lg font-bold text-emerald-900 flex items-center">

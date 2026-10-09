@@ -23,7 +23,7 @@ class DiretorGeralController extends Controller
             case 'em_aberto':
                 return ['em_andamento', 'encaminhado', 'pendente'];
             case 'processados':
-                return ['finalizado', 'indeferido'];
+                return ['deferido', 'indeferido'];
             case 'devolvidos':
                 return ['devolvido'];
             default:
@@ -132,7 +132,7 @@ class DiretorGeralController extends Controller
         $user = Auth::user();
 
         $totalProcessados = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['finalizado', 'indeferido'])
+            ->whereIn('status', ['deferido', 'indeferido'])
             ->count();
 
         $totalEncaminhados = RequestForwarding::where('receiver_id', $user->id)->count();
@@ -148,7 +148,7 @@ class DiretorGeralController extends Controller
             $endOfMonth   = $mes->copy()->endOfMonth();
 
             $processados = RequestForwarding::where('receiver_id', $user->id)
-                ->whereIn('status', ['finalizado', 'indeferido'])
+                ->whereIn('status', ['deferido', 'indeferido'])
                 ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                 ->count();
 
@@ -255,7 +255,7 @@ class DiretorGeralController extends Controller
 
         $oldStatus = $requerimento->status;
 
-    if (in_array($request->action, ['finalizado', 'indeferido', 'deferido'])) {
+    if (in_array($request->action, ['deferido', 'indeferido'])) {
             $requerimento->status       = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;
             $requerimento->save();
@@ -347,7 +347,7 @@ class DiretorGeralController extends Controller
         $data['totalRecebidos'] = $data['requerimentosRecebidos']->count();
 
         $data['requerimentosProcessados'] = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['finalizado', 'indeferido'])
+            ->whereIn('status', ['deferido', 'indeferido'])
             ->whereBetween('updated_at', [$startDate, $endDate])
             ->with(['requerimento', 'sender'])
             ->orderBy('updated_at', 'desc')
@@ -365,7 +365,7 @@ class DiretorGeralController extends Controller
         $data['totalDevolvidos'] = $data['requerimentosDevolvidos']->count();
 
         $tempoMedioQuery = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('request_forwardings.status', ['finalizado', 'indeferido'])
+            ->whereIn('request_forwardings.status', ['deferido', 'indeferido'])
             ->whereBetween('request_forwardings.updated_at', [$startDate, $endDate])
             ->join('requerimentos', 'request_forwardings.requerimento_id', '=', 'requerimentos.id')
             ->select(DB::raw('AVG(TIMESTAMPDIFF(HOUR, request_forwardings.created_at, request_forwardings.updated_at)) as tempo_medio'))
@@ -391,7 +391,7 @@ class DiretorGeralController extends Controller
             ->get();
 
         $data['resolucaoEficiente'] = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('request_forwardings.status', ['finalizado', 'indeferido'])
+            ->whereIn('request_forwardings.status', ['deferido', 'indeferido'])
             ->whereBetween('request_forwardings.updated_at', [$startDate, $endDate])
             ->select(
                 DB::raw('CASE 

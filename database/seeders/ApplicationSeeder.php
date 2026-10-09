@@ -80,15 +80,15 @@ class ApplicationSeeder extends Seeder
         ];
 
         for ($i = 0; $i < 1000; $i++) {
-            $statusOptions = ['pendente', 'em_andamento', 'finalizado', 'indeferido'];
+            $statusOptions = ['pendente', 'em_andamento', 'deferido', 'indeferido'];
             $status = $faker->randomElement($statusOptions);
 
-             // Se o status for 'finalizado' ou 'indeferido', use um usuário real
+             // Se o status for 'deferido' ou 'indeferido', use um usuário real
              $finalizadoPor = null;
              $resolvedAt = null;
              $tempoResolucao = null;
              
-             if ($status === 'finalizado' || $status === 'indeferido') {
+             if ($status === 'deferido' || $status === 'indeferido') {
                  // Pegar aleatoriamente um usuário da coleção
                  $randomUser = $users->random();
                  $finalizadoPor = $randomUser->name;

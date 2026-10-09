@@ -41,20 +41,12 @@
                 </h2>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 filter-container">
-                <a href="?status=todos" class="px-3 py-1 text-sm text-white border-gray-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'todos' ? 'bg-gray-800 shadow-md' : 'bg-gray-600 hover:bg-gray-300' }}" data-status="todos">
-                    Todos
-                </a>
-                <a href="?status=em_aberto" class="px-3 py-1 text-sm text-white border-blue-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'em_aberto' ? 'bg-blue-800 shadow-md' : 'bg-blue-600 hover:bg-blue-400' }}" data-status="em_aberto">
-                    Em Aberto
-                </a>
-                <a href="?status=processados" class="px-3 py-1 text-sm text-white border-green-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'processados' ? 'bg-green-800 shadow-md' : 'bg-green-600 hover:bg-green-200' }}" data-status="processados">
-                    Processados
-                </a>
-                <a href="?status=devolvidos" class="px-3 py-1 text-sm text-white border-pink-400 rounded-md transition-all outline-none focus:outline-none filter-btn {{ $currentStatus === 'devolvidos' ? 'bg-pink-800 shadow-md' : 'bg-pink-600 hover:bg-pink-200' }}" data-status="devolvidos">
-                    Devolvidos
-                </a>
-            </div>
+            <x-status-filter class="filter-container" links :current="$currentStatus" :options="[
+                'todos' => 'Todos',
+                'em_aberto' => 'Em Aberto',
+                'processados' => 'Processados',
+                'devolvidos' => 'Devolvidos',
+            ]" />
         </div>
     </x-slot>
 
@@ -70,9 +62,9 @@
                         @php
                             $displayStatus = $forwarding->requerimento->status ?? $forwarding->status;
                             $statusMeta = [
-                                'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Andamento'],
+                                'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Aberto'],
                                 'encaminhado' => ['dot' => 'bg-purple-500', 'badge' => 'text-purple-700 bg-purple-100 border border-purple-200', 'icon' => 'fa-share', 'label' => 'Encaminhado'],
-                                'finalizado' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Finalizado'],
+                                'deferido' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Deferido'],
                                 'indeferido' => ['dot' => 'bg-red-500', 'badge' => 'text-red-700 bg-red-100 border border-red-200', 'icon' => 'fa-times-circle', 'label' => 'Indeferido'],
                                 'pendente' => ['dot' => 'bg-amber-500', 'badge' => 'text-amber-700 bg-amber-100 border border-amber-200', 'icon' => 'fa-exclamation-circle', 'label' => 'Pendente'],
                                 'devolvido' => ['dot' => 'bg-pink-500', 'badge' => 'text-pink-700 bg-pink-100 border border-pink-200', 'icon' => 'fa-reply', 'label' => 'Devolvido'],
@@ -204,7 +196,7 @@
                                     </div>
                                     <form action="{{ $routePrefix === 'painel' ? route('painel.process', ['cargoSlug' => $cargoSlug, 'forwarding' => $forwarding->id]) : route('diretor-geral.process', $forwarding->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
                                         @csrf
-                                        <input type="hidden" name="action" value="finalizado">
+                                        <input type="hidden" name="action" value="deferido">
                                         <div class="modal-body p-6">
                                             <div class="mb-6">
                                                 <label for="resposta_{{ $forwarding->id }}" class="block text-sm font-semibold text-gray-700 mb-2">Resposta (opcional):</label>

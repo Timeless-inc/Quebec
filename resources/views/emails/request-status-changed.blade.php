@@ -19,15 +19,15 @@
             $normalized = $normalizeStatus($status);
 
             if (in_array($normalized, ['em_andamento', 'em_analise'], true)) {
-                return ['label' => 'Em Análise', 'classes' => 'text-blue-700 bg-blue-100 border border-blue-200'];
+                return ['label' => 'Em Aberto', 'classes' => 'text-blue-700 bg-blue-100 border border-blue-200'];
             }
 
             if ($normalized === 'pendente') {
                 return ['label' => 'Pendente', 'classes' => 'text-amber-700 bg-amber-100 border border-amber-200'];
             }
 
-            if (in_array($normalized, ['finalizado', 'aprovado', 'deferido'], true)) {
-                return ['label' => 'Aprovado', 'classes' => 'text-emerald-700 bg-emerald-100 border border-emerald-200'];
+            if ($normalized === 'deferido') {
+                return ['label' => 'Deferido', 'classes' => 'text-emerald-700 bg-emerald-100 border border-emerald-200'];
             }
 
             if ($normalized === 'indeferido') {

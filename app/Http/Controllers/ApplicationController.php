@@ -527,7 +527,7 @@ public function create()
             }
         }
 
-        if ($request->status === 'finalizado') {
+        if ($request->status === 'deferido') {
             $requerimento->finalizado_por = Auth::user()->name;
 
             $requerimento->resolved_at = now();
@@ -572,7 +572,7 @@ public function create()
     //     $statusMap = [
     //         'pendente' => 'Pendente',
     //         'em_andamento' => 'Em Análise',
-    //         'finalizado' => 'Aprovado',
+    //         'deferido' => 'Aprovado',
     //         'indeferido' => 'Indeferido'
     //     ];
 

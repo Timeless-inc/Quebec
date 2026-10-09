@@ -196,7 +196,7 @@ class ForwardingController extends Controller
 
         $forwarding->save();
 
-        if (in_array($request->action, ['finalizado', 'indeferido', 'deferido'])) {
+        if (in_array($request->action, ['deferido', 'indeferido'])) {
             $oldStatus = $requerimento->status;
             $requerimento->status        = $request->action;
             $requerimento->finalizado_por = Auth::user()->name;

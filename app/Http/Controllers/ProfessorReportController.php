@@ -94,7 +94,7 @@ class ProfessorReportController extends Controller
         
         // Estatísticas gerais
         $totalProcessados = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['finalizado', 'indeferido'])
+            ->whereIn('status', ['deferido', 'indeferido'])
             ->count();
 
         $totalEncaminhados = RequestForwarding::where('receiver_id', $user->id)
@@ -112,7 +112,7 @@ class ProfessorReportController extends Controller
             $endOfMonth = $mes->copy()->endOfMonth();
 
             $processados = RequestForwarding::where('receiver_id', $user->id)
-                ->whereIn('status', ['finalizado', 'indeferido'])
+                ->whereIn('status', ['deferido', 'indeferido'])
                 ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                 ->count();
 
@@ -152,7 +152,7 @@ class ProfessorReportController extends Controller
 
         // Requerimentos processados (finalizados ou indeferidos)
         $data['requerimentosProcessados'] = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('status', ['finalizado', 'indeferido'])
+            ->whereIn('status', ['deferido', 'indeferido'])
             ->whereBetween('updated_at', [$startDate, $endDate])
             ->with(['requerimento', 'sender'])
             ->orderBy('updated_at', 'desc')
@@ -172,7 +172,7 @@ class ProfessorReportController extends Controller
 
         // Tempo médio de processamento
         $tempoMedioQuery = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('request_forwardings.status', ['finalizado', 'indeferido'])
+            ->whereIn('request_forwardings.status', ['deferido', 'indeferido'])
             ->whereBetween('request_forwardings.updated_at', [$startDate, $endDate])
             ->join('requerimentos', 'request_forwardings.requerimento_id', '=', 'requerimentos.id')
             ->select(DB::raw('AVG(TIMESTAMPDIFF(HOUR, request_forwardings.created_at, request_forwardings.updated_at)) as tempo_medio'))
@@ -201,7 +201,7 @@ class ProfessorReportController extends Controller
 
         // Eficiência na resolução
         $data['resolucaoEficiente'] = RequestForwarding::where('receiver_id', $user->id)
-            ->whereIn('request_forwardings.status', ['finalizado', 'indeferido'])
+            ->whereIn('request_forwardings.status', ['deferido', 'indeferido'])
             ->whereBetween('request_forwardings.updated_at', [$startDate, $endDate])
             ->select(
                 DB::raw('CASE 

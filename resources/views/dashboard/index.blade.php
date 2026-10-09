@@ -7,24 +7,21 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center header-container">
-            <div class="w-full">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-2">
-                    Prioridades:
-                </h2>
-                <div class="flex flex-wrap items-center space-x-2 filter-container">
-                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-600 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
-                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-600 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Pendente</button>
-                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
-                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-600 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
-                    <button onclick="filterJustificativas('em_aberto')" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
-                </div>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between header-container">
+            <div class="filter-container">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Status</p>
+                <x-status-filter :current="$currentStatus" :options="[
+                    'todos' => 'Todos',
+                    'em_andamento' => 'Em Aberto',
+                    'pendente' => 'Pendente',
+                    'deferido' => 'Deferido',
+                    'indeferido' => 'Indeferido',
+                ]" />
             </div>
-            <div class="mt-8 new-req-btn">
-                <a href="{{ route('application') }}" class="w-full block">
-                    <button type="button" class="px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-800 w-full sm:w-auto">+ Novo requerimento</button>
-                </a>
-            </div>
+            <a href="{{ route('application') }}" class="new-req-btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 no-underline hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                Novo requerimento
+            </a>
         </div>
     </x-slot>
 
@@ -83,10 +80,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h2 id="situacao-titulo" class="font-semibold text-xl text-gray-800 leading-tight mb-4 my-2">
                 {{ $currentStatus === 'pendente' ? 'Processos em Atenção:' : 
-                ($currentStatus === 'finalizado' ? 'Processos Resolvidos:' : 
+                ($currentStatus === 'deferido' ? 'Processos Deferidos:' : 
                 ($currentStatus === 'indeferido' ? 'Processos Indeferidos:' :
                 ($currentStatus === 'em_aberto' ? 'Processos em Aberto:' :
-                ($currentStatus === 'em_andamento' ? 'Processos em Andamento:' : 'Todos os Processos:')))) }}
+                ($currentStatus === 'em_andamento' ? 'Processos em Aberto:' : 'Todos os Processos:')))) }}
             </h2>
         </div>
         

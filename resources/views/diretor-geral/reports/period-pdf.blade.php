@@ -166,12 +166,12 @@
                 <td>{{ \Illuminate\Support\Str::limit($req->requerimento->nomeCompleto, 25) }}</td>
                 <td>{{ $req->sender->name ?? 'N/A' }}</td>
                 <td>
-                    @if($req->status == 'finalizado')
+                    @if($req->status == 'deferido')
                     <span style="color: #00913F;">Deferido</span> 
                     @elseif($req->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span> 
                     @elseif($req->status == 'encaminhado')
-                    <span style="color: #9b59b6;">Em Análise</span>
+                    <span style="color: #9b59b6;">Em Aberto</span>
                     @elseif($req->status == 'devolvido')
                     <span style="color: #e91e63;">Devolvido</span>
                     @else
@@ -180,10 +180,10 @@
                 </td>
                 <td>{{ $req->created_at->format('d/m/Y H:i') }}</td>
                 <td>
-                    @if(in_array($req->status, ['finalizado', 'indeferido', 'devolvido']))
+                    @if(in_array($req->status, ['deferido', 'indeferido', 'devolvido']))
                         {{ $req->updated_at->format('d/m/Y H:i') }}
                     @else
-                        Em andamento
+                        Em Aberto
                     @endif
                 </td>
             </tr>

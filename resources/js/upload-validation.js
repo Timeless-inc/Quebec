@@ -165,7 +165,7 @@
             if (fileIsPdf(name)) {
                 const kb = Math.ceil(f.size / 1024);
                 if (kb > pdfLimitKb) {
-                    showInlineError(input, `❌ PDF "${f.name}" (${kb} KB) excede o limite de ${pdfLimitKb} KB.`);
+                    showInlineError(input, `PDF "${f.name}" (${kb} KB) excede o limite de ${pdfLimitKb} KB.`);
                     try { input.value = ''; } catch (err) { }
                     return false;
                 }
@@ -197,11 +197,11 @@
                             continue;
                         }
 
-                        showInlineError(input, `❌ Imagem "${f.name}" (${kb} KB) não pode ser reduzida abaixo de ${imageLimitKb} KB.`);
+                        showInlineError(input, `Imagem "${f.name}" (${kb} KB) não pode ser reduzida abaixo de ${imageLimitKb} KB.`);
                         try { input.value = ''; } catch (err) { }
                         return false;
                     } catch (e) {
-                        showInlineError(input, `❌ Erro ao comprimir "${f.name}": ${e.message}`);
+                        showInlineError(input, `Erro ao comprimir "${f.name}": ${e.message}`);
                         try { input.value = ''; } catch (err) { }
                         return false;
                     }
@@ -214,7 +214,7 @@
             // other files: enforce image limit as fallback
             const kbOther = Math.ceil(f.size / 1024);
             if (kbOther > imageLimitKb) {
-                showInlineError(input, `❌ Arquivo "${f.name}" (${kbOther} KB) excede o limite de ${imageLimitKb} KB.`);
+                showInlineError(input, `Arquivo "${f.name}" (${kbOther} KB) excede o limite de ${imageLimitKb} KB.`);
                 try { input.value = ''; } catch (err) { }
                 return false;
             }
@@ -229,7 +229,7 @@
         if (totalUploadKb > totalLimitKb) {
             showInlineError(
                 input,
-                `⚠️ Tamanho total (${totalUploadKb} KB) excede o limite de ${totalLimitKb} KB (${(totalLimitKb / 1024).toFixed(1)} MB). Remova alguns arquivos.`
+                `Tamanho total (${totalUploadKb} KB) excede o limite de ${totalLimitKb} KB (${(totalLimitKb / 1024).toFixed(1)} MB). Remova alguns arquivos.`
             );
             try { input.value = ''; } catch (err) { }
             return false;
@@ -247,7 +247,6 @@
             if (input.files.length > 0) {
                 fileNameElem.textContent = '';
 
-                fileNameElem.appendChild(document.createTextNode('✅ '));
 
                 const countStrong = document.createElement('strong');
                 countStrong.textContent = `${input.files.length} arquivo(s)`;

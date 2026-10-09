@@ -9,31 +9,32 @@
 
 <x-app-cradt>
     <x-slot name="header">
-        <div class="flex justify-between items-center w-full">
+        <div class="flex w-full flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Prioridades:
-                </h2>
-                <div class="flex items-center mt-2 space-x-2">
-                    <button onclick="filterJustificativas('todos')" type="button" class="px-3 py-1 text-sm text-white bg-gray-600 border-gray-400 rounded-md hover:bg-gray-300 filter-btn" data-status="todos">Todos</button>
-                    <button onclick="filterJustificativas('pendente')" type="button" class="px-3 py-1 text-sm text-white bg-yellow-600 border-yellow-400 rounded-md hover:bg-yellow-200 filter-btn" data-status="pendente">Pendente</button>
-                    <button onclick="filterJustificativas('finalizado')" type="button" class="px-3 py-1 text-sm text-white bg-green-600 border-green-400 rounded-md hover:bg-green-200 filter-btn" data-status="finalizado">Resolvido</button>
-                    <button onclick="filterJustificativas('indeferido')" type="button" class="px-3 py-1 text-sm text-white bg-red-600 border-red-400 rounded-md hover:bg-red-200 filter-btn" data-status="indeferido">Indeferido</button>
-                    <button onclick="filterJustificativas('em_aberto')" type="button" class="px-3 py-1 text-sm text-white bg-blue-600 border-blue-400 rounded-md hover:bg-blue-400 filter-btn" data-status="em_aberto">Em Aberto</button>
-                    <button onclick="filterJustificativas('encaminhado')" type="button" class="px-3 py-1 text-sm text-white bg-purple-600 border-purple-400 rounded-md hover:bg-purple-200 filter-btn" data-status="encaminhado">Encaminhado</button>
-                    <button onclick="filterJustificativas('devolvido')" type="button" class="px-3 py-1 text-sm text-white bg-pink-500 border-pink-400 rounded-md hover:bg-pink-200 filter-btn" data-status="devolvido">Devolvido</button>
-                </div>
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Status</p>
+                <x-status-filter :current="$currentStatus" :options="[
+                    'todos' => 'Todos',
+                    'em_andamento' => 'Em Aberto',
+                    'pendente' => 'Pendente',
+                    'encaminhado' => 'Encaminhado',
+                    'devolvido' => 'Devolvido',
+                    'deferido' => 'Deferido',
+                    'indeferido' => 'Indeferido',
+                ]" />
             </div>
 
-            <div class="mt-8">
-                <button type="button" class="px-3 py-1 text-sm text-white bg-gray-600 rounded-md hover:bg-gray-800" onclick="openConfigModal()">
-                    <i class="fas fa-cog"></i> Configurar Eventos
+            <div class="flex flex-wrap items-center gap-2 xl:flex-nowrap">
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" onclick="openConfigModal()">
+                    <i class="fas fa-cog text-gray-400"></i>
+                    Configurar eventos
                 </button>
-                <button type="button" class="px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#eventModal">
-                    + Novo Evento
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
+                    <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                    Evento exceção
                 </button>
-                <button type="button" class="px-3 py-1 text-sm text-white bg-yellow-700 rounded-md hover:bg-yellow-900" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
-                    ⚠ Evento Exceção
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                    Novo evento
                 </button>
             </div>
         </div>
@@ -42,7 +43,7 @@
     <div class="container mt-4 py-2">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form action="{{ route('cradt.index') }}" method="GET" class="mb-4">
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2 xl:flex-nowrap">
                     <div class="flex-1">
                         <input type="text"
                             class="w-full border border-gray-400 rounded-md p-2"
@@ -275,12 +276,16 @@
                 Processos em Atenção:
                 @elseif($currentStatus == 'indeferido')
                 Processos Indeferidos:
-                @elseif($currentStatus == 'finalizado')
-                Processos Resolvidos:
+                @elseif($currentStatus == 'deferido')
+                Processos Deferidos:
                 @elseif($currentStatus == 'em_andamento')
-                Processos em Andamento:
+                Processos em Aberto:
                 @elseif($currentStatus == 'em_aberto')
                 Processos em Aberto:
+                @elseif($currentStatus == 'encaminhado')
+                Processos Encaminhados:
+                @elseif($currentStatus == 'devolvido')
+                Processos Devolvidos:
                 @else
                 Todos os Processos:
                 @endif

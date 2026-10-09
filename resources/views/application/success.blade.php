@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SRE') }} - Requerimento Finalizado</title>
+        <title>{{ config('app.name', 'SRE') }} - Requerimento Enviado</title>
 
         <!-- Favicon -->
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
@@ -24,9 +24,9 @@
         <main class="w-100 d-flex justify-content-center align-items-start pt-20">
             <div class="max-w-md mx-auto p-2">
                 <div class="bg-white shadow-md rounded-lg p-8 text-center border border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Requerimento Finalizado</h2>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Requerimento Enviado</h2>
                     <div class="flex justify-center mb-6">
-                        <img src="{{ asset('img/check.png') }}" alt="Requerimento Finalizado" class="w-40 h-40">
+                        <img src="{{ asset('img/check.png') }}" alt="Requerimento Enviado" class="w-40 h-40">
                     </div>
                     @if (session('success'))
                         <div class="alert alert-success mb-6" role="alert">

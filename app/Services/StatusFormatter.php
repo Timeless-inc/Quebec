@@ -6,12 +6,11 @@ class StatusFormatter
 {
     private static array $statusMap = [
         'pendente' => 'Pendente',
-        'em_andamento' => 'Em Análise',
+        'em_andamento' => 'Em Aberto',
         'encaminhado' => 'Encaminhado',
         'devolvido' => 'Devolvido',
-        'finalizado' => 'Finalizado',
+        'deferido' => 'Deferido',
         'indeferido' => 'Indeferido',
-        //'deferido' => 'Deferido',
     ];
 
     public static function format(string $status): string

@@ -19,7 +19,7 @@ class RequestForwarding extends Model
     ];
 
     const STATUS_ENCAMINHADO = 'encaminhado';
-    const STATUS_FINALIZADO = 'finalizado';
+    const STATUS_DEFERIDO = 'deferido';
     const STATUS_INDEFERIDO = 'indeferido';
     const STATUS_PENDENTE = 'pendente';
     const STATUS_DEVOLVIDO = 'devolvido';

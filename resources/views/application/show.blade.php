@@ -4,10 +4,10 @@
         @method('PATCH')
         
         <button type="submit" name="status" value="em_andamento" class="btn btn-primary">
-            Em Andamento
+            Em Aberto
         </button>
         
-        <button type="submit" name="status" value="finalizado" class="btn btn-success">
+        <button type="submit" name="status" value="deferido" class="btn btn-success">
             Finalizar
         </button>
         

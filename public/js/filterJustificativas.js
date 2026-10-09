@@ -74,14 +74,20 @@ function filterJustificativas(status) {
             case 'indeferido':
                 titulo.textContent = 'Processos Indeferidos:';
                 break;
-            case 'finalizado':
-                titulo.textContent = 'Processos Resolvidos:';
+            case 'deferido':
+                titulo.textContent = 'Processos Deferidos:';
                 break;
             case 'em_andamento':
-                titulo.textContent = 'Processos em Andamento:';
+                titulo.textContent = 'Processos em Aberto:';
                 break;
             case 'em_aberto':
                 titulo.textContent = 'Processos em Aberto:';
+                break;
+            case 'encaminhado':
+                titulo.textContent = 'Processos Encaminhados:';
+                break;
+            case 'devolvido':
+                titulo.textContent = 'Processos Devolvidos:';
                 break;
             case 'todos':
             default:
@@ -98,11 +104,18 @@ function filterJustificativas(status) {
             case 'indeferido':
                 messageContainer.innerHTML = '<i class="fas fa-times-circle"></i> Não há requerimentos indeferidos';
                 break;
-            case 'finalizado':
-                messageContainer.innerHTML = '<i class="fas fa-check-circle"></i> Não há requerimentos resolvidos';
+            case 'deferido':
+                messageContainer.innerHTML = '<i class="fas fa-check-circle"></i> Não há requerimentos deferidos';
                 break;
             case 'em_andamento':
-                messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em andamento';
+            case 'em_aberto':
+                messageContainer.innerHTML = '<i class="fas fa-clock"></i> Não há requerimentos em aberto';
+                break;
+            case 'encaminhado':
+                messageContainer.innerHTML = '<i class="fas fa-share"></i> Não há requerimentos encaminhados';
+                break;
+            case 'devolvido':
+                messageContainer.innerHTML = '<i class="fas fa-reply"></i> Não há requerimentos devolvidos';
                 break;
             case 'todos':
                 messageContainer.innerHTML = '<i class="fas fa-info-circle"></i> Não há requerimentos';
@@ -134,11 +147,7 @@ function filterJustificativas(status) {
         filterButtons.forEach(btn => {
             btn.removeAttribute('disabled');
             btn.style.cursor = 'pointer';
-            if (btn.dataset.status !== status) {
-                btn.style.opacity = '0.8';
-            } else {
-                btn.style.opacity = '1';
-            }
+            btn.style.opacity = '';
         });
     }
 }
@@ -155,13 +164,7 @@ function updatePaginationLinks(status) {
 
 function highlightActiveButton(status) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        if (btn.dataset.status === status) {
-            btn.classList.add('font-bold');
-            btn.style.opacity = '1';
-        } else {
-            btn.classList.remove('font-bold');
-            btn.style.opacity = '0.8';
-        }
+        btn.dataset.active = btn.dataset.status === status ? 'true' : 'false';
     });
 }
 

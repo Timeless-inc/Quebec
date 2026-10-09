@@ -486,7 +486,7 @@
 
                         <!-- Informações e Avisos -->
                         <div class="text-sm text-gray-600 mt-2 p-4 bg-yellow-50 border-l-4 border-yellow-400">
-                            <p class="font-semibold">⚠️ Importante:</p>
+                            <p class="font-semibold">Importante:</p>
                             <ul class="list-disc ml-5 mt-1">
                                 <li>Marque a caixa de seleção para cada dado que deseja alterar</li>
                                 <li>É obrigatório anexar documento comprobatório para cada alteração solicitada</li>

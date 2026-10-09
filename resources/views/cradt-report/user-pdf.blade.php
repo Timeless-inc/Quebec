@@ -210,8 +210,8 @@
                 <td>{{ $atendimento->created_at->format('d/m/Y') }}</td>
                 <td>{{ $atendimento->resolved_at ? \Carbon\Carbon::parse($atendimento->resolved_at)->format('d/m/Y') : 'N/A' }}</td>
                 <td>
-                    @if($atendimento->status == 'finalizado')
-                    <span style="color: #00913F;">Finalizado</span> 
+                    @if($atendimento->status == 'deferido')
+                    <span style="color: #00913F;">Deferido</span> 
                     @elseif($atendimento->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span> 
                     @elseif($atendimento->status == 'pendente')
@@ -288,8 +288,8 @@
             @foreach($situacoesFiltered as $situacao)
             <tr>
                 <td>
-                    @if($situacao->status == 'finalizado')
-                    <span style="color: #00913F;">Finalizado</span> 
+                    @if($situacao->status == 'deferido')
+                    <span style="color: #00913F;">Deferido</span> 
                     @elseif($situacao->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span> 
                     @elseif($situacao->status == 'pendente')
@@ -352,8 +352,8 @@
                 <td>
                     @if($encaminhamento->status == 'encaminhado')
                     <span style="color: #9b59b6;">Encaminhado</span>
-                    @elseif($encaminhamento->status == 'finalizado')
-                    <span style="color: #00913F;">Finalizado</span>
+                    @elseif($encaminhamento->status == 'deferido')
+                    <span style="color: #00913F;">Deferido</span>
                     @elseif($encaminhamento->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span>
                     @elseif($encaminhamento->status == 'devolvido')
@@ -379,8 +379,8 @@
                 <span class="bar-label">
                     @if($statusEnc->status == 'encaminhado')
                         Encaminhado
-                    @elseif($statusEnc->status == 'finalizado')
-                        Finalizado
+                    @elseif($statusEnc->status == 'deferido')
+                        Deferido
                     @elseif($statusEnc->status == 'indeferido')
                         Indeferido
                     @elseif($statusEnc->status == 'devolvido')
@@ -391,7 +391,7 @@
                 </span>
                 <div class="bar" style="width: {{ min(300, $statusEnc->total * 30) }}px; 
                     background-color: 
-                    {{ $statusEnc->status == 'finalizado' ? '#00913F' : 
+                    {{ $statusEnc->status == 'deferido' ? '#00913F' : 
                       ($statusEnc->status == 'indeferido' ? '#AF1B3F' : 
                       ($statusEnc->status == 'devolvido' ? '#e91e63' : '#9b59b6')) }}">
                     <span class="bar-value">{{ $statusEnc->total }}</span>

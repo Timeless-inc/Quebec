@@ -121,7 +121,7 @@ class CradtReportController extends Controller
         $data = $this->obterDadosPorFiltro($query, $filtro, $request);
 
         if ($this->mapearFiltroParaColuna($filtro) === 'status') {
-            $data->each(fn ($item) => $item->label = Str::headline($item->label));
+            $data->each(fn ($item) => $item->label = \App\Services\StatusFormatter::format($item->label));
         }
 
         return response()->json($data);
@@ -577,7 +577,7 @@ class CradtReportController extends Controller
             return $valores;
         }
 
-        return collect($valores)->map(fn ($status) => Str::headline($status))->values();
+        return collect($valores)->map(fn ($status) => \App\Services\StatusFormatter::format($status))->values();
     }
 
     public function generateUserPdf(Request $request)

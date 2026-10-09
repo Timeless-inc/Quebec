@@ -21,8 +21,8 @@
     @php
         $visualStatus = in_array($status, ['encaminhado', 'devolvido']) ? 'em_andamento' : ($status ?? 'em_andamento');
         $statusMeta = [
-            'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Andamento'],
-            'finalizado' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Finalizado'],
+            'em_andamento' => ['dot' => 'bg-blue-500', 'badge' => 'text-blue-700 bg-blue-100 border border-blue-200', 'icon' => 'fa-clock', 'label' => 'Em Aberto'],
+            'deferido' => ['dot' => 'bg-emerald-500', 'badge' => 'text-emerald-700 bg-emerald-100 border border-emerald-200', 'icon' => 'fa-check-circle', 'label' => 'Deferido'],
             'indeferido' => ['dot' => 'bg-red-500', 'badge' => 'text-red-700 bg-red-100 border border-red-200', 'icon' => 'fa-times-circle', 'label' => 'Indeferido'],
             'pendente' => ['dot' => 'bg-amber-500', 'badge' => 'text-amber-700 bg-amber-100 border border-amber-200', 'icon' => 'fa-exclamation-circle', 'label' => 'Pendente'],
         ];
@@ -59,7 +59,7 @@
         <!-- Conteúdo Principal -->
         <div class="p-4">
             <!-- Informações do Usuário -->
-            @if(isset($requerimento) && in_array($status, ['finalizado', 'indeferido', 'pendente']) && isset($requerimento->finalizado_por))
+            @if(isset($requerimento) && in_array($status, ['deferido', 'indeferido', 'pendente']) && isset($requerimento->finalizado_por))
                 <!-- Grid com 4 colunas quando há responsável -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -79,7 +79,7 @@
                     </div>
 
                     <div class="flex items-center space-x-3 p-3 
-                    @if($status === 'finalizado') 
+                    @if($status === 'deferido') 
                         bg-emerald-50 border-emerald-200 
                     @elseif($status === 'indeferido') 
                         bg-red-50 border-red-200 
@@ -90,7 +90,7 @@
                     @endif 
                     rounded-lg border">
                         <i class="fas fa-user-tie w-5 h-5 
-                        @if($status === 'finalizado') 
+                        @if($status === 'deferido') 
                             text-emerald-600 
                         @elseif($status === 'indeferido') 
                             text-red-600 
@@ -102,7 +102,7 @@
                         flex-shrink-0"></i>
                         <div class="min-w-0 flex-1">
                             <p class="text-xs 
-                            @if($status === 'finalizado') 
+                            @if($status === 'deferido') 
                                 text-emerald-600 
                             @elseif($status === 'indeferido') 
                                 text-red-600 
@@ -154,14 +154,14 @@
             @endif
 
             <!-- Mensagens de Resposta -->
-            @if($status === 'finalizado' && isset($resposta) && !empty($resposta))
+            @if($status === 'deferido' && isset($resposta) && !empty($resposta))
             <div class="mb-4 p-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl">
                 <div class="flex items-start space-x-3">
                     <div class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-check-circle text-emerald-600"></i>
                     </div>
                     <div class="flex-1">
-                        <h6 class="text-sm font-semibold text-emerald-800 mb-1">Resposta - Finalizado:</h6>
+                        <h6 class="text-sm font-semibold text-emerald-800 mb-1">Resposta - Deferido:</h6>
                         <p class="text-sm text-gray-700">{{ $resposta }}</p>
                     </div>
                 </div>
@@ -336,14 +336,14 @@
                                 </div>
 
                                 <!-- Respostas -->
-                                @if($status === 'finalizado' && isset($resposta) && !empty($resposta))
+                                @if($status === 'deferido' && isset($resposta) && !empty($resposta))
                                 <div class="bg-white rounded-2xl border border-emerald-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="bg-gradient-to-r from-emerald-50 to-green-50 px-6 py-4 border-b border-emerald-100">
                                         <h6 class="text-lg font-bold text-emerald-900 flex items-center">
                                             <div class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-check-circle text-emerald-600"></i>
                                             </div>
-                                            Resposta - Finalizado
+                                            Resposta - Deferido
                                         </h6>
                                     </div>
                                     <div class="p-6">
@@ -549,7 +549,7 @@
                                 </div>
 
                                 <!-- Anexos da Finalização Modernizado -->
-                                @if($status === 'finalizado' && isset($anexos_finalizacao) && !empty($anexos_finalizacao))
+                                @if($status === 'deferido' && isset($anexos_finalizacao) && !empty($anexos_finalizacao))
                                 <div class="bg-white rounded-2xl border border-emerald-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="bg-gradient-to-r from-emerald-50 to-green-50 px-6 py-4 border-b border-emerald-100">
                                         <h6 class="text-lg font-bold text-emerald-900 flex items-center">

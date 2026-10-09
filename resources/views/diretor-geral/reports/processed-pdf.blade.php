@@ -180,7 +180,7 @@
                 <td>{{ \Illuminate\Support\Str::limit($req->requerimento->nomeCompleto, 25) }}</td>
                 <td>{{ $req->sender->name ?? 'N/A' }}</td>
                 <td>
-                    @if($req->status == 'finalizado')
+                    @if($req->status == 'deferido')
                     <span style="color: #00913F;">Deferido</span> 
                     @elseif($req->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span> 
@@ -229,7 +229,7 @@
             @foreach($data['estatisticasPorStatus'] as $situacao)
             <tr>
                 <td>
-                    @if($situacao->status == 'finalizado')
+                    @if($situacao->status == 'deferido')
                     <span style="color: #00913F;">Deferido</span> 
                     @elseif($situacao->status == 'indeferido')
                     <span style="color: #AF1B3F;">Indeferido</span> 

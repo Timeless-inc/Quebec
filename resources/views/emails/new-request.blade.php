@@ -12,16 +12,12 @@
 
         $statusMap = [
             'em_andamento' => [
-                'label' => 'Em Análise',
+                'label' => 'Em Aberto',
                 'classes' => 'text-blue-700 bg-blue-100 border border-blue-200',
             ],
             'pendente' => [
                 'label' => 'Pendente',
                 'classes' => 'text-amber-700 bg-amber-100 border border-amber-200',
-            ],
-            'finalizado' => [
-                'label' => 'Aprovado',
-                'classes' => 'text-emerald-700 bg-emerald-100 border border-emerald-200',
             ],
             'deferido' => [
                 'label' => 'Deferido',

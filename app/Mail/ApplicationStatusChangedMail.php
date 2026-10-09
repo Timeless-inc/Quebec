@@ -67,15 +67,6 @@ class ApplicationStatusChangedMail extends Mailable implements ShouldQueue
      */
     private function formatStatus($status)
     {
-        $statusMap = [
-            'pendente' => 'Pendente',
-            'em_andamento' => 'Em Andamento',
-            'deferido' => 'Deferido',
-            'indeferido' => 'Indeferido',
-            'encaminhado' => 'Encaminhado',  
-            'devolvido' => 'Devolvido', 
-        ];
-        
-        return $statusMap[$status] ?? ucfirst($status);
+        return \App\Services\StatusFormatter::format((string) $status);
     }
 }

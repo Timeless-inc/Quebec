@@ -51,7 +51,7 @@
             <form action="{{ route('application.updateStatus', $requerimento->id) }}" method="POST" enctype="multipart/form-data" class="approve-form">
                 @csrf
                 @method('PATCH')
-                <input type="hidden" name="status" value="finalizado">
+                <input type="hidden" name="status" value="deferido">
 
                 <div class="modal-body p-6">
                     <div class="mb-6">
