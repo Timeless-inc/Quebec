@@ -56,10 +56,29 @@
                         </ul>
                     </div>
 
-                    <button id="exportCSV" class="inline-flex justify-center items-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md text-sm font-semibold transition" style="display: none;">
-                        <i class="fas fa-file-csv"></i>
-                        Exportar CSV
-                    </button>
+                    <div class="dropdown" id="exportDropdown" style="display: none;">
+                        <button class="inline-flex justify-center items-center gap-2 w-full sm:w-auto px-4 py-2.5 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md text-sm font-semibold transition dropdown-toggle" type="button" id="exportDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-file-export"></i>
+                            Exportar
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-gray-200" aria-labelledby="exportDropdownButton">
+                            <li>
+                                <a class="dropdown-item export-option" href="#" data-format="xlsx">
+                                    <i class="fas fa-file-excel me-2 text-green-600"></i>Excel (.xlsx)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item export-option" href="#" data-format="pdf">
+                                    <i class="fas fa-file-pdf me-2 text-red-600"></i>PDF
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item export-option" href="#" data-format="csv">
+                                    <i class="fas fa-file-csv me-2 text-gray-500"></i>CSV
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
                     <button id="generateChart" class="inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-semibold shadow-sm transition">
                         <i class="fas fa-chart-line"></i>
@@ -198,7 +217,7 @@
                                 <select id="ano" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
                                     @if(isset($anosDisponiveis))
                                         @foreach($anosDisponiveis as $ano)
-                                            <option value="{{ $ano }}">{{ $ano }}</option>
+                                            <option value="{{ $ano }}" @selected($loop->last)>{{ $ano }}</option>
                                         @endforeach
                                     @else
                                         @php
@@ -266,7 +285,7 @@
                                 <select id="anoCross" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
                                     @if(isset($anosDisponiveis))
                                         @foreach($anosDisponiveis as $ano)
-                                            <option value="{{ $ano }}">{{ $ano }}</option>
+                                            <option value="{{ $ano }}" @selected($loop->last)>{{ $ano }}</option>
                                         @endforeach
                                     @else
                                         @php
@@ -280,6 +299,11 @@
                                 </select>
                             </div>
                         </div>
+
+                        <label for="stackBars" class="inline-flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                            <input id="stackBars" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            Empilhar barras
+                        </label>
                     </div>
                 </div>
 
@@ -294,48 +318,65 @@
                                 <p class="text-sm text-gray-500 mb-0">Ajuste os filtros acima e clique em Gerar Gráfico para visualizar os dados.</p>
                             </div>
                         </div>
-                        <canvas id="graficoRequerimentos" class="hidden h-full w-full p-3"></canvas>
+                        <div id="graficoRequerimentos" class="hidden h-full w-full p-3"></div>
                     </div>
                 </div>
             </section>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @vite('resources/js/report-charts.js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const chartCanvas = document.getElementById('graficoRequerimentos');
+            const chartElement = document.getElementById('graficoRequerimentos');
             const chartEmptyState = document.getElementById('chartEmptyState');
-            const exportButton = document.getElementById('exportCSV');
+            const exportDropdown = document.getElementById('exportDropdown');
+            const generateButton = document.getElementById('generateChart');
+            const stackToggle = document.getElementById('stackBars');
             const reportTypeOptions = document.querySelectorAll('.report-type-option');
-            let chart;
+            const exportUrl = "{{ route('cradt-report.export') }}";
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            let chart = null;
             let currentChartData = null;
 
-            const chartColors = [
-                { background: 'rgba(37, 99, 235, 0.65)', border: 'rgba(37, 99, 235, 1)' },
-                { background: 'rgba(22, 163, 74, 0.65)', border: 'rgba(22, 163, 74, 1)' },
-                { background: 'rgba(234, 179, 8, 0.65)', border: 'rgba(234, 179, 8, 1)' },
-                { background: 'rgba(220, 38, 38, 0.65)', border: 'rgba(220, 38, 38, 1)' },
-                { background: 'rgba(79, 70, 229, 0.65)', border: 'rgba(79, 70, 229, 1)' },
-                { background: 'rgba(8, 145, 178, 0.65)', border: 'rgba(8, 145, 178, 1)' },
-                { background: 'rgba(107, 114, 128, 0.65)', border: 'rgba(107, 114, 128, 1)' },
-                { background: 'rgba(219, 39, 119, 0.65)', border: 'rgba(219, 39, 119, 1)' }
-            ];
+            const FILTER_LABELS = {
+                tipo: 'Tipo de Requisição',
+                status: 'Status',
+                turno: 'Turno',
+                curso: 'Curso',
+                responsavel: 'Responsável',
+                tempoResolucao: 'Tempo de Resolução'
+            };
+
+            const VALUE_AXIS_TITLE = 'Quantidade de Requerimentos';
+            const MAX_VERTICAL_CATEGORIES = 8;
+            const MAX_LABELLED_BARS = 40;
+            const MAX_WRAPPED_LEGEND_ITEMS = 10;
+            const CHART_CHROME_HEIGHT = 180;
+            const MAX_EXPORT_IMAGE_PIXELS = 2000000;
+            const chartColors = ['#2563eb', '#16a34a', '#eab308', '#dc2626', '#4f46e5', '#0891b2', '#6b7280', '#db2777'];
+
+            function periodLabel(mesSelect, ano) {
+                if (mesSelect.value === 'all') {
+                    return `Ano de ${ano}`;
+                }
+
+                return `${mesSelect.options[mesSelect.selectedIndex].text}/${ano}`;
+            }
 
             function setChartVisibility(isVisible) {
-                chartCanvas.classList.toggle('hidden', !isVisible);
-                chartCanvas.style.display = isVisible ? 'block' : 'none';
+                chartElement.classList.toggle('hidden', !isVisible);
                 chartEmptyState.classList.toggle('hidden', isVisible);
             }
 
             function resetChart() {
                 if (chart) {
-                    chart.destroy();
-                    chart = null;
+                    chart.clear();
                 }
 
+                chartElement.parentElement.style.height = '';
                 currentChartData = null;
-                exportButton.style.display = 'none';
+                exportDropdown.style.display = 'none';
                 setChartVisibility(false);
             }
 
@@ -359,36 +400,311 @@
                 });
             });
 
-            function exportToCSV(labels, data, title) {
-                const csvRows = [['Categoria', 'Total']];
+            // Com muitas categorias as barras ficam na horizontal para os rótulos caberem
+            function buildAxes(categoryTitle, categories, horizontal) {
+                const categoryAxis = {
+                    type: 'category',
+                    data: categories,
+                    name: categoryTitle,
+                    nameLocation: 'middle',
+                    nameGap: 12,
+                    nameMoveOverlap: true,
+                    nameTextStyle: {
+                        fontWeight: 600,
+                        color: '#374151'
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        width: horizontal ? 230 : 120,
+                        overflow: horizontal ? 'truncate' : 'break',
+                        color: '#4b5563'
+                    }
+                };
+                const valueAxis = {
+                    type: 'value',
+                    name: VALUE_AXIS_TITLE,
+                    nameLocation: 'middle',
+                    nameGap: 12,
+                    nameMoveOverlap: true,
+                    nameTextStyle: {
+                        fontWeight: 600,
+                        color: '#374151'
+                    },
+                    minInterval: 1,
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(148, 163, 184, 0.25)'
+                        }
+                    }
+                };
 
-                for (let i = 0; i < labels.length; i++) {
-                    csvRows.push([labels[i], data[i]]);
-                }
-
-                downloadCSV(csvRows, title);
+                return horizontal ? {
+                    xAxis: valueAxis,
+                    yAxis: Object.assign(categoryAxis, {
+                        inverse: true
+                    })
+                } : {
+                    xAxis: categoryAxis,
+                    yAxis: valueAxis
+                };
             }
 
-            function exportCrossReportToCSV(rows, columns, data, title) {
-                const csvRows = [[''].concat(columns)];
-
-                for (let i = 0; i < rows.length; i++) {
-                    csvRows.push([rows[i]].concat(data[i]));
-                }
-
-                downloadCSV(csvRows, title);
+            function baseOption(title, subtitle, hasLegend) {
+                return {
+                    color: chartColors,
+                    title: {
+                        text: title,
+                        subtext: subtitle,
+                        left: 'center',
+                        top: 4,
+                        textStyle: {
+                            fontSize: 16,
+                            fontWeight: 600,
+                            color: '#1f2937'
+                        },
+                        subtextStyle: {
+                            color: '#6b7280'
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: 28,
+                        right: 48,
+                        top: hasLegend ? 124 : 72,
+                        bottom: 24,
+                        outerBoundsMode: 'same',
+                        outerBoundsContain: 'all'
+                    }
+                };
             }
 
-            function downloadCSV(rows, title) {
-                const csvContent = rows.map(row => row.join(',')).join('\n');
-                const blob = new Blob([csvContent], {
-                    type: 'text/csv;charset=utf-8;'
-                });
+            // bandHeight: altura reservada por categoria quando as barras ficam na horizontal
+            function renderChart(option, categoryCount, bandHeight) {
+                const wrapper = chartElement.parentElement;
+
+                setChartVisibility(true);
+                wrapper.style.height = '';
+
+                if (bandHeight) {
+                    const neededHeight = categoryCount * bandHeight + CHART_CHROME_HEIGHT;
+
+                    if (neededHeight > wrapper.clientHeight) {
+                        wrapper.style.height = `${neededHeight}px`;
+                    }
+                }
+
+                if (!chart) {
+                    chart = echarts.init(chartElement);
+                }
+
+                chart.resize();
+                chart.setOption(option, true);
+                exportDropdown.style.display = '';
+            }
+
+            function renderSimpleChart() {
+                const { filtro, labels, data, title } = currentChartData;
+                const horizontal = labels.length > MAX_VERTICAL_CATEGORIES;
+                const total = data.reduce((sum, value) => sum + value, 0);
+                const share = value => `${value} (${(value / total * 100).toFixed(1).replace('.', ',')}%)`;
+                const option = baseOption(title, `Total: ${total} requerimentos`, false);
+
+                option.tooltip.valueFormatter = share;
+
+                renderChart(Object.assign(option, buildAxes(FILTER_LABELS[filtro], labels, horizontal), {
+                    series: [{
+                        type: 'bar',
+                        name: 'Requerimentos',
+                        data: data,
+                        colorBy: 'data',
+                        barMaxWidth: 64,
+                        itemStyle: {
+                            borderRadius: horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]
+                        },
+                        label: {
+                            show: true,
+                            position: horizontal ? 'right' : 'top',
+                            formatter: params => share(params.value)
+                        }
+                    }]
+                }), labels.length, horizontal ? 20 : 0);
+            }
+
+            function renderCrossChart() {
+                const { filtro1, filtro2, rows, columns, data, title } = currentChartData;
+                const horizontal = columns.length > MAX_VERTICAL_CATEGORIES;
+                const stacked = stackToggle.checked;
+                const showLabels = rows.length * columns.length <= MAX_LABELLED_BARS;
+                const total = data.reduce((sum, row) => sum + row.reduce((rowSum, value) => rowSum + value, 0), 0);
+                const option = baseOption(title, `Cores: ${FILTER_LABELS[filtro1]} · Total: ${total} requerimentos`, true);
+
+                option.legend = {
+                    type: rows.length > MAX_WRAPPED_LEGEND_ITEMS ? 'scroll' : 'plain',
+                    top: 62,
+                    left: 'center',
+                    width: '90%'
+                };
+
+                renderChart(Object.assign(option, buildAxes(FILTER_LABELS[filtro2], columns, horizontal), {
+                    series: rows.map((row, index) => ({
+                        type: 'bar',
+                        name: row,
+                        data: data[index],
+                        stack: stacked ? 'total' : undefined,
+                        barMaxWidth: 48,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        label: {
+                            show: showLabels,
+                            position: stacked ? 'inside' : (horizontal ? 'right' : 'top'),
+                            formatter: params => params.value > 0 ? params.value : ''
+                        },
+                        labelLayout: {
+                            hideOverlap: true
+                        }
+                    }))
+                }), columns.length, horizontal ? (stacked ? 24 : Math.max(24, rows.length * 10 + 8)) : 0);
+            }
+
+            function fetchReport(url) {
+                generateButton.disabled = true;
+
+                return fetch(url, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .finally(() => {
+                        generateButton.disabled = false;
+                    });
+            }
+
+            function showNoData(message) {
+                resetChart();
+                alert(message);
+            }
+
+            generateButton.addEventListener('click', function() {
+                const reportType = document.querySelector('input[name="reportType"]:checked').value;
+
+                if (reportType === 'simple') {
+                    generateSimpleChart();
+                } else {
+                    generateCrossReport();
+                }
+            });
+
+            function generateSimpleChart() {
+                const filtro = document.getElementById('filtro').value;
+                const mesSelect = document.getElementById('mes');
+                const mes = mesSelect.value;
+                const ano = document.getElementById('ano').value;
+
+                fetchReport(`/getFilteredData?filtro=${filtro}&mes=${mes}&ano=${ano}`)
+                    .then(data => {
+                        if (!Array.isArray(data) || data.length === 0) {
+                            showNoData('Não há dados para o período e filtro selecionados.');
+                            return;
+                        }
+
+                        currentChartData = {
+                            type: 'simple',
+                            params: {
+                                tipoRelatorio: 'simple',
+                                filtro: filtro,
+                                mes: mes,
+                                ano: ano
+                            },
+                            filtro: filtro,
+                            labels: data.map(item => item.label),
+                            data: data.map(item => Number(item.total)),
+                            title: `Total de Requerimentos por ${FILTER_LABELS[filtro]} - ${periodLabel(mesSelect, ano)}`
+                        };
+
+                        renderSimpleChart();
+                    })
+                    .catch(() => showNoData('Não foi possível gerar o gráfico. Tente novamente.'));
+            }
+
+            function generateCrossReport() {
+                const filtro1 = document.getElementById('filtro1').value;
+                const filtro2 = document.getElementById('filtro2').value;
+                const mesSelect = document.getElementById('mesCross');
+                const mes = mesSelect.value;
+                const ano = document.getElementById('anoCross').value;
+
+                if (filtro1 === filtro2) {
+                    showNoData('Os dois filtros não podem ser iguais. Por favor, selecione filtros diferentes.');
+                    return;
+                }
+
+                fetchReport(`/getCrossReport?filtro1=${filtro1}&filtro2=${filtro2}&mes=${mes}&ano=${ano}`)
+                    .then(data => {
+                        if (data.error) {
+                            showNoData(data.error);
+                            return;
+                        }
+
+                        if (!data.rotulos || data.rotulos.length === 0) {
+                            showNoData('Não há dados suficientes para gerar este relatório.');
+                            return;
+                        }
+
+                        // Filtro 1 são as séries (cores) e Filtro 2 o eixo das categorias
+                        currentChartData = {
+                            type: 'cross',
+                            params: {
+                                tipoRelatorio: 'cross',
+                                filtro1: filtro1,
+                                filtro2: filtro2,
+                                mes: mes,
+                                ano: ano
+                            },
+                            filtro1: filtro1,
+                            filtro2: filtro2,
+                            rows: data.categorias,
+                            columns: data.rotulos,
+                            data: data.dados.map(row => row.map(Number)),
+                            title: `${data.titulo} - ${periodLabel(mesSelect, ano)}`
+                        };
+
+                        renderCrossChart();
+                    })
+                    .catch(() => showNoData('Não foi possível gerar o gráfico. Tente novamente.'));
+            }
+
+            stackToggle.addEventListener('change', function() {
+                if (currentChartData && currentChartData.type === 'cross') {
+                    renderCrossChart();
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                if (chart && currentChartData) {
+                    chart.resize();
+                }
+            });
+
+            function fileName(title, extension) {
+                return `${title.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_')}.${extension}`;
+            }
+
+            function downloadBlob(blob, name) {
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
 
                 link.setAttribute('href', url);
-                link.setAttribute('download', `${title.replace(/\s+/g, '_')}.csv`);
+                link.setAttribute('download', name);
                 link.style.visibility = 'hidden';
 
                 document.body.appendChild(link);
@@ -396,215 +712,85 @@
                 document.body.removeChild(link);
             }
 
-            document.getElementById('generateChart').addEventListener('click', function() {
-                setChartVisibility(true);
-                const ctx = chartCanvas.getContext('2d');
-                const reportType = document.querySelector('input[name="reportType"]:checked').value;
+            function csvCell(value) {
+                const text = String(value);
 
-                if (reportType === 'simple') {
-                    generateSimpleChart(ctx);
-                } else {
-                    generateCrossReport(ctx);
-                }
-            });
-
-            function generateSimpleChart(ctx) {
-                const selectedValue = document.getElementById('filtro').value;
-                const selectedMes = document.getElementById('mes').value;
-                const selectedAno = document.getElementById('ano').value;
-                const url = `/getFilteredData?filtro=${selectedValue}&mes=${selectedMes}&ano=${selectedAno}`;
-
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        const labels = data.map(item => item.label);
-                        const dataValues = data.map(item => item.total);
-                        const timeFrame = selectedMes === 'all' ? 'Ano' : 'Mês';
-                        const title = `Total de Requerimentos por ${selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)} - ${timeFrame}: ${selectedAno}`;
-
-                        currentChartData = {
-                            type: 'simple',
-                            labels: labels,
-                            data: dataValues,
-                            title: title
-                        };
-
-                        if (chart) {
-                            chart.destroy();
-                        }
-
-                        chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: title,
-                                    data: dataValues,
-                                    backgroundColor: chartColors.map(color => color.background),
-                                    borderColor: chartColors.map(color => color.border),
-                                    borderWidth: 1,
-                                    borderRadius: 6,
-                                    barPercentage: 0.78,
-                                    categoryPercentage: 0.55
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(148, 163, 184, 0.2)'
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        display: true,
-                                        position: 'bottom'
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: title,
-                                        font: {
-                                            size: 16,
-                                            weight: '600'
-                                        },
-                                        color: '#1f2937'
-                                    }
-                                }
-                            }
-                        });
-
-                        exportButton.style.display = 'inline-flex';
-                    });
+                return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
             }
 
-            function generateCrossReport(ctx) {
-                const filtro1 = document.getElementById('filtro1').value;
-                const filtro2 = document.getElementById('filtro2').value;
-                const mes = document.getElementById('mesCross').value;
-                const ano = document.getElementById('anoCross').value;
-
-                if (filtro1 === filtro2) {
-                    alert('Os dois filtros não podem ser iguais. Por favor, selecione filtros diferentes.');
-                    setChartVisibility(false);
-                    return;
-                }
-
-                const url = `/getCrossReport?filtro1=${filtro1}&filtro2=${filtro2}&mes=${mes}&ano=${ano}`;
-
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.rotulos || data.rotulos.length === 0) {
-                            alert('Não há dados suficientes para gerar este relatório.');
-                            setChartVisibility(false);
-                            return;
-                        }
-
-                        currentChartData = {
-                            type: 'cross',
-                            rows: data.categorias,
-                            columns: data.rotulos,
-                            data: data.dados,
-                            title: data.titulo
-                        };
-
-                        if (chart) {
-                            chart.destroy();
-                        }
-
-                        const datasets = data.categorias.map((categoria, index) => ({
-                            label: categoria,
-                            data: data.dados[index],
-                            backgroundColor: chartColors[index % chartColors.length].background,
-                            borderColor: chartColors[index % chartColors.length].border,
-                            borderWidth: 1,
-                            borderRadius: 6
-                        }));
-
-                        chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: data.rotulos,
-                                datasets: datasets
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: filtro2.charAt(0).toUpperCase() + filtro2.slice(1)
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(148, 163, 184, 0.2)'
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Quantidade'
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        display: true,
-                                        position: 'bottom',
-                                        title: {
-                                            display: true,
-                                            text: filtro1.charAt(0).toUpperCase() + filtro1.slice(1)
-                                        }
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: data.titulo,
-                                        font: {
-                                            size: 16,
-                                            weight: '600'
-                                        },
-                                        color: '#1f2937'
-                                    }
-                                }
-                            }
-                        });
-
-                        exportButton.style.display = 'inline-flex';
-                    });
-            }
-
-            exportButton.addEventListener('click', function() {
-                if (!currentChartData) {
-                    return;
-                }
+            function exportCSV() {
+                let rows;
 
                 if (currentChartData.type === 'simple') {
-                    exportToCSV(
-                        currentChartData.labels,
-                        currentChartData.data,
-                        currentChartData.title
+                    rows = [['Categoria', 'Total']].concat(
+                        currentChartData.labels.map((label, index) => [label, currentChartData.data[index]])
                     );
-                } else if (currentChartData.type === 'cross') {
-                    exportCrossReportToCSV(
-                        currentChartData.rows,
-                        currentChartData.columns,
-                        currentChartData.data,
-                        currentChartData.title
+                } else {
+                    rows = [[''].concat(currentChartData.columns)].concat(
+                        currentChartData.rows.map((row, index) => [row].concat(currentChartData.data[index]))
                     );
                 }
+
+                const csvContent = rows.map(row => row.map(csvCell).join(',')).join('\n');
+
+                // BOM para o Excel reconhecer os acentos
+                downloadBlob(new Blob(['﻿' + csvContent], {
+                    type: 'text/csv;charset=utf-8;'
+                }), fileName(currentChartData.title, 'csv'));
+            }
+
+            function exportFile(format) {
+                const body = new URLSearchParams(currentChartData.params);
+                const title = currentChartData.title;
+
+                body.set('formato', format);
+
+                if (format === 'pdf') {
+                    // Limita a resolução para o servidor conseguir montar o PDF de gráficos muito altos
+                    const pixelRatio = Math.min(2, Math.sqrt(MAX_EXPORT_IMAGE_PIXELS / (chart.getWidth() * chart.getHeight())));
+
+                    body.set('grafico', chart.getDataURL({
+                        type: 'png',
+                        pixelRatio: pixelRatio,
+                        backgroundColor: '#ffffff'
+                    }));
+                }
+
+                fetch(exportUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: body
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Falha na exportação: ${response.status}`);
+                        }
+
+                        return response.blob();
+                    })
+                    .then(blob => downloadBlob(blob, fileName(title, format)))
+                    .catch(() => alert('Não foi possível exportar o relatório. Tente novamente.'));
+            }
+
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (!currentChartData) {
+                        return;
+                    }
+
+                    const format = this.getAttribute('data-format');
+
+                    if (format === 'csv') {
+                        exportCSV();
+                    } else {
+                        exportFile(format);
+                    }
+                });
             });
 
             document.querySelectorAll('.user-report-option').forEach(option => {
@@ -661,23 +847,15 @@
             function updateSecondFilter() {
                 const filtro1Value = document.getElementById('filtro1').value;
                 const filtro2Select = document.getElementById('filtro2');
-                const allOptions = [
-                    { value: 'tipo', label: 'Tipo de Requisição' },
-                    { value: 'status', label: 'Status' },
-                    { value: 'turno', label: 'Turno' },
-                    { value: 'curso', label: 'Curso' },
-                    { value: 'responsavel', label: 'Responsável' },
-                    { value: 'tempoResolucao', label: 'Tempo de Resolução' }
-                ];
                 const currentSelection = filtro2Select.value;
 
                 filtro2Select.innerHTML = '';
 
-                allOptions.forEach(option => {
-                    if (option.value !== filtro1Value) {
+                Object.entries(FILTER_LABELS).forEach(([value, label]) => {
+                    if (value !== filtro1Value) {
                         const optElement = document.createElement('option');
-                        optElement.value = option.value;
-                        optElement.textContent = option.label;
+                        optElement.value = value;
+                        optElement.textContent = label;
                         filtro2Select.appendChild(optElement);
                     }
                 });

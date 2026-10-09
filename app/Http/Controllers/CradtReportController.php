@@ -9,10 +9,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade\Pdf; 
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 class CradtReportController extends Controller
 {
+    private const MAX_PIXELS_GRAFICO = 4000000;
+
     private $mapeamentoCampos = [
         'tipoRequisicao' => 'tipo',
         'finalizado_por' => 'responsavel',
@@ -112,6 +119,10 @@ class CradtReportController extends Controller
         }
 
         $data = $this->obterDadosPorFiltro($query, $filtro, $request);
+
+        if ($this->mapearFiltroParaColuna($filtro) === 'status') {
+            $data->each(fn ($item) => $item->label = Str::headline($item->label));
+        }
 
         return response()->json($data);
     }
@@ -289,7 +300,7 @@ class CradtReportController extends Controller
                     'rotulos' => [],
                     'categorias' => [],
                     'dados' => [],
-                    'titulo' => 'Relatório Cruzado: ' . ucfirst($campo1) . ' x ' . ucfirst($campo2)
+                    'titulo' => 'Relatório Cruzado: ' . $this->getFilterName($campo1) . ' x ' . $this->getFilterName($campo2)
                 ]);
             }
 
@@ -297,7 +308,7 @@ class CradtReportController extends Controller
                 'rotulos' => $resultados->pluck($campo2)->unique()->values(),
                 'categorias' => $resultados->pluck($campo1)->unique()->values(),
                 'dados' => [],
-                'titulo' => 'Relatório Cruzado: ' . ucfirst($campo1) . ' x ' . ucfirst($campo2)
+                'titulo' => 'Relatório Cruzado: ' . $this->getFilterName($campo1) . ' x ' . $this->getFilterName($campo2)
             ];
 
             foreach ($dadosCruzados['categorias'] as $categoria) {
@@ -311,6 +322,9 @@ class CradtReportController extends Controller
                 $dadosCruzados['dados'][] = $linha;
             }
 
+            $dadosCruzados['categorias'] = $this->formatarRotulos($filtro1Coluna, $dadosCruzados['categorias']);
+            $dadosCruzados['rotulos'] = $this->formatarRotulos($filtro2Coluna, $dadosCruzados['rotulos']);
+
             return response()->json($dadosCruzados);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao gerar relatório cruzado: ' . $e->getMessage()], 500);
@@ -320,9 +334,12 @@ class CradtReportController extends Controller
     private function getCrossReportWithTimeResolution(Request $request, $filtro1, $filtro2, $mes, $ano)
     {
         try {
-            $tempoFiltro = ($filtro1 === 'tempoResolucao') ? 'tempoResolucao' : 'tempoResolucao';
-            $outroFiltro = ($filtro1 === 'tempoResolucao') ? $filtro2 : $filtro1;
+            $tempoPrimeiro = $filtro1 === 'tempoResolucao';
+            $outroFiltro = $tempoPrimeiro ? $filtro2 : $filtro1;
             $outroNome = isset($this->mapeamentoCampos[$outroFiltro]) ? $this->mapeamentoCampos[$outroFiltro] : $outroFiltro;
+            $titulo = 'Relatório Cruzado: ' . ($tempoPrimeiro
+                ? 'Tempo de Resolução x ' . $this->getFilterName($outroNome)
+                : $this->getFilterName($outroNome) . ' x Tempo de Resolução');
 
             $query = ApplicationRequest::query();
 
@@ -365,7 +382,7 @@ class CradtReportController extends Controller
                     'rotulos' => [],
                     'categorias' => [],
                     'dados' => [],
-                    'titulo' => 'Relatório Cruzado: ' . ucfirst($outroNome) . ' x Tempo de Resolução'
+                    'titulo' => $titulo
                 ]);
             }
 
@@ -381,7 +398,7 @@ class CradtReportController extends Controller
                 'rotulos' => $temposOrdenados,
                 'categorias' => $resultados->pluck('categoria')->unique()->values(),
                 'dados' => [],
-                'titulo' => 'Relatório Cruzado: ' . ucfirst($outroNome) . ' x Tempo de Resolução'
+                'titulo' => $titulo
             ];
 
             foreach ($dadosCruzados['categorias'] as $categoria) {
@@ -395,95 +412,172 @@ class CradtReportController extends Controller
                 $dadosCruzados['dados'][] = $linha;
             }
 
+            $dadosCruzados['categorias'] = $this->formatarRotulos($outroFiltro, $dadosCruzados['categorias']);
+
+            // Filtro 1 define as séries (legenda) e Filtro 2 o eixo das categorias
+            if ($tempoPrimeiro) {
+                $categorias = $dadosCruzados['categorias'];
+                $dadosCruzados['dados'] = array_map(
+                    fn ($indiceTempo) => array_column($dadosCruzados['dados'], $indiceTempo),
+                    array_keys($temposOrdenados)
+                );
+                $dadosCruzados['categorias'] = $temposOrdenados;
+                $dadosCruzados['rotulos'] = $categorias;
+            }
+
             return response()->json($dadosCruzados);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao gerar relatório cruzado com tempo: ' . $e->getMessage()], 500);
         }
     }
-    public function generatePdf(Request $request)
+    public function export(Request $request)
     {
-        $mes = $request->input('mes');
-        $ano = $request->input('ano');
-        $filtro = $request->input('filtro');
-        $filtroExtra = $request->input('filtroExtra');
-        $valorFiltroExtra = $request->input('valorFiltroExtra');
-        
-        $query = ApplicationRequest::query();
-        
-        if ($mes === 'all') {
-            $startDate = Carbon::createFromDate($ano, 1, 1)->startOfYear();
-            $endDate = Carbon::createFromDate($ano, 12, 31)->endOfYear();
-            $periodoTexto = "Ano de $ano";
-        } else {
-            $startDate = Carbon::createFromDate($ano, $mes, 1)->startOfMonth();
-            $endDate = Carbon::createFromDate($ano, $mes, 1)->endOfMonth();
-            $periodoTexto = "Mês " . $startDate->format('m/Y');
-        }
-        
-        $query->whereBetween('created_at', [$startDate, $endDate]);
-        
-        if ($filtroExtra && $valorFiltroExtra) {
-            $query = $this->aplicarFiltroSecundario($query, $filtroExtra, $valorFiltroExtra);
-            $filtroExtraTexto = $this->getFilterName($filtroExtra) . ": " . $valorFiltroExtra;
-        } else {
-            $filtroExtraTexto = "";
-        }
-        
-        if ($filtro === 'tempoResolucao') {
-            $data = $query->whereNotNull('resolved_at')
-                ->select(
-                    DB::raw('CASE 
-                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 24 THEN "Menos de 1 dia"
-                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 48 THEN "1 dia" 
-                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 72 THEN "2 dias"
-                        WHEN TIMESTAMPDIFF(HOUR, created_at, resolved_at) < 168 THEN "3-7 dias"
-                        ELSE "Mais de 7 dias"
-                    END as label'),
-                    DB::raw('count(*) as total')
-                )
-                ->groupBy('label')
-                ->orderBy(DB::raw('CASE 
-                    WHEN label = "Menos de 1 dia" THEN 1
-                    WHEN label = "1 dia" THEN 2
-                    WHEN label = "2 dias" THEN 3
-                    WHEN label = "3-7 dias" THEN 4
-                    ELSE 5
-                END'))
-                ->get();
-            
-            $tituloRelatorio = "Relatório de Tempo de Resolução";
-        } else {
-            $filtroColuna = $this->mapearFiltroParaColuna($filtro);
-            
-            $data = $query->select($filtroColuna . ' as label', DB::raw('count(*) as total'))
-                ->whereNotNull($filtroColuna)
-                ->where($filtroColuna, '!=', '')
-                ->when($filtroColuna === 'finalizado_por', function($q) {
-                    return $q->where('finalizado_por', '!=', 'null')
-                            ->where('finalizado_por', '!=', 'N/A')
-                            ->where('finalizado_por', '!=', 'Não Atribuído');
-                })
-                ->groupBy($filtroColuna)
-                ->orderByDesc('total')
-                ->get();
-            
-            $tituloRelatorio = "Relatório por " . $this->getFilterName($filtro);
-        }
-        
-        $totalRequerimentos = $data->sum('total');
-        
-        $pdf = PDF::loadView('cradt-report.pdf', [
-            'titulo' => $tituloRelatorio,
-            'periodo' => $periodoTexto,
-            'filtroExtra' => $filtroExtraTexto,
-            'data' => $data,
-            'totalRequerimentos' => $totalRequerimentos,
-            'dataGeracao' => now()->format('d/m/Y H:i')
+        $filtros = array_keys($this->filtrosDisponiveis);
+
+        $request->validate([
+            'formato' => ['required', Rule::in(['xlsx', 'pdf'])],
+            'tipoRelatorio' => ['required', Rule::in(['simple', 'cross'])],
+            'mes' => ['required', 'regex:/^(all|0[1-9]|1[0-2])$/'],
+            'ano' => ['required', 'integer', 'between:2000,2100'],
+            'filtro' => ['required_if:tipoRelatorio,simple', Rule::in($filtros)],
+            'filtro1' => ['required_if:tipoRelatorio,cross', Rule::in($filtros)],
+            'filtro2' => ['required_if:tipoRelatorio,cross', 'different:filtro1', Rule::in($filtros)],
+            // Imagem do gráfico gerada no navegador; só aceita PNG embutido para o PDF não buscar URLs externas
+            'grafico' => ['nullable', 'string', 'max:4000000', 'regex:/^data:image\/png;base64,[A-Za-z0-9+\/=]++$/'],
         ]);
-        
-        $pdf->setPaper('a4', 'portrait');
-        
-        return $pdf->download('relatorio-sre-' . now()->format('dmY-His') . '.pdf');
+
+        $grafico = $request->input('grafico');
+        $graficoAlto = false;
+
+        if ($grafico) {
+            // Imagens muito grandes esgotam a memória do DomPDF
+            $dimensoes = @getimagesizefromstring(base64_decode(Str::after($grafico, 'base64,')));
+
+            abort_if(! $dimensoes || $dimensoes[0] * $dimensoes[1] > self::MAX_PIXELS_GRAFICO, 422, 'Imagem do gráfico inválida.');
+
+            $graficoAlto = $dimensoes[1] > $dimensoes[0];
+        }
+
+        $relatorio = $request->input('tipoRelatorio') === 'simple'
+            ? $this->montarTabelaSimples($request)
+            : $this->montarTabelaCruzada($request);
+
+        $relatorio['periodo'] = $this->descreverPeriodo($request->input('mes'), $request->input('ano'));
+        $relatorio['dataGeracao'] = now()->format('d/m/Y H:i');
+
+        $nomeArquivo = 'relatorio-sre-' . now()->format('dmY-His');
+
+        if ($request->input('formato') === 'xlsx') {
+            return $this->exportarXlsx($relatorio, $nomeArquivo . '.xlsx');
+        }
+
+        $pdf = Pdf::loadView('cradt-report.pdf', $relatorio + [
+            'grafico' => $grafico,
+            'graficoAlto' => $graficoAlto,
+            'geradoPor' => Auth::user()->name,
+        ]);
+
+        // Gráfico mais alto que largo ocupa uma página em retrato só para ele
+        $pdf->setPaper('a4', ! $graficoAlto && count($relatorio['cabecalho']) > 6 ? 'landscape' : 'portrait');
+
+        return $pdf->download($nomeArquivo . '.pdf');
+    }
+
+    private function montarTabelaSimples(Request $request)
+    {
+        $nomeFiltro = $this->getFilterName($request->input('filtro'));
+        $dados = collect($this->getFilteredData($request)->getData(true));
+        $total = $dados->sum('total');
+
+        return [
+            'titulo' => 'Total de Requerimentos por ' . $nomeFiltro,
+            'cabecalho' => [$nomeFiltro, 'Quantidade', '% do total'],
+            'linhas' => $dados->map(fn ($item) => [
+                $item['label'],
+                $item['total'],
+                round($item['total'] / $total * 100, 1),
+            ])->all(),
+            'rodape' => ['Total', $total, $total > 0 ? 100.0 : 0.0],
+        ];
+    }
+
+    private function montarTabelaCruzada(Request $request)
+    {
+        $resposta = $this->getCrossReport($request);
+        $dados = $resposta->getData(true);
+
+        abort_if(isset($dados['error']), $resposta->getStatusCode(), $dados['error'] ?? '');
+
+        $linhas = $dados['categorias'];
+        $colunas = $dados['rotulos'];
+        $matriz = $dados['dados'];
+        $nomeLinhas = $this->getFilterName($request->input('filtro1'));
+        $nomeColunas = $this->getFilterName($request->input('filtro2'));
+
+        // A dimensão com mais valores vai para as linhas para a tabela caber na página
+        if (count($colunas) > count($linhas)) {
+            $matriz = array_map(fn ($indice) => array_column($matriz, $indice), array_keys($colunas));
+            [$linhas, $colunas] = [$colunas, $linhas];
+            [$nomeLinhas, $nomeColunas] = [$nomeColunas, $nomeLinhas];
+        }
+
+        $corpo = [];
+        foreach ($linhas as $indice => $linha) {
+            $corpo[] = [$linha, ...$matriz[$indice], array_sum($matriz[$indice])];
+        }
+
+        $totaisColunas = array_map(fn ($indice) => array_sum(array_column($matriz, $indice)), array_keys($colunas));
+
+        return [
+            'titulo' => $dados['titulo'],
+            'cabecalho' => [$nomeLinhas . ' / ' . $nomeColunas, ...$colunas, 'Total'],
+            'linhas' => $corpo,
+            'rodape' => ['Total', ...$totaisColunas, array_sum($totaisColunas)],
+        ];
+    }
+
+    private function exportarXlsx(array $relatorio, $nomeArquivo)
+    {
+        return response()->streamDownload(function () use ($relatorio) {
+            $negrito = new Style(fontBold: true);
+
+            $writer = new XlsxWriter();
+            $writer->openToFile('php://output');
+            $writer->addRow(Row::fromValuesWithStyle([$relatorio['titulo']], $negrito));
+            $writer->addRow(Row::fromValues(['Período: ' . $relatorio['periodo']]));
+            $writer->addRow(Row::fromValues(['Gerado em: ' . $relatorio['dataGeracao']]));
+            $writer->addRow(Row::fromValues([]));
+            $writer->addRow(Row::fromValuesWithStyle($relatorio['cabecalho'], $negrito));
+
+            foreach ($relatorio['linhas'] as $linha) {
+                $writer->addRow(Row::fromValues($linha));
+            }
+
+            $writer->addRow(Row::fromValuesWithStyle($relatorio['rodape'], $negrito));
+            $writer->close();
+        }, $nomeArquivo, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    private function descreverPeriodo($mes, $ano)
+    {
+        if ($mes === 'all') {
+            return "Ano de $ano";
+        }
+
+        $nomeMes = Carbon::createFromDate($ano, $mes, 1)->locale('pt_BR')->translatedFormat('F');
+
+        return ucfirst($nomeMes) . "/$ano";
+    }
+
+    private function formatarRotulos($coluna, $valores)
+    {
+        if ($coluna !== 'status') {
+            return $valores;
+        }
+
+        return collect($valores)->map(fn ($status) => Str::headline($status))->values();
     }
 
     public function generateUserPdf(Request $request)

@@ -13,6 +13,7 @@
         "laravel/reverb": "^1.10",
         "laravel/tinker": "^2.9",
         "mpdf/mpdf": "*",
+        "openspout/openspout": "^5.12",
         "setasign/fpdi": "*"
     },
     "require-dev": {
