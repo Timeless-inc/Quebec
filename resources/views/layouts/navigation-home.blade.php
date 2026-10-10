@@ -43,7 +43,7 @@
                 {{ __('Entrar') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
-                {{ __('Cadastrar') }}
+                {{ __('Primeiro acesso') }}
             </x-responsive-nav-link>
         </div>
 

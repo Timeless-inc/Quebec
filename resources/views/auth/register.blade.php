@@ -277,7 +277,7 @@
                 });
             });
 
-            const form = document.querySelector("form[action='{{ route('register') }}']");
+            const form = document.querySelector("form[action='{{ route('primeiro-acesso.concluir') }}']");
             if (!form) return;
 
             form.addEventListener('submit', function(e) {

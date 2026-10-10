@@ -39,7 +39,7 @@
                 <!-- Links desktop -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('login') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Entrar</a>
-                    <a href="{{ url('/register') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2 rounded-md transition-all border">Cadastrar</a>
+                    <a href="{{ url('/register') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2 rounded-md transition-all border">Primeiro acesso</a>
                 </div>
 
                 <!-- Botão hamburguer mobile -->
@@ -63,7 +63,7 @@
                     Entrar
                 </a>
                 <a href="{{ url('/register') }}" class="block py-2 px-4 text-base font-medium bg-primary text-white hover:bg-secondary rounded-md text-center">
-                    Cadastrar
+                    Primeiro acesso
                 </a>
             </div>
         </div>
@@ -161,7 +161,7 @@
 
                 <div class="mt-4 md:mt-0">
                     <a href="{{ url('/register') }}" class="bg-primary hover:bg-secondary text-white font-medium px-6 py-3 rounded-md inline-flex items-center transition-colors">
-                        Criar sua conta
+                        Fazer primeiro acesso
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
