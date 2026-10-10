@@ -1,36 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Código de primeiro acesso</title>
-</head>
-{{-- Estilos embutidos: clientes de e-mail ignoram folhas de estilo e scripts externos --}}
-<body style="margin: 0; padding: 24px 12px; background-color: #f1f5f9; font-family: Arial, Helvetica, sans-serif; color: #334155;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-        <tr>
-            <td style="padding: 28px 32px; background-color: #047857; text-align: center; color: #ffffff;">
-                <h1 style="margin: 0; font-size: 20px; line-height: 1.3;">Sistema de Requerimento do Estudante</h1>
-                <p style="margin: 6px 0 0; font-size: 14px; color: #d1fae5;">Código de primeiro acesso</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 32px;">
-                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.6;">Olá, <strong>{{ $user->name }}</strong>.</p>
-                <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6;">Use o código abaixo para confirmar seu e-mail e ativar seu acesso ao SRE:</p>
+<x-emails.layout title="Seu código de primeiro acesso" heading="Falta só confirmar seu e-mail." eyebrow="Ativação da conta" preheader="Use seu código de verificação para confirmar o e-mail e ativar sua conta no SRE." :message="$message ?? null">
+    <p style="margin: 0 0 16px;">Olá, <strong style="color: #263e31;">{{ $user->name }}</strong>.</p>
+    <p style="margin: 0;">Para ativar seu acesso ao SRE, informe o código abaixo na tela de confirmação do sistema.</p>
 
-                <p style="margin: 0 0 24px; padding: 18px; text-align: center; font-size: 34px; font-weight: bold; letter-spacing: 10px; color: #065f46; background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px;">{{ $codigo }}</p>
-
-                <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">O código vale por {{ $minutos }} minutos e só pode ser usado uma vez.</p>
-                <p style="margin: 0; font-size: 14px; line-height: 1.6;">Se você não tentou acessar o sistema, ignore este e-mail: nenhuma conta será ativada sem o código.</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 18px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; text-align: center; font-size: 12px; line-height: 1.6; color: #64748b;">
-                © {{ date('Y') }} Sistema de Requerimento do Estudante (SRE)<br>
-                Este e-mail foi enviado automaticamente. Por favor, não responda.
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
+    <x-emails.panel title="Seu código de verificação">
+        <p style="margin: 8px 0 14px; text-align: center; color: #164c35; font-family: 'Courier New', Courier, monospace; font-size: 36px; line-height: 46px; font-weight: 700; letter-spacing: 7px;">{{ $codigo }}</p>
+        <p style="margin: 0; text-align: center; color: #687b6d; font-size: 12px; line-height: 20px;">Válido por <strong>{{ $minutos }} minutos</strong> · Uso único</p>
+    </x-emails.panel>
+    <p style="margin: 0 0 12px;">Não compartilhe este código com outras pessoas.</p>
+    <p style="margin: 0; color: #687b6d; font-size: 13px; line-height: 22px;">Se você não tentou acessar o SRE, ignore esta mensagem. Nenhuma conta será ativada sem a confirmação do código.</p>
+</x-emails.layout>
