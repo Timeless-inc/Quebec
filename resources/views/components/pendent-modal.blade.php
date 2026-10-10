@@ -31,10 +31,10 @@
                 </div>
 
                 <div class="modal-footer bg-gray-50 border-t border-gray-200/50 px-6 py-4">
-                    <button type="button" class="inline-flex items-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                    <button type="button" class="inline-flex items-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                         <i class="fas fa-times mr-2"></i>Cancelar
                     </button>
-                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-amber-600 text-white font-semibold rounded-md hover:bg-amber-700 transition-all duration-300 shadow-sm hover:shadow-md submit-btn">
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-amber-600 text-white font-semibold rounded-md hover:bg-amber-700 transition-all duration-300 shadow-xs hover:shadow-md submit-btn">
                         <i class="fas fa-check mr-2"></i>Confirmar Pend&ecirc;ncia
                     </button>
                 </div>

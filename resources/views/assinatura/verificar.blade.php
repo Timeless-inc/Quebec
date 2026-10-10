@@ -30,7 +30,7 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        <section class="bg-white border border-gray-200 rounded-lg shadow-sm p-5 sm:p-6">
+        <section class="bg-white border border-gray-200 rounded-lg shadow-xs p-5 sm:p-6">
             <h1 class="text-lg font-semibold text-gray-800">Verificar assinatura digital</h1>
             <p class="text-sm text-gray-500 mt-1">
                 Informe o código da assinatura digital impresso no rodapé do PDF do requerimento para conferir o documento original.
@@ -41,7 +41,7 @@
                 <input id="codigo" type="text" name="codigo" value="{{ $codigo }}" required autofocus
                     placeholder="Ex.: 1d752993-489c-4f50-a851-86732dcaedf0"
                     class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-emerald-500 focus:border-emerald-500 p-2.5">
-                <button type="submit" class="inline-flex justify-center items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-semibold shadow-sm transition">
+                <button type="submit" class="inline-flex justify-center items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-semibold shadow-xs transition">
                     Verificar
                 </button>
             </form>
@@ -55,13 +55,13 @@
         @endif
 
         @if($requerimento)
-            <section class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <section class="bg-white border border-gray-200 rounded-lg shadow-xs overflow-hidden">
                 <div class="bg-emerald-50 border-b border-emerald-100 px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                         <p class="font-semibold text-emerald-800">Assinatura válida</p>
                         <p class="text-sm text-emerald-700">Este código pertence a um requerimento registrado no SRE.</p>
                     </div>
-                    <a href="{{ route('assinatura.pdf', ['chave' => $requerimento->key, 'download' => 1]) }}" class="inline-flex justify-center items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-semibold shadow-sm transition">
+                    <a href="{{ route('assinatura.pdf', ['chave' => $requerimento->key, 'download' => 1]) }}" class="inline-flex justify-center items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-semibold shadow-xs transition">
                         Baixar PDF
                     </a>
                 </div>

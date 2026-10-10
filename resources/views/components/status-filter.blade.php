@@ -17,7 +17,7 @@
         'devolvidos' => 'bg-pink-500',
     ];
 
-    $classes = 'filter-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-500 no-underline transition-colors hover:text-gray-900 hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 data-[active=true]:bg-white data-[active=true]:text-gray-900 data-[active=true]:shadow-sm';
+    $classes = 'filter-btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-500 no-underline transition-colors hover:text-gray-900 hover:no-underline focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 data-[active=true]:bg-white data-[active=true]:text-gray-900 data-[active=true]:shadow-xs';
 @endphp
 
 <div {{ $attributes->merge(['class' => 'inline-flex flex-wrap items-center gap-1 rounded-xl bg-gray-100 p-1']) }} role="group" aria-label="Filtrar requerimentos por status">

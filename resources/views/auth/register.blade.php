@@ -25,11 +25,11 @@
             <div class="flex flex-col md:flex-row">
                 <!-- Left Side - Image Section -->
                 <div class="md:w-2/5 p-8 flex flex-col justify-between relative overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('/img/campus.jpg');">
-                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-sm"></div>
+                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-xs"></div>
                     
                     <!-- Logo -->
                     <div class="z-10">
-                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-md p-1">
+                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-xs rounded-md p-1">
                             <img src="/img/logo-sre.png" alt="SRE Logo" class="w-full h-full object-contain">
                         </div>
                     </div>
@@ -416,7 +416,7 @@
             transform: scale(1.05);
         }
         
-        .backdrop-blur-sm {
+        .backdrop-blur-xs {
             backdrop-filter: blur(4px) saturate(120%);
             -webkit-backdrop-filter: blur(4px) saturate(120%);
         }

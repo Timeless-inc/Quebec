@@ -32,7 +32,7 @@
                         type="button"
                         onclick="toggleNotifications('notification-list')"
                         id="notification-button"
-                        class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-xs flex items-center">
                         <!-- Ícone do Sino -->
                         <span id="notification-icon-bell" class="text-orange-500" aria-hidden="true">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,7 +52,7 @@
                 
                 <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
                     <div>
-                        <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-xs flex items-center">
                             Olá, <strong class="ml-1">{{ Auth::user()->username }}</strong>
                             <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -99,7 +99,7 @@
                     <button
                         type="button"
                         onclick="toggleNotificationsMobile()"
-                        class="text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        class="text-sm p-2 border border-gray-300 rounded-md shadow-xs flex items-center">
                         <!-- Ícone do Sino -->
                         <span class="text-orange-500" aria-hidden="true">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,11 +112,11 @@
                         </span>
                     </button>
                     <!-- Lista de Notificações Mobile -->
-                    <div id="mobile-notification-list" class="fixed inset-0 pt-16 px-4 pb-4 bg-gray-800 bg-opacity-75 z-50" style="display: none;">
+                    <div id="mobile-notification-list" class="fixed inset-0 pt-16 px-4 pb-4 bg-gray-800/75 z-50" style="display: none;">
                         <div class="bg-white rounded-lg shadow-xl max-w-md mx-auto overflow-hidden">
                             <div class="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
                                 <h3 class="text-lg font-medium text-gray-900">Notificações</h3>
-                                <button type="button" onclick="toggleNotificationsMobile()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                                <button type="button" onclick="toggleNotificationsMobile()" class="text-gray-400 hover:text-gray-500 focus:outline-hidden">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
@@ -130,7 +130,7 @@
                 </div>
                 
                 <!-- Botão Hamburguer -->
-                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-600 transition duration-150 ease-in-out">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 focus:text-gray-600 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

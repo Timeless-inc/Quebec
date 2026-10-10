@@ -48,7 +48,7 @@
                         </label>
                         <input 
                             type="text" 
-                            class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors" 
+                            class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors"
                             id="title{{ $event->id }}" 
                             name="title" 
                             value="{{ $event->title }}" 
@@ -63,7 +63,7 @@
                             </label>
                             <input 
                                 type="date" 
-                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors" 
+                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors"
                                 id="start_date{{ $event->id }}" 
                                 name="start_date" 
                                 value="{{ $event->start_date->format('Y-m-d') }}" 
@@ -76,7 +76,7 @@
                             </label>
                             <input 
                                 type="date" 
-                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors" 
+                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 focus:border-{{ $event->is_exception ? 'yellow' : 'blue' }}-500 transition-colors"
                                 id="end_date{{ $event->id }}" 
                                 name="end_date" 
                                 value="{{ $event->end_date->format('Y-m-d') }}" 

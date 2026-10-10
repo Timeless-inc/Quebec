@@ -25,10 +25,10 @@
         <div class="w-full max-w-4xl bg-white rounded-xl shadow-xl overflow-hidden">
             <div class="flex flex-col md:flex-row">
                 <div class="hidden md:flex md:w-2/5 p-8 flex-col justify-between relative overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('/img/campus.jpg');">
-                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-sm"></div>
+                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-xs"></div>
 
                     <div class="z-10">
-                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-md p-1">
+                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-xs rounded-md p-1">
                             <img src="/img/logo-sre.png" alt="SRE Logo" class="w-full h-full object-contain">
                         </div>
                     </div>

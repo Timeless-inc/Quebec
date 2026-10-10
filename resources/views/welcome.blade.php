@@ -5,26 +5,13 @@
     <meta charset="utf-8">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#10A11A',
-                        secondary: '#09600f',
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css'])
     <title>SRE | IFPE</title>
 </head>
 
 <body class="font-sans text-gray-800 bg-white">
     <!-- Header com logo e menu hamburguer -->
-    <header class="fixed w-full bg-white shadow-sm z-50">
+    <header class="fixed w-full bg-white shadow-xs z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <!-- Logo -->
@@ -43,7 +30,7 @@
                 </div>
 
                 <!-- Botão hamburguer mobile -->
-                <button id="mobile-menu-button" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100 focus:outline-none">
+                <button id="mobile-menu-button" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100 focus:outline-hidden">
                     <!-- Ícone Hamburguer -->
                     <svg id="hamburguer-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -85,7 +72,7 @@
                     </p>
 
                     <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                        <a href="{{ route('login') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2.5 md:px-6 md:py-3 rounded-md shadow transition-colors inline-flex items-center">
+                        <a href="{{ route('login') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2.5 md:px-6 md:py-3 rounded-md shadow-sm transition-colors inline-flex items-center">
                             Acessar Sistema
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />

@@ -61,7 +61,7 @@
                             <label for="receiver_id_{{ $forwarding->id }}" class="mb-2 flex items-center text-sm font-semibold text-gray-700">
                                 <i class="fas fa-users mr-2 text-purple-600"></i>Destinat&aacute;rio:
                             </label>
-                            <select class="w-full rounded-md border border-gray-300 bg-white p-3 text-sm text-gray-800 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500" id="receiver_id_{{ $forwarding->id }}" name="receiver_id" required>
+                            <select class="w-full rounded-md border border-gray-300 bg-white p-3 text-sm text-gray-800 shadow-xs focus:border-purple-500 focus:ring-2 focus:ring-purple-500" id="receiver_id_{{ $forwarding->id }}" name="receiver_id" required>
                                 <option value="">Selecione o destinat&aacute;rio</option>
                                 @foreach($availableReceivers as $roleName => $users)
                                     <optgroup label="{{ $roleName }}">
@@ -78,16 +78,16 @@
                         <label for="internal_message_{{ $forwarding->id }}" class="mb-2 flex items-center text-sm font-semibold text-gray-700">
                             <i class="fas fa-comment mr-2 text-purple-600"></i>Mensagem Interna (opcional):
                         </label>
-                        <textarea class="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-800 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500" id="internal_message_{{ $forwarding->id }}" name="internal_message" rows="3" placeholder="Adicione uma mensagem interna para o destinatario..."></textarea>
+                        <textarea class="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-800 shadow-xs focus:border-purple-500 focus:ring-2 focus:ring-purple-500" id="internal_message_{{ $forwarding->id }}" name="internal_message" rows="3" placeholder="Adicione uma mensagem interna para o destinatario..."></textarea>
                         <p class="mt-2 text-xs text-gray-500">Esta mensagem ser&aacute; vis&iacute;vel apenas para o destinat&aacute;rio do encaminhamento.</p>
                     </div>
                 </div>
 
                 <div class="modal-footer bg-gray-50 border-t border-gray-200/50 px-6 py-4">
-                    <button type="button" class="inline-flex items-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                    <button type="button" class="inline-flex items-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                         <i class="fas fa-times mr-2"></i>Cancelar
                     </button>
-                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-all duration-300 shadow-sm hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60" @if($availableReceivers->isEmpty()) disabled @endif>
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-all duration-300 shadow-xs hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60" @if($availableReceivers->isEmpty()) disabled @endif>
                         <i class="fas fa-paper-plane mr-2"></i>Reencaminhar
                     </button>
                 </div>

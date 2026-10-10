@@ -53,7 +53,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if ($forwardings->isEmpty())
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-500 text-center">
+                <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6 text-gray-500 text-center">
                     <i class="fas fa-info-circle mr-2 text-blue-500"></i> Não há requerimentos encaminhados para você.
                 </div>
             @else
@@ -74,11 +74,11 @@
                         <!-- Card Principal Modernizado -->
                         <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200/50 mb-4 overflow-hidden group">
                             <!-- Header do Card -->
-                            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200/50">
+                            <div class="bg-linear-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200/50">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <!-- Indicador de Status -->
-                                        <div class="w-3 h-3 rounded-full {{ $currentStatusMeta['dot'] }} shadow-sm"></div>
+                                        <div class="w-3 h-3 rounded-full {{ $currentStatusMeta['dot'] }} shadow-xs"></div>
                                         
                                         <div>
                                             <h3 class="text-md font-semibold text-gray-900 truncate max-w-xs">#{{ $forwarding->requerimento->id }} - {{ $forwarding->requerimento->tipoRequisicao }}</h3>
@@ -99,7 +99,7 @@
                                 <!-- Informações do Usuário -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <i class="fas fa-user w-5 h-5 text-gray-500 flex-shrink-0"></i>
+                                        <i class="fas fa-user w-5 h-5 text-gray-500 shrink-0"></i>
                                         <div class="min-w-0 flex-1">
                                             <p class="text-xs text-gray-500 font-medium mb-1">Nome</p>
                                             <p class="text-sm text-gray-900 font-medium truncate">{{ $forwarding->requerimento->nomeCompleto }}</p>
@@ -107,7 +107,7 @@
                                     </div>
                                     
                                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <i class="fas fa-id-card w-5 h-5 text-gray-500 flex-shrink-0"></i>
+                                        <i class="fas fa-id-card w-5 h-5 text-gray-500 shrink-0"></i>
                                         <div class="min-w-0 flex-1">
                                             <p class="text-xs text-gray-500 font-medium mb-1">Matrícula</p>
                                             <p class="text-sm text-gray-900 font-medium truncate">{{ $forwarding->requerimento->matricula }}</p>
@@ -115,7 +115,7 @@
                                     </div>
 
                                     <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                        <i class="fas fa-share w-5 h-5 text-purple-600 flex-shrink-0"></i>
+                                        <i class="fas fa-share w-5 h-5 text-purple-600 shrink-0"></i>
                                         <div class="min-w-0 flex-1">
                                             <p class="text-xs text-purple-600 font-medium mb-1">Encaminhado em</p>
                                             <p class="text-sm text-gray-900 font-medium">{{ $forwarding->created_at->format('d/m/Y H:i') }}</p>
@@ -123,7 +123,7 @@
                                     </div>
 
                                     <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                        <i class="fas fa-calendar-alt w-5 h-5 text-blue-600 flex-shrink-0"></i>
+                                        <i class="fas fa-calendar-alt w-5 h-5 text-blue-600 shrink-0"></i>
                                         <div class="min-w-0 flex-1">
                                             <p class="text-xs text-blue-600 font-medium mb-1">Criado em</p>
                                             <p class="text-sm text-gray-900 font-medium">{{ $forwarding->requerimento->created_at->format('d/m/Y H:i') }}</p>
@@ -178,11 +178,11 @@
                         <!-- Modal para Deferir Modernizado -->
                         <div class="modal fade" id="deferirModal-{{ $forwarding->id }}" tabindex="-1" aria-labelledby="deferirModalLabel-{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable">
-                                <div class="modal-content bg-gradient-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
+                                <div class="modal-content bg-linear-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
                                     <!-- Header Modernizado -->
-                                    <div class="modal-header bg-gradient-to-r from-emerald-600 via-emerald-700 to-green-700 text-white border-0 px-6 py-4">
+                                    <div class="modal-header bg-linear-to-r from-emerald-600 via-emerald-700 to-green-700 text-white border-0 px-6 py-4">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-xs">
                                                 <i class="fas fa-check-circle text-white text-lg"></i>
                                             </div>
                                             <div>
@@ -209,11 +209,11 @@
                                                 <p class="text-xs text-gray-500 mt-2">PDF até 5 MB. Imagens são otimizadas automaticamente quando necessário. Tipos permitidos: pdf, jpg, jpeg, png, webp.</p>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
-                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                                        <div class="modal-footer bg-linear-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
+                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                                                 <i class="fas fa-times mr-2"></i>Cancelar
                                             </button>
-                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-medium rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-medium rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 shadow-xs hover:shadow-md">
                                                 <i class="fas fa-check mr-2"></i>Confirmar Deferimento
                                             </button>
                                         </div>
@@ -225,11 +225,11 @@
                         <!-- Modal para Indeferir Modernizado -->
                         <div class="modal fade" id="indeferirModal-{{ $forwarding->id }}" tabindex="-1" aria-labelledby="indeferirModalLabel-{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable">
-                                <div class="modal-content bg-gradient-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
+                                <div class="modal-content bg-linear-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
                                     <!-- Header Modernizado -->
-                                    <div class="modal-header bg-gradient-to-r from-red-600 via-red-700 to-pink-700 text-white border-0 px-6 py-4">
+                                    <div class="modal-header bg-linear-to-r from-red-600 via-red-700 to-pink-700 text-white border-0 px-6 py-4">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-xs">
                                                 <i class="fas fa-times-circle text-white text-lg"></i>
                                             </div>
                                             <div>
@@ -251,11 +251,11 @@
                                                 <p class="text-xs text-gray-500 mt-2">É necessário informar o motivo do indeferimento.</p>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
-                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                                        <div class="modal-footer bg-linear-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
+                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                                                 <i class="fas fa-times mr-2"></i>Cancelar
                                             </button>
-                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-red-600 to-red-700 text-white font-medium rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-xs hover:shadow-md">
                                                 <i class="fas fa-times mr-2"></i>Confirmar Indeferimento
                                             </button>
                                         </div>
@@ -267,11 +267,11 @@
                         <!-- Modal para Devolver Modernizado -->
                         <div class="modal fade" id="returnModal{{ $forwarding->id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ $forwarding->id }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable">
-                                <div class="modal-content bg-gradient-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
+                                <div class="modal-content bg-linear-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
                                     <!-- Header Modernizado -->
-                                    <div class="modal-header bg-gradient-to-r from-pink-600 via-pink-700 to-rose-700 text-white border-0 px-6 py-4">
+                                    <div class="modal-header bg-linear-to-r from-pink-600 via-pink-700 to-rose-700 text-white border-0 px-6 py-4">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-xs">
                                                 <i class="fas fa-reply text-white text-lg"></i>
                                             </div>
                                             <div>
@@ -302,11 +302,11 @@
                                                 <p class="text-xs text-gray-500 mt-2">Esta mensagem será visível para quem receberá o requerimento devolvido.</p>
                                             </div>
                                         </div>
-                                        <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
-                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                                        <div class="modal-footer bg-linear-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
+                                            <button type="button" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                                                 <i class="fas fa-times mr-2"></i>Cancelar
                                             </button>
-                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-pink-600 to-pink-700 text-white font-medium rounded-xl hover:from-pink-700 hover:to-pink-800 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-pink-600 to-pink-700 text-white font-medium rounded-xl hover:from-pink-700 hover:to-pink-800 transition-all duration-300 shadow-xs hover:shadow-md">
                                                 <i class="fas fa-reply mr-2"></i>Devolver
                                             </button>
                                         </div>
@@ -324,11 +324,11 @@
     <!-- Modal de Detalhes Modernizado -->
     <div class="modal fade" id="detalhesModal-{{ $forwarding->requerimento->id }}" tabindex="-1" aria-labelledby="detalhesModalLabel-{{ $forwarding->requerimento->id }}" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content bg-gradient-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
+            <div class="modal-content bg-linear-to-br from-white to-gray-50 border-0 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Header Modernizado -->
-                <div class="modal-header bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white border-0 px-6 py-4">
+                <div class="modal-header bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white border-0 px-6 py-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-xs">
                             <i class="fas fa-file-alt text-white text-lg"></i>
                         </div>
                         <div>
@@ -343,10 +343,10 @@
 
                 <div class="modal-body p-0">
                     <!-- Status Header Modernizado -->
-                    <div class="bg-gradient-to-r from-slate-50 to-gray-100 px-6 py-4 border-b border-gray-200/50">
+                    <div class="bg-linear-to-r from-slate-50 to-gray-100 px-6 py-4 border-b border-gray-200/50">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                                <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                                     <i class="fas fa-calendar-alt text-white text-lg"></i>
                                 </div>
                                 <div>
@@ -355,7 +355,7 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end space-y-2">
-                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-sm {{ $currentStatusMeta['badge'] }}">
+                                <span class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full shadow-xs {{ $currentStatusMeta['badge'] }}">
                                     <i class="fas {{ $currentStatusMeta['icon'] }} mr-2"></i>
                                     {{ $currentStatusMeta['label'] }}
                                 </span>
@@ -367,8 +367,8 @@
                         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                             <div class="space-y-6">
                                 <!-- Informações do Requerimento Modernizado -->
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="bg-linear-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
                                         <h6 class="text-lg font-bold text-gray-900 flex items-center">
                                             <div class="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-file-alt text-blue-600"></i>
@@ -380,19 +380,19 @@
                                         <div class="space-y-4">
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Tipo</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->tipoRequisicao }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Data de criação</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->created_at->format('d/m/Y H:i') }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Status atual</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <span class="inline-flex items-center px-2 py-1 text-xs font-medium {{ $currentStatusMeta['badge'] }} rounded-full">
                                                         <i class="fas {{ $currentStatusMeta['icon'] }} mr-1"></i>{{ $currentStatusMeta['label'] }}
                                                     </span>
@@ -403,8 +403,8 @@
                                 </div>
 
                                 <!-- Observações Modernizado -->
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="bg-linear-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-100">
                                         <h6 class="text-lg font-bold text-gray-900 flex items-center">
                                             <div class="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-comment-dots text-slate-600"></i>
@@ -413,7 +413,7 @@
                                         </h6>
                                     </div>
                                     <div class="p-6">
-                                        <div class="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-xl border border-gray-200">
+                                        <div class="bg-linear-to-r from-gray-50 to-slate-50 p-4 rounded-xl border border-gray-200">
                                             <p class="text-sm text-gray-700 leading-relaxed">
                                                 @if ($forwarding->requerimento->observacoes)
                                                 {{ $forwarding->requerimento->observacoes }}
@@ -428,8 +428,8 @@
 
                             <div class="space-y-6">
                                 <!-- Informações do Aluno Modernizado -->
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-4 border-b border-gray-100">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="bg-linear-to-r from-indigo-50 to-blue-50 px-6 py-4 border-b border-gray-100">
                                         <h6 class="text-lg font-bold text-gray-900 flex items-center">
                                             <div class="w-8 h-8 bg-indigo-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-user-circle text-indigo-600"></i>
@@ -441,49 +441,49 @@
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Nome completo</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->nomeCompleto }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Matrícula</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->matricula }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">CPF</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->cpf }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Email</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900 break-all">{{ $forwarding->requerimento->email }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Telefone</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->celular }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Curso</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->curso }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Período</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->periodo }}</p>
                                                 </div>
                                             </div>
                                             <div class="group">
                                                 <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Campus</label>
-                                                <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
+                                                <div class="bg-linear-to-r from-gray-50 to-gray-100 p-3 rounded-xl border border-gray-200 group-hover:border-blue-300 transition-colors">
                                                     <p class="text-sm font-medium text-gray-900">{{ $forwarding->requerimento->campus }}</p>
                                                 </div>
                                             </div>
@@ -509,8 +509,8 @@
 
                                 @if($temDadosExtra)
                                 <!-- Informações Adicionais Modernizado -->
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="bg-linear-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
                                         <h6 class="text-lg font-bold text-gray-900 flex items-center">
                                             <div class="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-clipboard-list text-green-600"></i>
@@ -522,7 +522,7 @@
                                         <div class="space-y-3">
                                             @foreach($dadosExtra as $campo => $valor)
                                             @if(!empty($valor) || $valor === 0 || $valor === '0')
-                                            <div class="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-200">
+                                            <div class="flex justify-between items-center py-3 px-4 bg-linear-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-200">
                                                 <span class="font-semibold text-gray-600 text-sm">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</span>
                                                 <span class="text-gray-900 text-sm font-medium">{{ is_array($valor) ? implode(', ', $valor) : $valor }}</span>
                                             </div>
@@ -535,8 +535,8 @@
 
                                 @if($temAnexos)
                                 <!-- Anexos Modernizado -->
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                    <div class="bg-linear-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100">
                                         <h6 class="text-lg font-bold text-gray-900 flex items-center">
                                             <div class="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
                                                 <i class="fas fa-paperclip text-purple-600"></i>
@@ -557,7 +557,7 @@
                                             @if(is_array($anexoItem))
                                             @foreach($anexoItem as $path)
                                             @if(!empty($path))
-                                            <a href="{{ asset('storage/'.$path) }}" class="flex items-center p-4 text-blue-600 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 group" target="_blank">
+                                            <a href="{{ asset('storage/'.$path) }}" class="flex items-center p-4 text-blue-600 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 group" target="_blank">
                                                 <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
                                                     <i class="fas fa-file-download text-blue-600"></i>
                                                 </div>
@@ -567,7 +567,7 @@
                                             @endif
                                             @endforeach
                                             @elseif(!empty($anexoItem))
-                                            <a href="{{ asset('storage/'.$anexoItem) }}" class="flex items-center p-4 text-blue-600 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 group" target="_blank">
+                                            <a href="{{ asset('storage/'.$anexoItem) }}" class="flex items-center p-4 text-blue-600 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 group" target="_blank">
                                                 <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
                                                     <i class="fas fa-file-download text-blue-600"></i>
                                                 </div>
@@ -577,7 +577,7 @@
                                             @endif
                                             @endforeach
                                             @else
-                                            <div class="text-center py-8 px-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border-2 border-dashed border-gray-300">
+                                            <div class="text-center py-8 px-4 bg-linear-to-r from-gray-50 to-slate-50 rounded-xl border-2 border-dashed border-gray-300">
                                                 <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                                     <i class="fas fa-inbox text-2xl text-gray-400"></i>
                                                 </div>
@@ -590,7 +590,7 @@
                                 @endif
 
                                 @if(!$temDadosExtra && !$temAnexos && empty(trim($forwarding->requerimento->observacoes)))
-                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                                <div class="bg-white rounded-2xl border border-gray-200/50 shadow-xs hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                     <div class="p-6">
                                         <div class="flex flex-col items-center justify-center py-8">
                                             <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -606,8 +606,8 @@
                     </div>
                 </div>
                 <!-- Footer Modernizado -->
-                <div class="modal-footer bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
-                    <button type="button" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-sm hover:shadow-md" data-bs-dismiss="modal">
+                <div class="modal-footer bg-linear-to-r from-gray-50 to-slate-50 border-t border-gray-200/50 px-6 py-4">
+                    <button type="button" class="inline-flex items-center px-6 py-3 bg-linear-to-r from-gray-500 to-gray-600 text-white font-medium rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-xs hover:shadow-md" data-bs-dismiss="modal">
                         <i class="fas fa-times mr-2"></i>Fechar
                     </button>
                 </div>

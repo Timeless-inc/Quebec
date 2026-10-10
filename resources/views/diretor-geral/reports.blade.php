@@ -1,6 +1,6 @@
 <title>SRE - {{ $roleName ?? 'Diretor Geral' }} - Relatórios</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <x-bootstrap-styles />
 
 @php
     $rpx = $routePrefix ?? 'diretor-geral';
@@ -34,10 +34,10 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-5 p-6 lg:grid-cols-3">
-                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                        <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-5">
+                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-blue-100 bg-white shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+                        <div class="bg-linear-to-r from-blue-600 to-blue-500 p-5">
                             <div class="flex items-start gap-4">
-                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
                                     <i class="fas fa-chart-bar text-lg"></i>
                                 </div>
                                 <div>
@@ -51,7 +51,7 @@
                                 Visualize os requerimentos processados, incluindo deferidos, indeferidos e devolvidos.
                             </p>
                             <div class="dropdown mt-auto">
-                                <button class="dropdown-toggle inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="dropdown-toggle inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-file-pdf mr-2"></i>Gerar relatório
                                 </button>
                                 <ul class="dropdown-menu w-100">
@@ -65,10 +65,10 @@
                         </div>
                     </div>
 
-                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-emerald-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                        <div class="bg-gradient-to-r from-emerald-600 to-green-500 p-5">
+                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-emerald-100 bg-white shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+                        <div class="bg-linear-to-r from-emerald-600 to-green-500 p-5">
                             <div class="flex items-start gap-4">
-                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
                                     <i class="fas fa-calendar-alt text-lg"></i>
                                 </div>
                                 <div>
@@ -81,16 +81,16 @@
                             <p class="mb-5 text-sm leading-6 text-gray-600">
                                 Escolha uma data inicial e final para gerar um relatório personalizado.
                             </p>
-                            <button class="mt-auto inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700" onclick="openCustomPeriodModal('period')">
+                            <button class="mt-auto inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700" onclick="openCustomPeriodModal('period')">
                                 <i class="fas fa-filter mr-2"></i>Configurar período
                             </button>
                         </div>
                     </div>
 
-                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-purple-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-5">
+                    <div class="group flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-purple-100 bg-white shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+                        <div class="bg-linear-to-r from-purple-600 to-indigo-600 p-5">
                             <div class="flex items-start gap-4">
-                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white">
                                     <i class="fas fa-chart-pie text-lg"></i>
                                 </div>
                                 <div>
@@ -103,7 +103,7 @@
                             <p class="mb-5 text-sm leading-6 text-gray-600">
                                 Consulte totais recebidos, processados, devolvidos e a evolução mensal.
                             </p>
-                            <button class="mt-auto inline-flex w-full items-center justify-center rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-purple-700" onclick="showStatistics()">
+                            <button class="mt-auto inline-flex w-full items-center justify-center rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-purple-700" onclick="showStatistics()">
                                 <i class="fas fa-chart-line mr-2"></i>Ver estatísticas
                             </button>
                         </div>

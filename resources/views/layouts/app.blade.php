@@ -30,7 +30,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <x-bootstrap-styles />
 
         
         <style>
@@ -91,16 +91,16 @@
         .text-purple-800 { color: #6b21a8 !important; }
         .bg-purple-50 { background-color: #faf5ff !important; }
         .border-purple-100 { border-color: #f3e8ff !important; }
-        .bg-gradient-to-r.from-emerald-600.via-emerald-700.to-green-700,
-        .bg-gradient-to-r.from-emerald-600.to-emerald-700 { background: #047857 !important; }
-        .bg-gradient-to-r.from-red-600.via-red-700.to-pink-700,
-        .bg-gradient-to-r.from-red-600.to-red-700,
-        .bg-gradient-to-r.from-red-600.to-rose-600 { background: #b91c1c !important; }
-        .bg-gradient-to-r.from-pink-600.via-pink-700.to-rose-700,
-        .bg-gradient-to-r.from-pink-600.to-pink-700 { background: #be185d !important; }
-        .bg-gradient-to-r.from-amber-500.to-orange-600 { background: #d97706 !important; }
-        .bg-gradient-to-r.from-purple-600.to-indigo-600 { background: #9333ea !important; }
-        .bg-gradient-to-r.from-gray-500.to-gray-600 { background: #4b5563 !important; }
+        .bg-linear-to-r.from-emerald-600.via-emerald-700.to-green-700,
+        .bg-linear-to-r.from-emerald-600.to-emerald-700 { background: #047857 !important; }
+        .bg-linear-to-r.from-red-600.via-red-700.to-pink-700,
+        .bg-linear-to-r.from-red-600.to-red-700,
+        .bg-linear-to-r.from-red-600.to-rose-600 { background: #b91c1c !important; }
+        .bg-linear-to-r.from-pink-600.via-pink-700.to-rose-700,
+        .bg-linear-to-r.from-pink-600.to-pink-700 { background: #be185d !important; }
+        .bg-linear-to-r.from-amber-500.to-orange-600 { background: #d97706 !important; }
+        .bg-linear-to-r.from-purple-600.to-indigo-600 { background: #9333ea !important; }
+        .bg-linear-to-r.from-gray-500.to-gray-600 { background: #4b5563 !important; }
         </style>
 
         <!-- Scripts -->
@@ -112,7 +112,7 @@
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
+                <header class="bg-white shadow-sm">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

@@ -13,7 +13,7 @@
     @endphp
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 sm:p-5 mb-5">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-xs p-4 sm:p-5 mb-5">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
@@ -29,7 +29,7 @@
                             <i class="fas fa-user-cog"></i>
                             Meu Relatório
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-gray-200" aria-labelledby="userReportDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-xs border-gray-200" aria-labelledby="userReportDropdown">
                             <li>
                                 <a class="dropdown-item user-report-option" href="#" data-period="mes-atual">
                                     <i class="fas fa-calendar-day me-2 text-blue-500"></i>Mês Atual
@@ -61,7 +61,7 @@
                             <i class="fas fa-file-export"></i>
                             Exportar
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-gray-200" aria-labelledby="exportDropdownButton">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-xs border-gray-200" aria-labelledby="exportDropdownButton">
                             <li>
                                 <a class="dropdown-item export-option" href="#" data-format="xlsx">
                                     <i class="fas fa-file-excel me-2 text-green-600"></i>Excel (.xlsx)
@@ -80,7 +80,7 @@
                         </ul>
                     </div>
 
-                    <button id="generateChart" class="inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-semibold shadow-sm transition">
+                    <button id="generateChart" class="inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-semibold shadow-xs transition">
                         <i class="fas fa-chart-line"></i>
                         Gerar Gráfico
                     </button>
@@ -117,7 +117,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-[18rem_minmax(0,1fr)] gap-5 items-start">
             <aside class="space-y-4">
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-xs overflow-hidden">
                     <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                         <div>
                             <h5 class="font-semibold text-gray-800 m-0">Resumo por Situação</h5>
@@ -141,7 +141,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-xs overflow-hidden">
                     <div class="px-4 py-3 border-b border-gray-100">
                         <h5 class="font-semibold text-gray-800 m-0">Tipo de Relatório</h5>
                         <p class="text-xs text-gray-500 mb-0 mt-0.5">Escolha a leitura do gráfico</p>
@@ -166,7 +166,7 @@
                 </div>
             </aside>
 
-            <section class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden min-h-[620px]">
+            <section class="bg-white border border-gray-200 rounded-lg shadow-xs overflow-hidden min-h-[620px]">
                 <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                         <div>
@@ -301,7 +301,7 @@
                         </div>
 
                         <label for="stackBars" class="inline-flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                            <input id="stackBars" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <input id="stackBars" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
                             Empilhar barras
                         </label>
                     </div>
@@ -472,7 +472,7 @@
                     tooltip: {
                         trigger: 'axis',
                         axisPointer: {
-                            type: 'shadow'
+                            type: 'shadow-sm'
                         }
                     },
                     grid: {

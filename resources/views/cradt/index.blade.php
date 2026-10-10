@@ -24,15 +24,15 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2 xl:flex-nowrap">
-                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" onclick="openConfigModal()">
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs transition-colors hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" onclick="openConfigModal()">
                     <i class="fas fa-cog text-gray-400"></i>
                     Configurar eventos
                 </button>
-                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs transition-colors hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventExceptionModal">
                     <i class="fas fa-exclamation-triangle text-amber-500"></i>
                     Evento exceção
                 </button>
-                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventModal">
+                <button type="button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" data-bs-toggle="modal" data-bs-target="#eventModal">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
                     Novo evento
                 </button>
@@ -87,7 +87,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6">
                 <div class="row">
                     @foreach($events as $event)
                     <div class="col-md-4 mb-3">
@@ -167,7 +167,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-8">
             <h3 class="text-lg font-semibold mb-4">Solicitações de Alteração de Perfil Pendentes</h3>
 
-            <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -227,7 +227,7 @@
                                     </div>
                                     
                                     <!-- Approval Modal -->
-                                    <div id="approval-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                                    <div id="approval-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600/50 hidden flex items-center justify-center z-50">
                                         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto text-left">
                                             <h3 class="text-lg font-medium text-gray-900 mb-4">Deferir Solicitação</h3>
                                             <form method="POST" action="{{ route('profile-requests.approve-group', $groupId) }}">
@@ -245,7 +245,7 @@
                                     </div>
                                     
                                     <!-- Rejection Modal -->
-                                    <div id="rejection-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                                    <div id="rejection-modal-{{ $groupId }}" class="fixed inset-0 bg-gray-600/50 hidden flex items-center justify-center z-50">
                                         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto text-left">
                                             <h3 class="text-lg font-medium text-gray-900 mb-4">Indeferir Solicitação</h3>
                                             <form method="POST" action="{{ route('profile-requests.reject-group', $groupId) }}" id="reject-form-{{ $groupId }}">
@@ -328,7 +328,7 @@
                 </div>
             </div>
             @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6 text-center">
                 <p class="mb-0">Não há requerimentos para exibir no momento.</p>
             </div>
             @endif

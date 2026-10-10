@@ -11,7 +11,7 @@
                     Configure cargos personalizados e quem pode receber encaminhamentos.
                 </p>
             </div>
-            <button type="button" id="openCreateRoleModalHeader" class="inline-flex w-fit items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">
+            <button type="button" id="openCreateRoleModalHeader" class="inline-flex w-fit items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-indigo-700">
                 <i class="fas fa-plus mr-2"></i>Novo cargo
             </button>
         </div>
@@ -20,13 +20,13 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm" role="alert">
+                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs" role="alert">
                     <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm" role="alert">
+                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-xs" role="alert">
                     <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
                 </div>
             @endif
@@ -49,9 +49,9 @@
                             'Cradt' => ['bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'fas fa-user-cog'],
                             'Diretor Geral' => ['bg-indigo-50', 'text-indigo-700', 'border-indigo-200', 'fas fa-user-shield'],
                         ] as $nome => $cor)
-                            <div class="rounded-lg border {{ $cor[2] }} bg-white p-3 shadow-sm">
+                            <div class="rounded-lg border {{ $cor[2] }} bg-white p-3 shadow-xs">
                                 <div class="flex items-center gap-3">
-                                    <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg {{ $cor[0] }} {{ $cor[1] }}">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {{ $cor[0] }} {{ $cor[1] }}">
                                         <i class="{{ $cor[3] }} text-sm"></i>
                                     </div>
                                     <div class="min-w-0">
@@ -82,7 +82,7 @@
                             </div>
                             <h3 class="text-base font-semibold text-gray-900">Nenhum cargo criado ainda</h3>
                             <p class="mt-1 max-w-md text-sm text-gray-500">Crie um cargo para liberar novos painéis e opções de encaminhamento.</p>
-                            <button type="button" id="openCreateRoleModalEmpty" class="mt-5 inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">
+                            <button type="button" id="openCreateRoleModalEmpty" class="mt-5 inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-indigo-700">
                                 <i class="fas fa-plus mr-2"></i>Criar primeiro cargo
                             </button>
                         </div>
@@ -103,7 +103,7 @@
                                         <tr class="transition-colors hover:bg-gray-50">
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
-                                                    <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
+                                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
                                                         <i class="fas fa-id-badge"></i>
                                                     </div>
                                                     <div class="min-w-0">
@@ -185,7 +185,7 @@
                     <label for="create-role-label" class="mb-1 block text-sm font-medium text-gray-700">
                         Nome do cargo <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="label" id="create-role-label" value="{{ old('label') }}" required class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-400 focus:ring-indigo-200" placeholder="Ex: Supervisor, Coordenador de Área...">
+                    <input type="text" name="label" id="create-role-label" value="{{ old('label') }}" required class="block w-full rounded-lg border-gray-300 text-sm shadow-xs focus:border-indigo-400 focus:ring-indigo-200" placeholder="Ex: Supervisor, Coordenador de Área...">
                     <p class="mt-1 text-xs text-gray-500">Este nome será exibido no sistema e nas listas de encaminhamento.</p>
                     @error('label')
                         <p class="mt-1 text-xs font-medium text-red-600">{{ $message }}</p>
@@ -195,7 +195,7 @@
                 <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
                     <label class="flex cursor-pointer items-start gap-3">
                         <input type="hidden" name="can_receive_forwardings" value="0">
-                        <input type="checkbox" name="can_receive_forwardings" value="1" id="create-role-can-receive" {{ old('can_receive_forwardings', true) ? 'checked' : '' }} class="mt-1 rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <input type="checkbox" name="can_receive_forwardings" value="1" id="create-role-can-receive" {{ old('can_receive_forwardings', true) ? 'checked' : '' }} class="mt-1 rounded-sm border-gray-300 text-indigo-600 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50">
                         <span>
                             <span class="block text-sm font-semibold text-gray-800">Pode receber encaminhamentos</span>
                             <span class="mt-1 block text-xs leading-5 text-gray-500">Usuários com este cargo aparecerão na lista de destinatários do CRADT ao encaminhar requerimentos.</span>
@@ -204,10 +204,10 @@
                 </div>
 
                 <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                    <button type="button" class="closeCreateRoleModal inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
+                    <button type="button" class="closeCreateRoleModal inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-xs transition-colors hover:bg-gray-50">
                         Cancelar
                     </button>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold leading-none text-white shadow-sm transition-colors hover:bg-indigo-700">
+                    <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold leading-none text-white shadow-xs transition-colors hover:bg-indigo-700">
                         <i class="fas fa-save mr-2"></i>Criar cargo
                     </button>
                 </div>

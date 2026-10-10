@@ -18,13 +18,13 @@
 
     <div class="py-6 md:py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-4 md:p-6 text-gray-900">
-                    <div class="bg-blue-200 overflow-hidden shadow-sm sm:rounded-lg border border-primary-200">
+                    <div class="bg-blue-200 overflow-hidden shadow-xs sm:rounded-lg border border-primary-200">
                         <div class="container mx-auto mt-3 md:mt-5">
                             <div class="p-4 md:p-6">
                                 @if ($errors->any())
-                                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+                                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-sm">
                                     <ul class="list-disc pl-5">
                                         @foreach ($errors->all() as $error)
                                         <li class="text-red-700">{{ $error }}</li>
@@ -40,15 +40,15 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                         <div>
                                             <label for="nomeCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->nomeCompleto }}" readonly>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-gray-50" value="{{ $requerimento->nomeCompleto }}" readonly>
                                         </div>
                                         <div>
                                             <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->cpf }}" readonly>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-gray-50" value="{{ $requerimento->cpf }}" readonly>
                                         </div>
                                         <div>
                                             <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
-                                            <input type="text" id="celular" name="celular" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-white" value="{{ old('celular', $requerimento->celular ?? '') }}">
+                                            <input type="text" id="celular" name="celular" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-white" value="{{ old('celular', $requerimento->celular ?? '') }}">
                                             <p id="celularError" class="text-red-600 text-sm hidden mt-1">Informe um número de celular válido com 11 dígitos (somente números).</p>
                                         </div>
                                     </div>
@@ -56,26 +56,26 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                         <div>
                                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                            <input type="email" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->email }}" readonly>
+                                            <input type="email" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-gray-50" value="{{ $requerimento->email }}" readonly>
                                         </div>
                                         <div>
                                             <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">RG</label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->rg }}" readonly>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-gray-50" value="{{ $requerimento->rg }}" readonly>
                                         </div>
                                         <div>
                                             <label for="orgaoExpedidor" class="block text-sm font-medium text-gray-700 mb-1">Órgão Expedidor <span id="orgaoExpedidorRequired" class="text-red-500">*</span></label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ $requerimento->orgaoExpedidor }}" required>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="orgaoExpedidor" name="orgaoExpedidor" value="{{ $requerimento->orgaoExpedidor }}" required>
                                         </div>
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                         <div>
                                             <label for="campus" class="block text-sm font-medium text-gray-700 mb-1">Campus <span id="campusRequired" class="text-red-500">*</span></label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="campus" name="campus" value="{{ $requerimento->campus }}" required>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="campus" name="campus" value="{{ $requerimento->campus }}" required>
                                         </div>
                                         <div>
                                             <label for="matricula" class="block text-sm font-medium text-gray-700 mb-1">Número de Matrícula</label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="matricula_view" name="matricula">
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="matricula_view" name="matricula">
                                                 <option value="{{ $requerimento->matricula }}" {{ old('matricula', $requerimento->matricula) == $requerimento->matricula ? 'selected' : '' }}>{{ $requerimento->matricula }}</option>
                                                 @foreach(Auth::user()->todasMatriculas() as $matriculaDoUsuario)
                                                 @if($matriculaDoUsuario != $requerimento->matricula)
@@ -86,7 +86,7 @@
                                         </div>
                                         <div>
                                             <label for="situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação <span id="situacaoRequired" class="text-red-500">*</span></label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="situacao" name="situacao" required>
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="situacao" name="situacao" required>
                                                 <option value="1" {{ $requerimento->situacao === 'Matriculado' ? 'selected' : '' }}>Matriculado</option>
                                                 <option value="2" {{ $requerimento->situacao === 'Graduado' ? 'selected' : '' }}>Graduado</option>
                                                 <option value="3" {{ $requerimento->situacao === 'Desvinculado' ? 'selected' : '' }}>Desvinculado</option>
@@ -97,7 +97,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                                         <div>
                                             <label for="curso" class="block text-sm font-medium text-gray-700 mb-1">Curso <span id="cursoRequired" class="text-red-500">*</span></label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="curso" name="curso" required>
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="curso" name="curso" required>
                                                 @foreach($cursos as $id => $nome)
                                                 <option value="{{ $id }}" {{ $requerimento->curso === $nome ? 'selected' : '' }}>{{ $nome }}</option>
                                                 @endforeach
@@ -105,7 +105,7 @@
                                         </div>
                                         <div>
                                             <label for="periodo" class="block text-sm font-medium text-gray-700 mb-1">Período <span id="periodoRequired" class="text-red-500">*</span></label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="periodo" name="periodo" required>
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="periodo" name="periodo" required>
                                                 @for($i = 1; $i <= 8; $i++)
                                                     <option value="{{ $i }}" {{ $requerimento->periodo == $i ? 'selected' : '' }}>{{ $i }}º</option>
                                                 @endfor
@@ -113,7 +113,7 @@
                                         </div>
                                         <div>
                                             <label for="turno" class="block text-sm font-medium text-gray-700 mb-1">Turno <span id="turnoRequired" class="text-red-500">*</span></label>
-                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="turno" name="turno" required>
+                                            <select class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="turno" name="turno" required>
                                                 <option value="manhã" {{ $requerimento->turno === 'manhã' ? 'selected' : '' }}>Manhã</option>
                                                 <option value="tarde" {{ $requerimento->turno === 'tarde' ? 'selected' : '' }}>Tarde</option>
                                             </select>
@@ -123,13 +123,13 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                         <div>
                                             <label for="tipoRequisicao" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Requisição</label>
-                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50" value="{{ $requerimento->tipoRequisicao }}" readonly>
+                                            <input type="text" class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 bg-gray-50" value="{{ $requerimento->tipoRequisicao }}" readonly>
                                             <input type="hidden" id="tipoRequisicao" name="tipoRequisicao" value="{{ array_search($requerimento->tipoRequisicao, $tiposRequisicao) }}">
                                         </div>
                                         <div class="relative">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
                                             <div class="relative" id="anexoDropdown" style="margin-top: 0.5rem; display: none;">
-                                                <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                                <button type="button" id="anexoButton" class="w-full text-left px-4 py-2 border border-gray-300 rounded-md  focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                                                     Anexos/informações (clique para abrir)
                                                 </button>
                                                 <div id="anexoDropdownMenu" class="hidden absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg p-4 border border-gray-200 max-h-80 overflow-y-auto">
@@ -141,11 +141,11 @@
 
                                     <div>
                                         <label for="observacoes" class="block text-sm font-medium text-gray-700 mb-1">Observações</label>
-                                        <textarea class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="observacoes" name="observacoes" rows="3">{{ $requerimento->observacoes }}</textarea>
+                                        <textarea class="w-full rounded-md border-gray-300  focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50" id="observacoes" name="observacoes" rows="3">{{ $requerimento->observacoes }}</textarea>
                                     </div>
 
                                     <div class="flex justify-end py-3 md:py-4">
-                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200" id="submitEditBtn">
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200" id="submitEditBtn">
                                             <span class="button-text">Atualizar</span>
                                             <svg class="hidden ml-2 -mr-1 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -167,7 +167,7 @@
     <div id="anexosAtuais" class="hidden">{{ json_encode($anexosAtuais ?? []) }}</div>
     <div id="requerimentoStatus" class="hidden">{{ $requerimento->status ?? '' }}</div>
 
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="dropdown-backdrop"></div>
+    <div class="fixed inset-0 bg-black/50 z-40 hidden" id="dropdown-backdrop"></div>
     <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-md transform transition-transform duration-300 ease-in-out translate-x-full"></div>
 
     <script>
@@ -493,7 +493,7 @@
                     // Botão fechar para mobile
                     if (isMobile) {
                         const closeButton = document.createElement('button');
-                        closeButton.className = 'w-full py-2 px-4 bg-gray-200 text-gray-700 rounded mb-4 text-sm font-medium';
+                        closeButton.className = 'w-full py-2 px-4 bg-gray-200 text-gray-700 rounded-sm mb-4 text-sm font-medium';
                         closeButton.textContent = 'Fechar';
                         closeButton.addEventListener('click', function(e) {
                             e.preventDefault();
@@ -514,7 +514,7 @@
                                 const existingValue = dadosExtra && dadosExtra[field.name.split('[')[1].replace(']', '')] || '';
                                 fieldDiv.innerHTML = `
                                     <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
-                                    <input type="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" value="${existingValue}" required>
+                                    <input type="text" class="w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 text-sm" id="${uniqueId}" name="${field.name}" value="${existingValue}" required>
                                 `;
                             } else if (field.type === 'select') {
                                 const existingValue = dadosExtra && dadosExtra[field.name.split('[')[1].replace(']', '')] || '';
@@ -524,7 +524,7 @@
                                 });
                                 fieldDiv.innerHTML = `
                                     <label for="${uniqueId}" class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-red-500">*</span></label>
-                                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" id="${uniqueId}" name="${field.name}" required>
+                                    <select class="w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50 text-sm" id="${uniqueId}" name="${field.name}" required>
                                         ${optionsHtml}
                                     </select>
                                 `;
@@ -542,7 +542,7 @@
                                             <div class="flex flex-col sm:flex-row items-start">
                                                 <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
                                                 <p class="text-sm text-gray-500 mt-1">Tamanho máximo por arquivo: imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
-                                                <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
+                                                <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-xs text-sm font-medium rounded-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 file-button" data-input-id="${uniqueId}">
                                                     Escolher arquivo
                                                 </button>
                                                 <span id="file-name-${uniqueId}" class="text-gray-500 text-sm mt-2 sm:mt-0 sm:ml-3 file-name">
@@ -784,7 +784,7 @@
             
             notification.innerHTML = `
                 <div class="flex items-start">
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         ${currentConfig.icon}
                     </div>
                     <div class="ml-3 flex-1">
@@ -792,7 +792,7 @@
                     </div>
                     <div class="ml-auto pl-3">
                         <div class="-mx-1.5 -my-1.5">
-                            <button type="button" class="inline-flex ${currentConfig.text} rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'info' ? 'blue' : type === 'success' ? 'green' : type === 'warning' ? 'yellow' : 'red'}-500">
+                            <button type="button" class="inline-flex ${currentConfig.text} rounded-md p-1.5 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'info' ? 'blue' : type === 'success' ? 'green' : type === 'warning' ? 'yellow' : 'red'}-500">
                                 <span class="sr-only">Fechar</span>
                                 <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -836,7 +836,7 @@
         function showLoading() {
                 const loadingOverlay = document.createElement('div');
                 loadingOverlay.id = 'loading-overlay';
-                loadingOverlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+                loadingOverlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
                 loadingOverlay.innerHTML = `
                     <div class="loading-spinner"></div>
                 `;

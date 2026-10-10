@@ -22,7 +22,7 @@
                         <div class="flex">
                             <input 
                                 type="text" 
-                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors cpf-mask" 
+                                class="form-control w-full py-2 px-3 border border-gray-300 rounded-l-md focus:outline-hidden focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors cpf-mask"
                                 id="cpf_search" 
                                 name="cpf" 
                                 placeholder="000.000.000-00" 
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="mb-4 hidden transform transition-all duration-300 ease-in-out" id="userFoundContainer">
-                        <div id="userFoundSuccess" class="mt-3 p-3 bg-green-50 border border-green-200 rounded-md shadow-sm hidden">
+                        <div id="userFoundSuccess" class="mt-3 p-3 bg-green-50 border border-green-200 rounded-md shadow-xs hidden">
                             <div class="flex items-center">
                                 <div class="bg-green-100 p-2 rounded-full mr-3">
                                     <i class="fas fa-check text-green-500"></i>
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="userFoundError" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md shadow-sm hidden">
+                        <div id="userFoundError" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md shadow-xs hidden">
                             <div class="flex items-center">
                                 <div class="bg-red-100 p-2 rounded-full mr-3">
                                     <i class="fas fa-times text-red-500"></i>
@@ -69,7 +69,7 @@
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-list-alt mr-1"></i> Tipo de Requerimento
                             </label>
-                            <select class="form-select w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="requisition_type_id" required>
+                            <select class="form-select w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="requisition_type_id" required>
                                 <option value="">Selecione o tipo de requerimento</option>
                                 @php
                                 $appController = app('App\Http\Controllers\ApplicationController');
@@ -89,21 +89,21 @@
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-heading mr-1"></i> Título do Evento
                             </label>
-                            <input type="text" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="title" placeholder="Ex: Exceção para [Nome do Aluno]">
+                            <input type="text" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="title" placeholder="Ex: Exceção para [Nome do Aluno]">
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-calendar-day mr-1"></i> Data de Início
                             </label>
-                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="start_date" required>
+                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="start_date" required>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-calendar-check mr-1"></i> Data de Término
                             </label>
-                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="end_date" required>
+                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors" name="end_date" required>
                         </div>
                     </div>
                     

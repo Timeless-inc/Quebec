@@ -11,7 +11,7 @@
                     Cadastros de alunos com o mesmo CPF, nome ou RG. Confira os dados e mantenha apenas o cadastro correto.
                 </p>
             </div>
-            <a href="{{ route('diretor-geral.users.index') }}" class="inline-flex w-fit items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
+            <a href="{{ route('diretor-geral.users.index') }}" class="inline-flex w-fit items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50">
                 <i class="fas fa-arrow-left mr-2"></i>Voltar aos usuários
             </a>
         </div>
@@ -20,7 +20,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             @if(session('success'))
-                <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm" role="alert">
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs" role="alert">
                     <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                 </div>
             @endif

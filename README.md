@@ -33,8 +33,8 @@ A estrutura segue o padrão do Laravel e organiza o sistema da seguinte forma:
 
 ## Tecnologias e recursos
 
-- Laravel 11
-- PHP 8.2+
+- Laravel 12
+- PHP 8.4+
 - Vite e Tailwind CSS para a interface
 - Laravel Breeze para autenticação
 - Geração de relatórios e documentos em PDF
@@ -45,9 +45,9 @@ A estrutura segue o padrão do Laravel e organiza o sistema da seguinte forma:
 
 Antes de rodar o projeto, verifique se você tem instalado:
 
-- PHP 8.2 ou superior
+- PHP 8.4 ou superior (requisito do OpenSpout 5 e das dependências atuais)
 - Composer
-- Node.js com npm
+- Node.js 22 ou superior com npm
 
 ## Como executar localmente
 
@@ -95,6 +95,8 @@ Antes de rodar o projeto, verifique se você tem instalado:
     Esse comando sobe a aplicação, o Vite, os logs e o listener de filas em um único passo.
 
 Se preferir iniciar manualmente, você também pode usar `php artisan serve` e `npm run dev` em terminais separados.
+
+Ao atualizar dependências do frontend, encerre o Vite antes de executar `npm install` ou `npm ci` e inicie `npm run dev` novamente ao terminar. Um processo antigo pode continuar referenciando módulos removidos pela atualização e retornar erro 500 para o CSS, deixando as páginas sem estilos.
 
 8. Instale e inicie o Reverb:
 

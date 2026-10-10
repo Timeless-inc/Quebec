@@ -1,5 +1,5 @@
 <title>SRE</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <x-bootstrap-styles />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
 <script src="{{ asset('js/form-loading.js') }}" defer></script>
@@ -18,7 +18,7 @@
                     'indeferido' => 'Indeferido',
                 ]" />
             </div>
-            <a href="{{ route('application') }}" class="new-req-btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 no-underline hover:text-white">
+            <a href="{{ route('application') }}" class="new-req-btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 no-underline hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
                 Novo requerimento
             </a>
@@ -35,7 +35,7 @@
         </div>
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6">
                 <div class="row g-3">
                     @foreach($events as $event)
                     <div class="col-md-4 col-sm-6 col-12">
@@ -111,7 +111,7 @@
             />
             @endforeach
             @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6 text-center">
                 <p class="mb-3">Você ainda não possui nenhum requerimento. Comece agora mesmo!</p>
                 <a href="{{ route('application') }}" class="btn btn-success">Fazer Requerimento</a>
             </div>

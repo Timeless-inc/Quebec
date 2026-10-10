@@ -19,15 +19,15 @@
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('cradt.register') }}" class="inline-flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 no-underline shadow-sm hover:bg-emerald-100">
+                <a href="{{ route('cradt.register') }}" class="inline-flex w-fit items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 no-underline shadow-xs hover:bg-emerald-100">
                     <i class="fas fa-user-plus mr-2"></i>Pré-cadastrar usuário
                 </a>
                 @if($isDiretorGeral)
-                    <a href="{{ route('diretor-geral.users.duplicados') }}" class="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 shadow-sm hover:bg-amber-100">
+                    <a href="{{ route('diretor-geral.users.duplicados') }}" class="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 shadow-xs hover:bg-amber-100">
                         <i class="fas fa-clone mr-2"></i>Alunos duplicados
                     </a>
                 @endif
-                <span class="inline-flex w-fit items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm">
+                <span class="inline-flex w-fit items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700 shadow-xs">
                     <i class="fas fa-users mr-2 text-indigo-600"></i>{{ $users->total() }} usuário(s)
                 </span>
             </div>
@@ -37,13 +37,13 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm" role="alert">
+                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs" role="alert">
                     <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm" role="alert">
+                <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-xs" role="alert">
                     <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
                 </div>
             @endif
@@ -57,13 +57,13 @@
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                                     <i class="fas fa-search text-sm"></i>
                                 </span>
-                                <input type="text" name="search" id="search" value="{{ request('search') }}" class="block w-full rounded-lg border-gray-300 pl-10 text-sm shadow-sm focus:border-indigo-400 focus:ring-indigo-200" placeholder="Nome, email, CPF, matrícula...">
+                                <input type="text" name="search" id="search" value="{{ request('search') }}" class="block w-full rounded-lg border-gray-300 pl-10 text-sm shadow-xs focus:border-indigo-400 focus:ring-indigo-200" placeholder="Nome, email, CPF, matrícula...">
                             </div>
                         </div>
 
                         <div>
                             <label for="role" class="mb-1 block text-sm font-medium text-gray-700">Cargo</label>
-                            <select name="role" id="role" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-400 focus:ring-indigo-200">
+                            <select name="role" id="role" class="block w-full rounded-lg border-gray-300 text-sm shadow-xs focus:border-indigo-400 focus:ring-indigo-200">
                                 <option value="">Todos</option>
                                 <option value="Aluno" {{ request('role') == 'Aluno' ? 'selected' : '' }}>Aluno</option>
                                 <option value="Cradt" {{ request('role') == 'Cradt' ? 'selected' : '' }}>CRADT</option>
@@ -75,10 +75,10 @@
                         </div>
 
                         <div class="flex flex-wrap gap-2">
-                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700">
                                 <i class="fas fa-filter mr-2"></i>Filtrar
                             </button>
-                            <a href="{{ $indexRoute }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
+                            <a href="{{ $indexRoute }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-xs transition-colors hover:bg-gray-50">
                                 <i class="fas fa-eraser mr-2"></i>Limpar
                             </a>
                         </div>
@@ -136,7 +136,7 @@
                                     <tr class="transition-colors hover:bg-gray-50">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-3">
-                                                <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+                                                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
                                                     {{ mb_substr($user->name, 0, 1) }}
                                                 </div>
                                                 <div class="min-w-0">

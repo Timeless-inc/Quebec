@@ -38,7 +38,7 @@
                         </div>
                     @endif
                     <p class="text-gray-600 text-sm mb-8">Obrigado por utilizar o SRE. <BR> Seu pedido já foi registrado no sistema.</p>
-                    <a href="{{ route('dashboard') }}" class="btn btn-success px-6 py-3 rounded text-white shadow-md bg-green-600 hover:bg-green-700 transition-colors">
+                    <a href="{{ route('dashboard') }}" class="btn btn-success px-6 py-3 rounded-sm text-white shadow-md bg-green-600 hover:bg-green-700 transition-colors">
                         Voltar para o Dashboard
                     </a>
                 </div>

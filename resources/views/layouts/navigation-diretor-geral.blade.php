@@ -61,7 +61,7 @@
                         type="button"
                         onclick="toggleNotifications()"
                         id="notification-button"
-                        class="relative flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-orange-500 shadow-sm transition-colors hover:bg-gray-50"
+                        class="relative flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 text-orange-500 shadow-xs transition-colors hover:bg-gray-50"
                         aria-label="Notificações">
                         <span id="notification-icon-bell" aria-hidden="true">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +80,7 @@
                 <!-- User Dropdown Menu -->
                 <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
                     <div>
-                        <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-xs flex items-center">
                             Olá, <strong class="ml-1">{{ Auth::user()->username }}</strong>
                             <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -129,7 +129,7 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

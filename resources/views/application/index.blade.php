@@ -33,7 +33,7 @@
             $textareaClass = 'block w-full min-h-28 rounded-md border-slate-300 bg-white text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-green-600 focus:ring-green-600';
             $labelClass = 'mb-1.5 flex h-5 items-center text-xs font-semibold uppercase text-slate-600';
             $sectionTitleClass = 'border-l-4 border-green-600 pl-3 text-sm font-semibold uppercase text-green-700';
-            $autoBadgeClass = 'ml-1 inline-flex h-4 items-center rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase text-slate-400';
+            $autoBadgeClass = 'ml-1 inline-flex h-4 items-center rounded-sm bg-slate-100 px-1.5 text-[10px] font-semibold uppercase text-slate-400';
         @endphp
 
         <div class="py-8 md:py-10">
@@ -193,7 +193,7 @@
                                     <div class="relative">
                                         <div class="hidden" id="anexoDropdown">
                                             <label class="{{ $labelClass }}">Documentos e informações</label>
-                                            <button type="button" id="anexoButton" aria-expanded="false" class="flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-white px-4 text-left text-sm font-medium text-slate-700 transition hover:border-green-500 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+                                            <button type="button" id="anexoButton" aria-expanded="false" class="flex h-10 w-full items-center justify-between rounded-md border border-slate-300 bg-white px-4 text-left text-sm font-medium text-slate-700 transition hover:border-green-500 hover:bg-green-50 focus:outline-hidden focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
                                                 <span>Anexos e informações</span>
                                                 <svg class="h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -213,10 +213,10 @@
                             </section>
 
                             <div class="flex flex-col-reverse gap-3 bg-slate-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-6">
-                                <a href="{{ route('dashboard') }}" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+                                <a href="{{ route('dashboard') }}" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-hidden focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
                                     Cancelar
                                 </a>
-                                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-transparent bg-green-600 px-5 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2" id="submitBtn">
+                                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-transparent bg-green-600 px-5 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-hidden focus:ring-2 focus:ring-green-600 focus:ring-offset-2" id="submitBtn">
                                     <span class="button-text">Enviar requerimento</span>
                                     <svg class="hidden h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -231,7 +231,7 @@
         </div>
     </x-app-layout>
 
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="dropdown-backdrop"></div>
+    <div class="fixed inset-0 bg-black/50 z-40 hidden" id="dropdown-backdrop"></div>
 
     <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-md transform transition-transform duration-300 ease-in-out translate-x-full"></div>
 
@@ -280,7 +280,7 @@
             
             notification.innerHTML = `
                 <div class="flex items-start">
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         ${currentConfig.icon}
                     </div>
                     <div class="ml-3 flex-1">
@@ -288,7 +288,7 @@
                     </div>
                     <div class="ml-auto pl-3">
                         <div class="-mx-1.5 -my-1.5">
-                            <button type="button" class="inline-flex ${currentConfig.text} rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'info' ? 'blue' : type === 'success' ? 'green' : type === 'warning' ? 'yellow' : 'red'}-500">
+                            <button type="button" class="inline-flex ${currentConfig.text} rounded-md p-1.5 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'info' ? 'blue' : type === 'success' ? 'green' : type === 'warning' ? 'yellow' : 'red'}-500">
                                 <span class="sr-only">Fechar</span>
                                 <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -675,10 +675,10 @@
                                         <input type="file" class="hidden file-input" id="${uniqueId}" name="${field.name}" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" required>
                                         <p class="text-xs leading-5 text-slate-500">Imagens até 5 MB, PDF até 2 MB. Tamanho total por envio: 10 MB.</p>
                                         <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-                                        <button type="button" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 file-button" data-input-id="${uniqueId}">
+                                        <button type="button" class="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-hidden focus:ring-2 focus:ring-green-600 focus:ring-offset-2 file-button" data-input-id="${uniqueId}">
                                             Escolher arquivo
                                         </button>
-                                        <span id="file-name-${uniqueId}" class="min-w-0 break-words text-sm text-slate-500 file-name">Nenhum arquivo selecionado</span>
+                                        <span id="file-name-${uniqueId}" class="min-w-0 wrap-break-word text-sm text-slate-500 file-name">Nenhum arquivo selecionado</span>
                                         </div>
                                     </div>
                                     <p id="error_${uniqueId}" class="mt-2 hidden text-sm text-red-600">Este arquivo é obrigatório.</p>
@@ -917,7 +917,7 @@
             function showLoading() {
                 const loadingOverlay = document.createElement('div');
                 loadingOverlay.id = 'loading-overlay';
-                loadingOverlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+                loadingOverlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
                 loadingOverlay.innerHTML = `
                     <div class="loading-spinner"></div>
                 `;

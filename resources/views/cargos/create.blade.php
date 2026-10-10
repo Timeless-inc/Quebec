@@ -12,10 +12,10 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg p-6">
 
                 @if($errors->any())
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-sm">
                         <ul class="list-disc list-inside text-sm">
                             @foreach($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -33,7 +33,7 @@
                         </label>
                         <input type="text" name="label" id="label" value="{{ old('label') }}"
                                required
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                               class="block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50"
                                placeholder="Ex: Supervisor, Coordenador de Área...">
                         <p class="text-xs text-gray-500 mt-1">Este nome será exibido no sistema e nas listas de encaminhamento.</p>
                         @error('label')
@@ -46,7 +46,7 @@
                             <input type="hidden" name="can_receive_forwardings" value="0">
                             <input type="checkbox" name="can_receive_forwardings" value="1" id="can_receive_forwardings"
                                    {{ old('can_receive_forwardings', true) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                   class="rounded-sm border-gray-300 text-indigo-600 shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50">
                             <div>
                                 <span class="text-sm font-medium text-gray-700">Pode receber encaminhamentos</span>
                                 <p class="text-xs text-gray-500">Usuários com este cargo aparecerão na lista de destinatários do CRADT ao encaminhar requerimentos.</p>

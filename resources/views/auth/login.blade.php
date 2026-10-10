@@ -23,11 +23,11 @@
         <div class="w-full max-w-4xl bg-white rounded-xl shadow-xl overflow-hidden">
             <div class="flex flex-col md:flex-row">
                 <div class="hidden md:flex md:w-2/5 p-8 flex-col justify-between relative overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('/img/campus.jpg');">
-                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-sm"></div>
+                    <div class="absolute inset-0 bg-emerald-900/30 backdrop-blur-xs"></div>
                     
                     <!-- Logo -->
                     <div class="z-10">
-                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-md p-1">
+                        <div class="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-xs rounded-md p-1">
                             <img src="/img/logo-sre.png" alt="SRE Logo" class="w-full h-full object-contain">
                         </div>
                     </div>
@@ -42,10 +42,10 @@
                 <div class="w-full md:w-3/5 py-8 px-6 md:px-10">
                     <div class="md:hidden mb-6">
                         <div class="relative w-full h-32 rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('/img/campus.jpg');">
-                            <div class="absolute inset-0 bg-emerald-900/40 backdrop-blur-sm"></div>
+                            <div class="absolute inset-0 bg-emerald-900/40 backdrop-blur-xs"></div>
                             
                             <div class="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
-                                <div class="w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-md p-1 mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-xs rounded-md p-1 mb-2">
                                     <img src="/img/logo-sre.png" alt="SRE Logo" class="w-full h-full object-contain">
                                 </div>
                                 <h1 class="text-xl font-bold text-white text-center">Bem-vindo de volta!</h1>
@@ -108,7 +108,7 @@
                         <!-- Lembrar senha e Esqueceu senha -->
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-2 sm:space-y-0">
                             <label for="remember_me" class="inline-flex items-center">
-                                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500" name="remember">
+                                <input id="remember_me" type="checkbox" class="rounded-sm border-gray-300 text-emerald-600 shadow-xs focus:ring-emerald-500" name="remember">
                                 <span class="ms-2 text-sm text-gray-600">{{ __('Lembrar senha') }}</span>
                             </label>
 

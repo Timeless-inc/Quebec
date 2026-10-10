@@ -19,7 +19,7 @@
                         <label class="form-label font-medium text-gray-700 mb-1 block">
                             <i class="fas fa-list-alt mr-1"></i> Tipo de Requerimento
                         </label>
-                        <select class="form-select w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="requisition_type_id" required>
+                        <select class="form-select w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="requisition_type_id" required>
                             <option value="">Selecione o tipo de requerimento</option>
                             @php
                                 $appController = app('App\Http\Controllers\ApplicationController');
@@ -39,7 +39,7 @@
                         <label class="form-label font-medium text-gray-700 mb-1 block">
                             <i class="fas fa-heading mr-1"></i> Título do Evento
                         </label>
-                        <input type="text" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="title" placeholder="Ex: Período de Matrícula 2025/1">
+                        <input type="text" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="title" placeholder="Ex: Período de Matrícula 2025/1">
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -47,13 +47,13 @@
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-calendar-day mr-1"></i> Data de Início
                             </label>
-                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="start_date" required>
+                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="start_date" required>
                         </div>
                         <div class="mb-2">
                             <label class="form-label font-medium text-gray-700 mb-1 block">
                                 <i class="fas fa-calendar-check mr-1"></i> Data de Término
                             </label>
-                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="end_date" required>
+                            <input type="date" class="form-control w-full py-2 px-3 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" name="end_date" required>
                         </div>
                     </div>
                     

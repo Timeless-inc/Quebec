@@ -2,7 +2,7 @@
     $isDiretorGeral = auth()->user()->isDiretorGeral();
     $layoutComponent = $isDiretorGeral ? 'app-diretor-geral-layout' : 'app-cradt';
     $indexRoute = $isDiretorGeral ? route('diretor-geral.users.index') : route('users.index');
-    $fieldClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-400 focus:ring focus:ring-emerald-200 focus:ring-opacity-50';
+    $fieldClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-emerald-400 focus:ring-3 focus:ring-emerald-200/50';
 @endphp
 
 <x-dynamic-component :component="$layoutComponent">
@@ -18,7 +18,7 @@
     <div class="py-8">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm" role="alert">
+                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs" role="alert">
                     {{ session('success') }}
                 </div>
             @endif
@@ -82,10 +82,10 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-5">
-                        <a href="{{ $indexRoute }}" class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 no-underline shadow-sm hover:bg-gray-50">
+                        <a href="{{ $indexRoute }}" class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 no-underline shadow-xs hover:bg-gray-50">
                             Voltar
                         </a>
-                        <button type="submit" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+                        <button type="submit" class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-emerald-700">
                             Pré-cadastrar
                         </button>
                     </div>

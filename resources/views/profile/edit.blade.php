@@ -178,13 +178,13 @@
     @if(Auth::user()->isDiretorGeral())
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
@@ -194,7 +194,7 @@
     @else
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <!-- Formulário de Solicitação -->
                 <div>
                     <h3 class="text-xl font-semibold">Solicitar Alteração de Dados</h3>
@@ -218,7 +218,7 @@
                                     <!-- Nome -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_name" name="fields[name][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="name">
+                                            <input type="checkbox" id="change_name" name="fields[name][selected]" class="toggle-change w-4 h-4 text-red-600 rounded-sm focus:ring-red-500" data-field="name">
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium">Nome</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->name }}</td>
@@ -238,7 +238,7 @@
                                     <!-- Matrícula Principal -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_matricula" name="fields[matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="matricula">
+                                            <input type="checkbox" id="change_matricula" name="fields[matricula][selected]" class="toggle-change w-4 h-4 text-red-600 rounded-sm focus:ring-red-500" data-field="matricula">
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium">Matrícula Principal</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->matricula }}</td>
@@ -268,7 +268,7 @@
                                     <!-- CPF -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_cpf" name="fields[cpf][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="cpf">
+                                            <input type="checkbox" id="change_cpf" name="fields[cpf][selected]" class="toggle-change w-4 h-4 text-red-600 rounded-sm focus:ring-red-500" data-field="cpf">
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium">CPF</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->cpf }}</td>
@@ -288,7 +288,7 @@
                                     <!-- RG -->
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" id="change_rg" name="fields[rg][selected]" class="toggle-change w-4 h-4 text-red-600 rounded focus:ring-red-500" data-field="rg">
+                                            <input type="checkbox" id="change_rg" name="fields[rg][selected]" class="toggle-change w-4 h-4 text-red-600 rounded-sm focus:ring-red-500" data-field="rg">
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium">RG</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ Auth::user()->rg }}</td>
@@ -313,7 +313,7 @@
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
                                     <div class="font-medium">Nome</div>
-                                    <input type="checkbox" id="mobile_change_name" name="fields[name][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="name">
+                                    <input type="checkbox" id="mobile_change_name" name="fields[name][selected]" class="toggle-change w-5 h-5 text-red-600 rounded-sm focus:ring-red-500" data-field="name">
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
@@ -340,7 +340,7 @@
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
                                     <div class="font-medium">Matrícula Principal</div>
-                                    <input type="checkbox" id="mobile_change_matricula" name="fields[matricula][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="matricula">
+                                    <input type="checkbox" id="mobile_change_matricula" name="fields[matricula][selected]" class="toggle-change w-5 h-5 text-red-600 rounded-sm focus:ring-red-500" data-field="matricula">
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
@@ -383,7 +383,7 @@
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
                                     <div class="font-medium">CPF</div>
-                                    <input type="checkbox" id="mobile_change_cpf" name="fields[cpf][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="cpf">
+                                    <input type="checkbox" id="mobile_change_cpf" name="fields[cpf][selected]" class="toggle-change w-5 h-5 text-red-600 rounded-sm focus:ring-red-500" data-field="cpf">
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
@@ -410,7 +410,7 @@
                             <div class="mobile-card">
                                 <div class="mobile-card-header">
                                     <div class="font-medium">RG</div>
-                                    <input type="checkbox" id="mobile_change_rg" name="fields[rg][selected]" class="toggle-change w-5 h-5 text-red-600 rounded focus:ring-red-500" data-field="rg">
+                                    <input type="checkbox" id="mobile_change_rg" name="fields[rg][selected]" class="toggle-change w-5 h-5 text-red-600 rounded-sm focus:ring-red-500" data-field="rg">
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="data-item">
@@ -456,7 +456,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
-            <div class="bg-white shadow sm:rounded-lg p-6">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
@@ -469,7 +469,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <h3 class="text-lg font-semibold mb-4">Histórico de Solicitações</h3>
 
-            <div class="desktop-view bg-white shadow sm:rounded-lg overflow-hidden">
+            <div class="desktop-view bg-white shadow-sm sm:rounded-lg overflow-hidden">
                 <div class="responsive-table">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -568,7 +568,7 @@
                     </div>
                 </div>
                 @empty
-                <div class="bg-white shadow sm:rounded-lg p-4 text-center text-gray-500">
+                <div class="bg-white shadow-sm sm:rounded-lg p-4 text-center text-gray-500">
                     Nenhuma solicitação encontrada
                 </div>
                 @endforelse
