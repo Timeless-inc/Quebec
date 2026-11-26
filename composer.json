@@ -9,7 +9,7 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "intervention/image": "^4.0",
-        "laravel/framework": "^11.31",
+        "laravel/framework": "12.71",
         "laravel/reverb": "^1.10",
         "laravel/tinker": "^2.9",
         "mpdf/mpdf": "*",

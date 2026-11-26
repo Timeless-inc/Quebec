@@ -19,13 +19,25 @@
             }
         }
     </script>
+    <!-- Regra única de margem lateral (container) e de ritmo vertical (seção), usada em toda a página -->
+    <style type="text/tailwindcss">
+        @layer components {
+            .page-container {
+                @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+            }
+
+            .page-section {
+                @apply py-16 md:py-24;
+            }
+        }
+    </style>
     <title>SRE | IFPE</title>
 </head>
 
 <body class="font-sans text-gray-800 bg-white">
     <!-- Header com logo e menu hamburguer -->
     <header class="fixed w-full bg-white shadow-sm z-50">
-        <div class="container mx-auto px-4 py-3">
+        <div class="page-container py-3">
             <div class="flex justify-between items-center">
                 <!-- Logo -->
                 <div>
@@ -58,7 +70,7 @@
 
         <!-- Menu mobile (inicialmente escondido) -->
         <div id="mobile-menu" class="hidden md:hidden w-full bg-white shadow-inner">
-            <div class="py-3 space-y-2 px-4">
+            <div class="page-container py-3 space-y-2">
                 <a href="{{ route('login') }}" class="block py-2 px-4 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary rounded-md">
                     Entrar
                 </a>
@@ -70,9 +82,10 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="pt-28 md:pt-32 pb-16 md:pb-20">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+    <!-- Topo = altura do header fixo (4rem) + o respiro padrão da seção -->
+    <section class="pt-32 pb-16 md:pt-40 md:pb-24">
+        <div class="page-container">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
                 <!-- Lado esquerdo - texto -->
                 <div class="md:w-1/2 text-center md:text-left">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
@@ -95,7 +108,7 @@
                 </div>
 
                 <!-- Lado direito - imagem -->
-                <div class="md:w-1/2 flex items-center justify-center mt-8 md:mt-0">
+                <div class="md:w-1/2 flex items-center justify-center md:justify-end">
                     <img src="/img/estudante.png" alt="Imagem do Estudante" class="w-full max-w-md rounded-xl transform hover:scale-105 transition-all duration-300">
                 </div>
             </div>
@@ -103,11 +116,11 @@
     </section>
 
     <!-- Seção de recursos com ícones -->
-    <section class="py-12 md:py-20 bg-gray-50">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+    <section class="page-section bg-gray-50">
+        <div class="page-container">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-12">
                 <!-- Card 1 -->
-                <div class="flex flex-col items-center text-center p-4">
+                <div class="flex flex-col items-center text-center">
                     <div class="bg-primary/10 p-4 rounded-xl mb-5">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -120,7 +133,7 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="flex flex-col items-center text-center p-4">
+                <div class="flex flex-col items-center text-center">
                     <div class="bg-primary/10 p-4 rounded-xl mb-5">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -133,7 +146,7 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="flex flex-col items-center text-center p-4 sm:col-span-2 md:col-span-1 mx-auto sm:max-w-lg md:max-w-none">
+                <div class="flex flex-col items-center text-center sm:col-span-2 md:col-span-1 mx-auto sm:max-w-lg md:max-w-none">
                     <div class="bg-primary/10 p-4 rounded-xl mb-5">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
@@ -149,8 +162,8 @@
     </section>
 
     <!-- Seção "Pronto para começar" -->
-    <section class="py-12 md:py-20">
-        <div class="container mx-auto px-4 md:px-6">
+    <section class="page-section">
+        <div class="page-container">
             <div class="flex flex-col md:flex-row justify-between items-center gap-8">
                 <div class="text-center md:text-left">
                     <h2 class="text-2xl md:text-3xl font-bold mb-4">Pronto para simplificar seus requerimentos?</h2>
@@ -172,8 +185,8 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-50 py-8 md:py-12">
-        <div class="container mx-auto px-4 md:px-6">
+    <footer class="bg-gray-50 py-12 md:py-16">
+        <div class="page-container">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
                     <h4 class="text-sm uppercase font-semibold text-gray-500 mb-4">NOSSO SISTEMA</h4>

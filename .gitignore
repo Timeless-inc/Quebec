@@ -20,6 +20,8 @@ yarn-error.log
 /.idea
 /.nova
 /.vscode
+/.claude
+/.impeccable
 /.zed
 
 storage/

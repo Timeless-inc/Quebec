@@ -2,7 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] {
+    display: none !important;
+}
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
     display: none;
+}
+
+@layer components {
+    .auth-page {
+        accent-color: #047857;
+        caret-color: #047857;
+    }
+
+    .auth-page ::selection {
+        background-color: #a7f3d0;
+        color: #022c22;
+    }
+
+    .auth-input {
+        @apply block h-12 w-full rounded-[10px] border border-gray-300 bg-white px-3.5 text-base text-gray-900 transition-colors placeholder:text-gray-500 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 aria-[invalid=true]:border-red-600 aria-[invalid=true]:focus:ring-red-500/20;
+    }
+
+    select.auth-input {
+        @apply pr-10;
+    }
+
+    .auth-button {
+        @apply inline-flex h-12 items-center justify-center rounded-[10px] bg-emerald-700 px-5 text-base font-semibold text-white shadow-sm shadow-emerald-900/20 transition-colors hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/40 disabled:cursor-wait disabled:opacity-70;
+    }
+
+    .auth-button-secondary {
+        @apply inline-flex h-12 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-5 text-base font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30;
+    }
+
+    .auth-link {
+        @apply rounded font-semibold text-emerald-700 underline-offset-4 transition-colors hover:text-emerald-900 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30;
+    }
 }

@@ -232,7 +232,7 @@
         
         container.innerHTML = '<li class="text-center py-2">Carregando notificações...</li>';
         
-        fetch('/notifications')
+        fetch('/notifications', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Erro HTTP! status: ${response.status}`);
@@ -339,7 +339,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/notifications/count')
+        fetch('/notifications/count', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(response => response.json())
             .then(data => {
                 updateNotificationCounter(data.count);

@@ -7,7 +7,8 @@ function fetchNotifications() {
     const notificationList = document.getElementById('notifications');
     if (!notificationList) return;
 
-    fetch('/notifications')
+    // X-Requested-With: sem login o Laravel responde 401 em vez de redirecionar e gravar /notifications como destino do próximo login.
+    fetch('/notifications', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
