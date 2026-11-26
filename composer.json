@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "chillerlan/php-qrcode": "^6.0",
         "intervention/image": "^4.0",
         "laravel/framework": "12.71",
         "laravel/reverb": "^1.10",

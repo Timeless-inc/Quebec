@@ -3,36 +3,52 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf; // Namespace do DOMPDF
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\ApplicationRequest;
+use Illuminate\Support\Str;
+use chillerlan\QRCode\Output\QRGdImagePNG;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 class PDFController extends Controller
 {
-    /**
-     * Gera o PDF para o requerimento específico.
-     *
-     * @param int $id ID do requerimento
-     * @return \Illuminate\Http\Response PDF para download
-     */
     public function gerarPDF($id)
     {
-        // Buscar os dados do requerimento pelo ID
         $requerimento = ApplicationRequest::findOrFail($id);
-    
-        // Converter dadosExtra de JSON para array manualmente
         $requerimento->dadosExtra = json_decode($requerimento->dadosExtra, true);
-    
-        // Gerar assinatura digital usando a chave UUID
-        $assinatura = 'Assinatura Digital Automática - ' . $requerimento->key;
-    
-        // Renderizar a view de PDF com os dados do requerimento e a assinatura
+
+        $urlVerificacao = route('requerimento.verificar', $requerimento->key);
+        $qrCode = (new QRCode(new QROptions(['outputInterface' => QRGdImagePNG::class, 'scale' => 6])))->render($urlVerificacao);
+
         $pdf = Pdf::loadView('pdf.requerimento', [
             'requerimento' => $requerimento,
-            'assinatura' => $assinatura,
+            'urlVerificacao' => $urlVerificacao,
+            'qrCode' => $qrCode,
         ]);
-    
-        // Retornar o PDF para download com um nome dinâmico
+
         return $pdf->download('requerimento_' . $id . '.pdf');
+    }
+
+    // Rota pública (aberta pelo QR do PDF): só dados mascarados, para conferir com o papel.
+    public function verificar(string $key)
+    {
+        $requerimento = ApplicationRequest::where('key', $key)->firstOrFail();
+
+        $nomePartes = preg_split('/\s+/', trim($requerimento->nomeCompleto));
+        $nomeMascarado = collect($nomePartes)
+            ->map(fn ($parte, $posicao) => $posicao === 0 ? $parte : mb_strtoupper(mb_substr($parte, 0, 1)) . '.')
+            ->implode(' ');
+
+        return response()->view('requerimento-verificacao', [
+            'requerimento' => $requerimento,
+            'nomeMascarado' => $nomeMascarado,
+            'matriculaMascarada' => Str::mask((string) $requerimento->matricula, '*', 0, -4),
+            'statusTexto' => ApplicationRequest::STATUS_TEXTOS[$requerimento->status] ?? $requerimento->status,
+        ])->withHeaders([
+            'X-Robots-Tag' => 'noindex, nofollow',
+            'Referrer-Policy' => 'no-referrer',
+            'Cache-Control' => 'no-store, private',
+        ]);
     }
 
     public function mostrarJustificativa($id)

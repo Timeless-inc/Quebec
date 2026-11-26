@@ -35,6 +35,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/verificar/{key}', [PDFController::class, 'verificar'])
+    ->whereUuid('key')
+    ->middleware('throttle:30,1')
+    ->name('requerimento.verificar');
+
 Route::get('/dashboard', function (Request $request) {
     // Keep flashed notifications during redirect
     session()->reflash();

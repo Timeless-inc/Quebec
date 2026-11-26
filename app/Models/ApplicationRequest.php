@@ -10,6 +10,13 @@ class ApplicationRequest extends Model
 {
     use HasFactory;
 
+    public const STATUS_TEXTOS = [
+        'pendente' => 'Pendente',
+        'em_andamento' => 'Em Análise',
+        'finalizado' => 'Aprovado',
+        'indeferido' => 'Indeferido',
+    ];
+
     protected $table = 'requerimentos';
 
     protected $fillable = [

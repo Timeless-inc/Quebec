@@ -601,14 +601,7 @@ public function create()
 
     private function getStatusText($status)
     {
-        $statusMap = [
-            'pendente' => 'Pendente',
-            'em_andamento' => 'Em Análise',
-            'finalizado' => 'Aprovado',
-            'indeferido' => 'Indeferido'
-        ];
-
-        return $statusMap[$status] ?? $status;
+        return ApplicationRequest::STATUS_TEXTOS[$status] ?? $status;
     }
 
     public function getTiposRequisicao()

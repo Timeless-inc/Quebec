@@ -37,16 +37,16 @@
             </div>
         </aside>
 
-        <main class="flex flex-col px-6 py-6 sm:px-12 lg:px-16">
-            <div class="relative mx-auto flex w-full max-w-md flex-1 flex-col lg:justify-center">
-                <a href="{{ url('/') }}" class="auth-button-secondary h-10 w-fit gap-1.5 px-3.5 text-sm lg:absolute lg:left-0 lg:top-0">
+        <main class="flex flex-col px-6 py-6 sm:px-12 lg:px-16 lg:pt-12">
+            <div class="mx-auto flex w-full max-w-md flex-1 flex-col">
+                <a href="{{ url('/') }}" class="auth-button-secondary h-10 w-fit gap-1.5 px-3.5 text-sm lg:mt-2">
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="m15 18-6-6 6-6" />
                     </svg>
                     Voltar
                 </a>
 
-                <div class="flex flex-col py-10 lg:py-16">
+                <div class="flex flex-1 flex-col py-10 lg:justify-center lg:py-16">
                     {{ $slot }}
                 </div>
             </div>
