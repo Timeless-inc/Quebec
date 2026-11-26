@@ -10,6 +10,11 @@ O SRE nasce como uma resposta a um problema cotidiano da comunidade acadêmica: 
 
 O projeto é desenvolvido com base em levantamento com discentes, reuniões com a CRADT e validação em ambiente controlado com estudantes do campus. O resultado é uma plataforma que busca aproximar a experiência digital da rotina real da instituição, com foco em clareza, agilidade e autonomia.
 
+## Prévia do sistema
+
+[(Clique Aqui) - Sistema de Requerimento Estudantil](https://freeimage.host/a/sistema-de-requerimento-estudantil.H3CdwQ)
+
+
 ## O que o sistema oferece
 
 - Para o Estudante: criação de requerimentos, acompanhamento do andamento, acesso ao histórico e recebimento de notificações.

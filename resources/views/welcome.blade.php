@@ -78,7 +78,7 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
                         Sistema de<br>
                         <span class="text-primary">requerimento</span><br>
-                        do estudante
+                        estudantil
                     </h1>
                     <p class="text-gray-600 text-base md:text-lg mb-6 md:mb-8 max-w-lg mx-auto md:mx-0">
                         Gerencie suas solicitações acadêmicas em um só lugar, de forma rápida e sem burocracia, com nossa plataforma moderna e intuitiva.
@@ -178,7 +178,7 @@
                 <div class="col-span-1 md:col-span-2">
                     <h4 class="text-sm uppercase font-semibold text-gray-500 mb-4">NOSSO SISTEMA</h4>
                     <p class="text-gray-600 mb-4 max-w-md">
-                        Sistema de Requerimento do Estudante
+                        Sistema de Requerimento Estudantil
                     </p>
                 </div>
 

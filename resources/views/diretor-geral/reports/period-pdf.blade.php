@@ -289,7 +289,7 @@
     
     <div class="footer">
         <p>Este relatório apresenta uma análise detalhada da atividade no período especificado.</p>
-        <p>SRE - Sistema de Requerimentos do Estudante | Gerado em {{ $dataGeracao }}</p>
+        <p>SRE - Sistema de Requerimento Estudantil | Gerado em {{ $dataGeracao }}</p>
     </div>
 </body>
 </html>

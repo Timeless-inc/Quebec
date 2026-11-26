@@ -12,7 +12,7 @@
             <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md ring-4 ring-white/30">
                 <img src="{{ asset('img/logo-sre.png') }}" alt="Logo SRE" class="h-10 w-10 object-contain">
             </div>
-            <h1 class="text-2xl font-bold leading-tight sm:text-3xl">Bem-vindo(a) ao Sistema de Requerimento do Estudante</h1>
+            <h1 class="text-2xl font-bold leading-tight sm:text-3xl">Bem-vindo(a) ao Sistema de Requerimento Estudantil</h1>
             <p class="mt-2 text-sm text-emerald-50">Sua conta foi criada com sucesso.</p>
         </div>
 
@@ -35,7 +35,7 @@
         </div>
 
         <div class="border-t border-slate-100 bg-slate-50 px-6 py-5 text-center sm:px-10">
-            <p class="text-xs leading-6 text-slate-500">© {{ date('Y') }} Sistema de Requerimento do Estudante (SRE)</p>
+            <p class="text-xs leading-6 text-slate-500">© {{ date('Y') }} Sistema de Requerimento Estudantil (SRE)</p>
             <p class="text-xs leading-6 text-slate-500">Este e-mail foi enviado automaticamente. Por favor, não responda.</p>
         </div>
     </div>
