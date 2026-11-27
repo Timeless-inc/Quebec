@@ -5,20 +5,54 @@
     <meta charset="utf-8">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta name="theme-color" content="#063B2E">
+    <link rel="preload" href="/fonts/figtree-variable.ttf" as="font" type="font/ttf" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Paleta e fonte do Manual de Marca SRE v1.0
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#10A11A',
-                        secondary: '#09600f',
+                        floresta: '#063B2E',
+                        esmeralda: '#047857',
+                        campus: '#10A557',
+                        menta: '#DCF3E6',
+                        papel: '#F5F8F4',
+                        lima: '#C6F36B',
+                        musgo: '#3D5A4E',
+                        tinta: '#0C1A15',
+                    },
+                    fontFamily: {
+                        sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    <style>
+        @font-face {
+            font-family: 'Figtree';
+            src: url('/fonts/figtree-variable.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+        }
+
+        html { scrollbar-width: none; }
+        html::-webkit-scrollbar { display: none; }
+        ::selection { background: #C6F36B; color: #063B2E; }
+        :focus-visible { outline: 3px solid #10A557; outline-offset: 3px; border-radius: 4px; }
+        .on-dark :focus-visible { outline-color: #C6F36B; }
+
+        /* Momento único de movimento: o hexágono se desenha e o check atravessa a abertura */
+        .draw { stroke-dasharray: 1; animation: draw 2.4s cubic-bezier(0.37, 0, 0.2, 1) 0.3s both; }
+        .rise { animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+        @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) {
+            .draw, .rise { animation: none; }
+        }
+    </style>
     <!-- Regra única de margem lateral (container) e de ritmo vertical (seção), usada em toda a página -->
     <style type="text/tailwindcss">
         @layer components {
@@ -31,36 +65,31 @@
             }
         }
     </style>
-    <title>SRE | IFPE</title>
+    <title>SRE | IFPE Campus Igarassu</title>
 </head>
 
-<body class="font-sans text-gray-800 bg-white">
-    <!-- Header com logo e menu hamburguer -->
-    <header class="fixed w-full bg-white shadow-sm z-50">
+<body class="font-sans font-medium text-tinta bg-papel antialiased">
+    <!-- Header: SRE à esquerda, IFPE à direita, separados por filete fino -->
+    <header class="fixed w-full bg-papel border-b border-menta z-50">
         <div class="page-container py-3">
             <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <div>
-                    <a href="#" class="flex items-center">
-                        <img src="/img/logo-sre.png" alt="SRE Logo" class="h-8 md:h-10 w-auto">
-                        <span class="mx-2 text-gray-300 font-light">|</span>
-                        <img src="/img/ifpe.png" alt="IFPE Logo" class="h-8 md:h-10 w-auto">
-                    </a>
-                </div>
+                <a href="{{ url('/') }}" class="flex items-center" aria-label="SRE, página inicial">
+                    <img src="/img/sre/sre-horizontal-compacto-positivo.svg" alt="SRE, Sistema de Requerimento Estudantil" class="h-10 md:h-11 w-auto">
+                    <span class="mx-3 md:mx-4 h-8 w-px bg-musgo/25" aria-hidden="true"></span>
+                    <img src="/img/ifpe.png" alt="Instituto Federal de Pernambuco" class="h-6 md:h-8 w-auto">
+                </a>
 
                 <!-- Links desktop -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Entrar</a>
-                    <a href="{{ url('/register') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2 rounded-md transition-all border">Cadastrar</a>
+                    <a href="{{ route('login') }}" class="text-musgo hover:text-esmeralda font-semibold underline-offset-4 hover:underline transition-colors">Entrar</a>
+                    <a href="{{ url('/register') }}" class="bg-esmeralda hover:bg-floresta text-white font-semibold px-5 py-2.5 rounded-lg transition-colors">Cadastrar</a>
                 </div>
 
                 <!-- Botão hamburguer mobile -->
-                <button id="mobile-menu-button" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100 focus:outline-none">
-                    <!-- Ícone Hamburguer -->
+                <button id="mobile-menu-button" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Abrir menu" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-floresta hover:bg-menta">
                     <svg id="hamburguer-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                    <!-- Ícone X (inicialmente escondido) -->
                     <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -69,153 +98,167 @@
         </div>
 
         <!-- Menu mobile (inicialmente escondido) -->
-        <div id="mobile-menu" class="hidden md:hidden w-full bg-white shadow-inner">
+        <div id="mobile-menu" class="hidden md:hidden w-full bg-papel border-t border-menta">
             <div class="page-container py-3 space-y-2">
-                <a href="{{ route('login') }}" class="block py-2 px-4 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary rounded-md">
+                <a href="{{ route('login') }}" class="block py-3 px-4 text-base font-semibold text-floresta hover:bg-menta rounded-lg">
                     Entrar
                 </a>
-                <a href="{{ url('/register') }}" class="block py-2 px-4 text-base font-medium bg-primary text-white hover:bg-secondary rounded-md text-center">
+                <a href="{{ url('/register') }}" class="block py-3 px-4 text-base font-semibold bg-esmeralda text-white hover:bg-floresta rounded-lg text-center">
                     Cadastrar
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <!-- Topo = altura do header fixo (4rem) + o respiro padrão da seção -->
-    <section class="pt-32 pb-16 md:pt-40 md:pb-24">
-        <div class="page-container">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
-                <!-- Lado esquerdo - texto -->
-                <div class="md:w-1/2 text-center md:text-left">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
-                        Sistema de<br>
-                        <span class="text-primary">requerimento</span><br>
-                        estudantil
-                    </h1>
-                    <p class="text-gray-600 text-base md:text-lg mb-6 md:mb-8 max-w-lg mx-auto md:mx-0">
-                        Gerencie suas solicitações acadêmicas em um só lugar, de forma rápida e sem burocracia, com nossa plataforma moderna e intuitiva.
-                    </p>
+    <main>
+        <!-- Hero: fundo Floresta, símbolo gigante a 7% de branco como textura -->
+        <section class="on-dark relative overflow-hidden bg-floresta text-white pt-32 pb-16 md:pt-44 md:pb-28">
+            <svg class="pointer-events-none absolute -right-40 -bottom-40 w-[44rem] max-w-none opacity-100" viewBox="8 5 104 110" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M105 52 L105 82 L60 108 L15 82 L15 38 L60 12 L75 20.7" stroke="#fff" stroke-opacity=".07" stroke-width="12" />
+                <path d="M38 62 L55 79 L100 24" stroke="#C6F36B" stroke-opacity=".16" stroke-width="13" />
+            </svg>
 
-                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                        <a href="{{ route('login') }}" class="bg-primary hover:bg-secondary text-white font-medium px-5 py-2.5 md:px-6 md:py-3 rounded-md shadow transition-colors inline-flex items-center">
-                            Acessar Sistema
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+            <div class="page-container relative">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16">
+                    <!-- Lado esquerdo: texto -->
+                    <div class="md:w-1/2 text-center md:text-left rise">
+                        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-[-0.03em] leading-[1.02] mb-5 md:mb-7 text-balance">
+                            Sistema de<br>
+                            <span class="text-lima">requerimento</span><br>
+                            estudantil
+                        </h1>
+                        <p class="text-menta/90 text-lg md:text-xl leading-relaxed mb-8 md:mb-10 max-w-lg mx-auto md:mx-0">
+                            Gerencie suas solicitações acadêmicas em um só lugar, de forma rápida e sem burocracia, com nossa plataforma moderna e intuitiva.
+                        </p>
+
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                            <a href="{{ route('login') }}" class="bg-lima hover:bg-white text-floresta font-bold px-6 py-3.5 rounded-lg transition-colors inline-flex items-center">
+                                Acessar Sistema
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Lado direito: foto do campus dentro do símbolo, o check sai pela abertura -->
+                    <div class="md:w-1/2 flex items-center justify-center md:justify-end">
+                        <svg class="w-64 sm:w-80 md:w-full md:max-w-md" viewBox="8 5 104 110" role="img" aria-label="Foto do campus Igarassu do IFPE dentro do símbolo do SRE">
+                            <defs>
+                                <clipPath id="hex-foto">
+                                    <path d="M97.21 33.50 Q105 38 105.00 47.00 L105.00 73.00 Q105 82 97.21 86.50 L67.79 103.50 Q60 108 52.21 103.50 L22.79 86.50 Q15 82 15.00 73.00 L15.00 47.00 Q15 38 22.79 33.50 L52.21 16.50 Q60 12 67.79 16.50 Z" />
+                                </clipPath>
+                            </defs>
+                            <image href="/img/campus.jpg" x="-45" y="-30" width="150" height="150" clip-path="url(#hex-foto)" preserveAspectRatio="xMidYMid slice" />
+                            <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path class="draw" pathLength="1" d="M105 52 L105 82 L60 108 L15 82 L15 38 L60 12 L75 20.7" stroke="#fff" stroke-width="12" />
+                                <path class="draw" pathLength="1" d="M38 62 L55 79 L100 24" stroke="#063B2E" stroke-width="21" />
+                                <path class="draw" pathLength="1" d="M38 62 L55 79 L100 24" stroke="#C6F36B" stroke-width="13" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trilha: três nós ligados por uma linha, o último concluído com check -->
+        <section class="page-section">
+            <div class="page-container">
+                <h2 class="sr-only">Como funciona</h2>
+                <ol class="grid grid-cols-1 md:grid-cols-3 gap-y-12 md:gap-x-10">
+                    <li class="relative pl-20 md:pl-0">
+                        <svg class="absolute left-0 top-0 h-14 w-14 md:relative md:z-10 md:block md:mx-auto md:h-16 md:w-16 md:mb-6" viewBox="0 0 120 120" fill="none" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M60 12 L105 38 L105 82 L60 108 L15 82 L15 38 Z" fill="#F5F8F4" stroke="#047857" stroke-width="10" />
+                        </svg>
+                        <span class="absolute left-[26px] top-16 -bottom-12 w-1 rounded-full bg-esmeralda/30 md:left-1/2 md:right-auto md:top-[30px] md:bottom-auto md:h-1 md:w-[calc(100%+2.5rem)]" aria-hidden="true"></span>
+                        <h3 class="text-xl md:text-2xl font-bold tracking-[-0.02em] text-floresta mb-3 md:text-center">Solicitações</h3>
+                        <p class="text-musgo text-base leading-relaxed max-w-xs md:max-w-sm md:mx-auto md:text-center">
+                            Envie seu requerimento com formulários dinâmicos, com upload de arquivos para todos os tipos de solicitação.
+                        </p>
+                    </li>
+
+                    <li class="relative pl-20 md:pl-0">
+                        <svg class="absolute left-0 top-0 h-14 w-14 md:relative md:z-10 md:block md:mx-auto md:h-16 md:w-16 md:mb-6" viewBox="0 0 120 120" fill="none" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M60 12 L105 38 L105 82 L60 108 L15 82 L15 38 Z" fill="#F5F8F4" stroke="#047857" stroke-width="10" />
+                        </svg>
+                        <span class="absolute left-[26px] top-16 -bottom-12 w-1 rounded-full bg-esmeralda/30 md:left-1/2 md:right-auto md:top-[30px] md:bottom-auto md:h-1 md:w-[calc(100%+2.5rem)]" aria-hidden="true"></span>
+                        <h3 class="text-xl md:text-2xl font-bold tracking-[-0.02em] text-floresta mb-3 md:text-center">Rastreamento</h3>
+                        <p class="text-musgo text-base leading-relaxed max-w-xs md:max-w-sm md:mx-auto md:text-center">
+                            Acompanhe o andamento de seus requerimentos com atualizações dos status pelo sistema e por e-mail.
+                        </p>
+                    </li>
+
+                    <li class="relative pl-20 md:pl-0">
+                        <svg class="absolute left-0 top-0 h-14 w-14 md:relative md:z-10 md:block md:mx-auto md:h-16 md:w-16 md:mb-6" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M60 12 L105 38 L105 82 L60 108 L15 82 L15 38 Z" fill="#047857" stroke="#047857" stroke-width="10" />
+                            <path d="M38 62 L55 79 L84 40" stroke="#F5F8F4" stroke-width="13" />
+                        </svg>
+                        <h3 class="text-xl md:text-2xl font-bold tracking-[-0.02em] text-floresta mb-3 md:text-center">Processos</h3>
+                        <p class="text-musgo text-base leading-relaxed max-w-xs md:max-w-sm md:mx-auto md:text-center">
+                            Rapidez no processamento dos requerimentos, com notificações automáticas para você acompanhar tudo em tempo real.
+                        </p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Seção "Pronto para começar" -->
+        <section class="page-section bg-menta">
+            <div class="page-container">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-[-0.02em] text-floresta mb-4 text-balance">Pronto para simplificar seus requerimentos?</h2>
+                        <p class="text-musgo text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
+                            Nossa plataforma oferece tudo que você precisa para gerenciar suas demandas acadêmicas com rapidez. Esqueça as filas e os papéis.
+                        </p>
+                    </div>
+
+                    <div class="shrink-0">
+                        <a href="{{ url('/register') }}" class="bg-esmeralda hover:bg-floresta text-white font-bold px-6 py-3.5 rounded-lg inline-flex items-center transition-colors">
+                            Criar sua conta
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </a>
                     </div>
                 </div>
-
-                <!-- Lado direito - imagem -->
-                <div class="md:w-1/2 flex items-center justify-center md:justify-end">
-                    <img src="/img/estudante.png" alt="Imagem do Estudante" class="w-full max-w-md rounded-xl transform hover:scale-105 transition-all duration-300">
-                </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Seção de recursos com ícones -->
-    <section class="page-section bg-gray-50">
-        <div class="page-container">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-12">
-                <!-- Card 1 -->
-                <div class="flex flex-col items-center text-center">
-                    <div class="bg-primary/10 p-4 rounded-xl mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Solicitações</h3>
-                    <p class="text-gray-600">
-                        Envie seu requerimento com formulários dinâmicos, com upload de arquivos para todos os tipos de solicitação.
-                    </p>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="flex flex-col items-center text-center">
-                    <div class="bg-primary/10 p-4 rounded-xl mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Rastreamento</h3>
-                    <p class="text-gray-600">
-                        Acompanhe o andamento de seus requerimentos com atualizações dos status pelo sistema e por e-mail.
-                    </p>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="flex flex-col items-center text-center sm:col-span-2 md:col-span-1 mx-auto sm:max-w-lg md:max-w-none">
-                    <div class="bg-primary/10 p-4 rounded-xl mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Processos</h3>
-                    <p class="text-gray-600">
-                        Rapidez no processamento dos requerimentos, com notificações automáticas para você acompanhar tudo em tempo real.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Seção "Pronto para começar" -->
-    <section class="page-section">
-        <div class="page-container">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center md:text-left">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-4">Pronto para simplificar seus requerimentos?</h2>
-                    <p class="text-gray-600 max-w-lg mx-auto md:mx-0">
-                        Nossa plataforma oferece tudo que você precisa para gerenciar suas demandas acadêmicas com rapidez. Esqueça as filas e os papéis.
-                    </p>
-                </div>
-
-                <div class="mt-4 md:mt-0">
-                    <a href="{{ url('/register') }}" class="bg-primary hover:bg-secondary text-white font-medium px-6 py-3 rounded-md inline-flex items-center transition-colors">
-                        Criar sua conta
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-50 py-12 md:py-16">
+    <footer class="on-dark bg-floresta text-menta/80 py-12 md:py-16">
         <div class="page-container">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h4 class="text-sm uppercase font-semibold text-gray-500 mb-4">NOSSO SISTEMA</h4>
-                    <p class="text-gray-600 mb-4 max-w-md">
-                        Sistema de Requerimento Estudantil
+                    <img src="/img/sre/sre-horizontal-compacto-negativo.svg" alt="SRE" class="h-12 w-auto mb-4">
+                    <p class="max-w-md">
+                        Sistema de Requerimento Estudantil<br>
+                        IFPE Campus Igarassu
                     </p>
                 </div>
 
                 <div>
-                    <h4 class="text-sm uppercase font-semibold text-gray-500 mb-4">Links Rápidos</h4>
+                    <h4 class="text-sm uppercase font-bold tracking-[0.14em] text-lima mb-4">Links Rápidos</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-600 hover:text-primary text-sm">Política de privacidade</a></li>
+                        <li><a href="#" class="hover:text-white underline-offset-4 hover:underline text-sm">Política de privacidade</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-sm uppercase font-semibold text-gray-500 mb-4">Contato</h4>
+                    <h4 class="text-sm uppercase font-bold tracking-[0.14em] text-lima mb-4">Contato</h4>
                     <ul class="space-y-2">
                         <li class="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-lima shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">contato@sre.edu.br</span>
+                            <span class="text-sm">contato@sre.edu.br</span>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500 text-xs">
+            <div class="border-t border-menta/15 mt-8 pt-8 text-center text-menta/70 text-xs">
                 <p>&copy; {{ date('Y') }} Timeless Inc. Todos os direitos reservados.</p>
             </div>
         </div>
@@ -224,37 +267,31 @@
     <!-- JavaScript simplificado para hamburguer -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Selecionar elementos
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const hamburgerIcon = document.getElementById('hamburguer-icon');
             const closeIcon = document.getElementById('close-icon');
 
-            // Verificar se elementos existem
             if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) {
                 console.error('Elementos necessários para o menu não encontrados');
                 return;
             }
 
-            // Toggle do menu
+            function setMenuOpen(isOpen) {
+                mobileMenu.classList.toggle('hidden', !isOpen);
+                hamburgerIcon.classList.toggle('hidden', isOpen);
+                closeIcon.classList.toggle('hidden', !isOpen);
+                mobileMenuButton.setAttribute('aria-expanded', String(isOpen));
+                mobileMenuButton.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+            }
+
             mobileMenuButton.addEventListener('click', function() {
-                // Toggle da visibilidade do menu
-                mobileMenu.classList.toggle('hidden');
-                
-                // Toggle dos ícones
-                hamburgerIcon.classList.toggle('hidden');
-                closeIcon.classList.toggle('hidden');
+                setMenuOpen(mobileMenu.classList.contains('hidden'));
             });
 
-            // Adicionar eventos para links do menu móvel
-            const mobileLinks = mobileMenu.querySelectorAll('a');
-            mobileLinks.forEach(link => {
+            mobileMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', function() {
-                    // Fechar menu quando um link é clicado
-                    mobileMenu.classList.add('hidden');
-                    // Resetar ícones
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
+                    setMenuOpen(false);
                 });
             });
         });

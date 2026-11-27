@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'Figtree';
+    src: url('/fonts/figtree-variable.ttf') format('truetype');
+    font-weight: 300 900;
+    font-display: swap;
+}
+
 [x-cloak] {
     display: none !important;
 }
@@ -18,12 +25,12 @@ input[type="password"]::-ms-clear {
     }
 
     .auth-page ::selection {
-        background-color: #a7f3d0;
-        color: #022c22;
+        background-color: #C6F36B;
+        color: #063B2E;
     }
 
     .auth-input {
-        @apply block h-12 w-full rounded-[10px] border border-gray-300 bg-white px-3.5 text-base text-gray-900 transition-colors placeholder:text-gray-500 hover:border-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 aria-[invalid=true]:border-red-600 aria-[invalid=true]:focus:ring-red-500/20;
+        @apply block h-12 w-full rounded-[10px] border border-musgo/30 bg-white px-3.5 text-base text-tinta transition-colors placeholder:text-musgo/85 hover:border-musgo/50 focus:border-esmeralda focus:outline-none focus:ring-4 focus:ring-campus/25 aria-[invalid=true]:border-red-600 aria-[invalid=true]:focus:ring-red-500/20;
     }
 
     select.auth-input {
@@ -31,14 +38,14 @@ input[type="password"]::-ms-clear {
     }
 
     .auth-button {
-        @apply inline-flex h-12 items-center justify-center rounded-[10px] bg-emerald-700 px-5 text-base font-semibold text-white shadow-sm shadow-emerald-900/20 transition-colors hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/40 disabled:cursor-wait disabled:opacity-70;
+        @apply inline-flex h-12 items-center justify-center rounded-[10px] bg-esmeralda px-5 text-base font-bold text-white transition-colors hover:bg-floresta focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-campus/40 disabled:cursor-wait disabled:opacity-70;
     }
 
     .auth-button-secondary {
-        @apply inline-flex h-12 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-5 text-base font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30;
+        @apply inline-flex h-12 items-center justify-center rounded-[10px] border border-musgo/30 bg-white px-5 text-base font-semibold text-floresta transition-colors hover:border-musgo/50 hover:bg-menta/60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-campus/30;
     }
 
     .auth-link {
-        @apply rounded font-semibold text-emerald-700 underline-offset-4 transition-colors hover:text-emerald-900 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/30;
+        @apply rounded font-semibold text-esmeralda underline-offset-4 transition-colors hover:text-floresta hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-campus/30;
     }
 }

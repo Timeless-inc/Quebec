@@ -1,25 +1,24 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Esqueceu sua senha? Sem problemas. Basta nos informar seu endereço de e-mail e enviaremos um link de redefinição de senha que permitirá que você escolha um novo.') }}
-    </div>
+<x-auth-shell title="SRE | Recuperar senha" photo-title="Sem problema, é rápido"
+    photo-text="Informe seu e-mail e enviamos o caminho para criar uma nova senha." :back-url="route('login')">
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <h1 class="text-3xl font-bold tracking-[-0.02em] text-floresta">Esqueceu sua senha?</h1>
+    <p class="mt-2 text-base text-musgo">Informe seu e-mail. Enviaremos um link para você criar uma nova senha.</p>
 
-    <form method="POST" action="{{ route('password.email') }}">
+    <x-auth-session-status class="mt-6" :status="session('status')" />
+
+    <form x-data="forgotPasswordForm(@js($errors->messages()))" x-ref="form" @submit.prevent="submit"
+        @input="clear($event.target.name)" method="POST" action="{{ route('password.email') }}" class="mt-8 space-y-5" novalidate>
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <x-auth-field name="email" label="E-mail" type="email" placeholder="seuemail@discente.ifpe.edu.br" autocomplete="username" autofocus />
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Enviar Link de Redefinição') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" :disabled="submitting" x-text="submitting ? 'Enviando...' : 'Enviar link'" class="auth-button w-full">
+            {{ __('Enviar link') }}
+        </button>
     </form>
-</x-guest-layout>
+
+    <p class="mt-8 text-center text-sm text-musgo">
+        Lembrou a senha?
+        <a href="{{ route('login') }}" class="auth-link px-1">Entrar</a>
+    </p>
+</x-auth-shell>

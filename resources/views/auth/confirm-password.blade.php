@@ -1,27 +1,17 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+<x-auth-shell title="SRE | Confirmar senha" photo-title="Área protegida"
+    photo-text="Confirme sua senha para continuar.">
 
-    <form method="POST" action="{{ route('password.confirm') }}">
+    <h1 class="text-3xl font-bold tracking-[-0.02em] text-floresta">Confirme sua senha</h1>
+    <p class="mt-2 text-base text-musgo">Esta é uma área protegida. Digite sua senha para continuar.</p>
+
+    <form x-data="confirmPasswordForm(@js($errors->messages()))" x-ref="form" @submit.prevent="submit"
+        @input="clear($event.target.name)" method="POST" action="{{ route('password.confirm') }}" class="mt-8 space-y-5" novalidate>
         @csrf
 
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
+        <x-auth-field name="password" label="Senha" type="password" placeholder="Sua senha" autocomplete="current-password" autofocus />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" :disabled="submitting" x-text="submitting ? 'Confirmando...' : 'Confirmar'" class="auth-button w-full">
+            {{ __('Confirmar') }}
+        </button>
     </form>
-</x-guest-layout>
+</x-auth-shell>

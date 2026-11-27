@@ -1,31 +1,20 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<x-auth-shell title="SRE | Confirmar e-mail" photo-title="Confirme seu e-mail"
+    photo-text="Falta um passo para ter acesso ao sistema.">
+
+    <h1 class="text-3xl font-bold tracking-[-0.02em] text-floresta">Confirme seu e-mail</h1>
+    <p class="mt-2 text-base text-musgo">Enviamos um link para o e-mail do seu cadastro. Clique nele para começar. Não chegou? Peça outro.</p>
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
+        <p class="mt-6 text-sm font-semibold text-esmeralda" role="status">Enviamos um novo link para o e-mail do seu cadastro.</p>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+    <form method="POST" action="{{ route('verification.send') }}" class="mt-8">
+        @csrf
+        <button type="submit" class="auth-button w-full">{{ __('Enviar outro link') }}</button>
+    </form>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
-</x-guest-layout>
+    <form method="POST" action="{{ route('logout') }}" class="mt-6 text-center">
+        @csrf
+        <button type="submit" class="auth-link px-1 text-sm">{{ __('Sair') }}</button>
+    </form>
+</x-auth-shell>

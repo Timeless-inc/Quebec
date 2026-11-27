@@ -93,17 +93,24 @@ const authForm = (serverMessages, rules) => ({
     },
 });
 
-Alpine.data('loginForm', (serverMessages) => ({
-    ...authForm(serverMessages, loginRules),
+// Formulários curtos: valida os campos listados e envia.
+const registerSimpleForm = (name, fields, rules) =>
+    Alpine.data(name, (serverMessages) => ({
+        ...authForm(serverMessages, rules),
 
-    submit() {
-        const invalidInput = this.validate(['email', 'password']);
-        if (invalidInput) return invalidInput.focus();
+        submit() {
+            const invalidInput = this.validate(fields);
+            if (invalidInput) return invalidInput.focus();
 
-        this.submitting = true;
-        this.$refs.form.submit();
-    },
-}));
+            this.submitting = true;
+            this.$refs.form.submit();
+        },
+    }));
+
+registerSimpleForm('loginForm', ['email', 'password'], loginRules);
+registerSimpleForm('forgotPasswordForm', ['email'], loginRules);
+registerSimpleForm('resetPasswordForm', ['email', 'password', 'password_confirmation'], registerRules);
+registerSimpleForm('confirmPasswordForm', ['password'], loginRules);
 
 Alpine.data('registerForm', (serverMessages, hasSecondMatricula) => ({
     ...authForm(serverMessages, registerRules),

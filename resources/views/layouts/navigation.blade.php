@@ -1,12 +1,12 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-papel border-b border-menta">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ Auth::user()->getDashboardRoute() }}">
-                        <x-application-logo />
+                    <a href="{{ Auth::user()->getDashboardRoute() }}" aria-label="SRE, página inicial">
+                        <img src="/img/sre/sre-horizontal-compacto-positivo.svg" alt="SRE" class="h-10 w-auto">
                     </a>
                 </div>
 
@@ -29,9 +29,9 @@
                         type="button"
                         onclick="toggleNotifications('notification-list')"
                         id="notification-button"
-                        class="text-sm p-2 px-3 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        class="text-sm p-2 px-3 border border-musgo/30 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span id="notification-icon-bell" class="text-orange-500" aria-hidden="true">
+                        <span id="notification-icon-bell" class="text-esmeralda" aria-hidden="true">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
                             </svg>
@@ -42,14 +42,14 @@
                         </span>
                     </button>
                     <!-- Lista de Notificações -->
-                    <div id="notification-list" class="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg w-64 z-50" style="display: none;">
-                        <ul id="notifications" class="p-2 text-sm text-green-700 max-h-80 overflow-y-auto"></ul>
+                    <div id="notification-list" class="absolute right-0 mt-2 bg-white border border-musgo/30 rounded-md shadow-lg w-64 z-50" style="display: none;">
+                        <ul id="notifications" class="p-2 text-sm text-esmeralda max-h-80 overflow-y-auto"></ul>
                     </div>
                 </div>
                 
                 <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="ml-3 relative">
                     <div>
-                        <button @click="open = !open" type="button" class="text-gray-700 hover:text-gray-900 text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        <button @click="open = !open" type="button" class="text-floresta hover:text-floresta text-sm p-2 border border-musgo/30 rounded-md shadow-sm flex items-center">
                             Olá, <strong class="ml-1">{{ Auth::user()->username }}</strong>
                             <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -64,23 +64,23 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-50 border border-gray-200"
+                        class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl z-50 border border-menta"
                         style="display: none;">
 
-                        <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 border-l-4 border-transparent hover:border-blue-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm text-floresta hover:bg-menta/50 transition-colors duration-150 border-l-4 border-transparent hover:border-esmeralda">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-musgo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             {{ __('Perfil') }}
                         </a>
 
-                        <div class="border-t border-gray-100 my-1"></div>
+                        <div class="border-t border-menta my-1"></div>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 border-l-4 border-transparent hover:border-red-500 group">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-500 group-hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-sm text-floresta hover:bg-menta/50 transition-colors duration-150 border-l-4 border-transparent hover:border-red-500 group">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-musgo group-hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                                 <span class="group-hover:text-red-500">{{ __('Sair') }}</span>
@@ -96,9 +96,9 @@
                     <button
                         type="button"
                         onclick="toggleNotificationsMobile()"
-                        class="text-sm p-2 border border-gray-300 rounded-md shadow-sm flex items-center">
+                        class="text-sm p-2 border border-musgo/30 rounded-md shadow-sm flex items-center">
                         <!-- Ícone do Sino -->
-                        <span class="text-orange-500" aria-hidden="true">
+                        <span class="text-esmeralda" aria-hidden="true">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 01-6 0m6 0H9" />
                             </svg>
@@ -111,23 +111,23 @@
                     <!-- Lista de Notificações Mobile -->
                     <div id="mobile-notification-list" class="fixed inset-0 pt-16 px-4 pb-4 bg-gray-800 bg-opacity-75 z-50" style="display: none;">
                         <div class="bg-white rounded-lg shadow-xl max-w-md mx-auto overflow-hidden">
-                            <div class="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
-                                <h3 class="text-lg font-medium text-gray-900">Notificações</h3>
-                                <button type="button" onclick="toggleNotificationsMobile()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <div class="flex justify-between items-center p-4 bg-menta/40 border-b border-menta">
+                                <h3 class="text-lg font-medium text-floresta">Notificações</h3>
+                                <button type="button" onclick="toggleNotificationsMobile()" class="text-musgo/70 hover:text-musgo focus:outline-none">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
                             <div class="p-4">
-                                <ul id="mobile-notifications" class="text-sm text-green-700 max-h-80 overflow-y-auto"></ul>
+                                <ul id="mobile-notifications" class="text-sm text-esmeralda max-h-80 overflow-y-auto"></ul>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Botão Hamburguer -->
-                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-600 transition duration-150 ease-in-out">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-musgo hover:text-musgo hover:bg-menta focus:outline-none focus:bg-menta focus:text-musgo transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -139,7 +139,7 @@
 
     <!-- Menu Responsivo (visível apenas quando o hamburguer é clicado) -->
     <div :class="{'block': open, 'hidden': !open}" class="sm:hidden">
-        <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
+        <div class="pt-2 pb-3 space-y-1 border-t border-menta">
             <x-responsive-nav-link :href="Auth::user()->getDashboardRoute()" :active="request()->routeIs('dashboard') || request()->routeIs('diretor-geral.dashboard') || request()->routeIs('painel.dashboard') || request()->routeIs('cradt')" class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -158,10 +158,10 @@
         </div>
 
         <!-- Opções de Perfil e Logout (Mobile) -->
-        <div class="pt-4 pb-1 border-t border-gray-200 bg-gray-50">
+        <div class="pt-4 pb-1 border-t border-menta bg-menta/40">
             <div class="px-4 py-2">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name ?? Auth::user()->username }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-base text-floresta">{{ Auth::user()->name ?? Auth::user()->username }}</div>
+                <div class="font-medium text-sm text-musgo">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
@@ -241,7 +241,7 @@
             })
             .then(data => {
                 if (data.length === 0) {
-                    container.innerHTML = '<li class="text-center py-4 text-gray-500 italic">Você não tem notificações no momento.</li>';
+                    container.innerHTML = '<li class="text-center py-4 text-musgo italic">Você não tem notificações no momento.</li>';
                     return;
                 }
                 
@@ -249,14 +249,14 @@
                 data.forEach(notification => {
                     const li = document.createElement('li');
                     li.className = notification.is_read 
-                        ? 'p-3 border-b border-gray-200 text-gray-500' 
-                        : 'p-3 border-b border-gray-200 text-gray-700 bg-blue-50';
+                        ? 'p-3 border-b border-menta text-musgo' 
+                        : 'p-3 border-b border-menta text-floresta bg-menta/60';
                     li.setAttribute('data-notification-id', notification.id);
                     
                     li.innerHTML = `
                         <div class="flex justify-between items-center">
                             <span class="font-semibold">${notification.title}</span>
-                            <span class="text-xs status-indicator ${notification.is_read ? 'text-gray-500' : 'text-green-700 font-bold'}">${notification.is_read ? 'Lida' : 'Nova'}</span>
+                            <span class="text-xs status-indicator ${notification.is_read ? 'text-musgo' : 'text-esmeralda font-bold'}">${notification.is_read ? 'Lida' : 'Nova'}</span>
                         </div>
                         <div class="text-sm mt-1">${notification.message}</div>
                     `;
